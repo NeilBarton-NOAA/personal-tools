@@ -1,0 +1,9 @@
+[credential]
+    helper = store --file ~/.git-credentials
+[credential "https://github.com"]
+    username = NeilBarton-NOAA
+[url "https://github.com/NOAA-EMC/"]
+    insteadof = gitEMC:
+[url "https://github.com/NeilBarton-NOAA/"]
+    insteadof = gitNPB:
+
