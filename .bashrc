@@ -31,6 +31,10 @@ export HISTSIZE=100
 alias ls='ls -B --group-directories-first --color=auto'
 alias dirs='dirs -v'
 alias psu="ps U nbarton"
+alias sme="squeue -u nbarton"
+alias sd="cd /work/noaa/stmp/nbarton"
+alias md="cd /work/noaa/marine/nbarton"
+alias gitgeturl="git config --get remote.origin.url"
 
 # modules
 source ~/.profile
