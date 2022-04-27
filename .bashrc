@@ -1,13 +1,5 @@
 # @(#).bashrc  2019.04.14
 ################################################################################
-##
-##  This is the default HPC2 ~/.bashrc file.
-##  This file and others are used to define and setup the user environment.
-##  Lines beginning with a # are comments and are ignored by the shell.
-##  For additional details, see the bash man page, "man bash".
-##
-################################################################################
-
 ##  Source global definitions: The next line must be the first non-commented line.
 [ -f /etc/bashrc ] && . /etc/bashrc
 
@@ -37,4 +29,4 @@ alias md="cd /work/noaa/marine/nbarton"
 alias gitgeturl="git config --get remote.origin.url"
 
 # modules
-source ~/.profile
+#source ~/.profile
