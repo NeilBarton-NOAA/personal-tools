@@ -3,6 +3,7 @@
 .bash_profile
 .cache
 .emacs
+.fontconfig
 .globus/
 .ipython/
 .kshrc
