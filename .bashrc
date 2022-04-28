@@ -30,8 +30,8 @@ if [[ $machine == *hfe* ]]; then
     alias sd="cd /scratch2/NCEPDEV/stmp1/Neil.Barton"
     export WORKDIR=/scratch2/NCEPDEV/stmp1/Neil.Barton
 elif [[ ${machine} == *Orion* ]]; then
-    alias sd="cd /work/noaa/stmp/nbarton"
-    alias md="cd /work/noaa/marine/nbarton"
+    alias sd="cd /work/noaa/marine/nbarton"
+    alias ssd="cd /work/noaa/stmp/nbarton"
     export WORKDIR=/work/noaa/marine/nbarton
 else
     echo "machine unknown in .bashrc: " $machine

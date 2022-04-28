@@ -8,6 +8,7 @@ if [[ $machine == *hfe* ]]; then
 elif [[ ${machine} == *Orion* ]]; then
     module_file=ufs_orion.intel
     m=orion
+    export HOMEDIR=/work/noaa/global/$USER
     export WORKDIR=/work/noaa/marine/$USER
 else
     echo "machine unkown: " $machine
