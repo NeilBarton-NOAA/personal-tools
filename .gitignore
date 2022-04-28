@@ -1,6 +1,7 @@
 .bash_history
 .bash_logout
 .bash_profile
+.cache
 .emacs
 .globus/
 .ipython/
