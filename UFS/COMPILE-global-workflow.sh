@@ -1,6 +1,6 @@
 #!/bin/sh
-
-TOPDIR=/work/noaa/marine/nbarton
+source $PWD/MACHINE-config.sh
+TOPDIR=$WORKDIR
 cd $TOPDIR
 machine=$(uname -n)
 code=global-workflow
@@ -17,10 +17,8 @@ fi
 
 ########################
 # build model
-if [[ ${machine} == *Orion* ]]; then
-    m=orion
-fi
+cd ${TOPDIR}/global-workflow/sorc
 sh checkout.sh
 sh build_all.sh -c
-sh link_workflow.emc ${m} coupled
+sh link_workflow.sh emc ${m} coupled
 echo 'DONE'

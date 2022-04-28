@@ -2,6 +2,7 @@
 ################################################################################
 ##  Source global definitions: The next line must be the first non-commented line.
 [ -f /etc/bashrc ] && . /etc/bashrc
+machine=$(uname -n)
 
 ################################################################################
 ##  All non-interactive shells will exit on the next line.
@@ -22,11 +23,19 @@ export HISTSIZE=100
 # aliases
 alias ls='ls -B --group-directories-first --color=auto'
 alias dirs='dirs -v'
-alias psu="ps U nbarton"
-alias sme="squeue -u nbarton"
-alias sd="cd /work/noaa/stmp/nbarton"
-alias md="cd /work/noaa/marine/nbarton"
+alias psu="ps U $USER"
 alias gitgeturl="git config --get remote.origin.url"
+alias qme="squeue -u $USER"
+if [[ $machine == *hfe* ]]; then
+    alias sd="cd /scratch2/NCEPDEV/stmp1/Neil.Barton"
+    export WORKDIR=/scratch2/NCEPDEV/stmp1/Neil.Barton
+elif [[ ${machine} == *Orion* ]]; then
+    alias sd="cd /work/noaa/stmp/nbarton"
+    alias md="cd /work/noaa/marine/nbarton"
+    export WORKDIR=/work/noaa/marine/nbarton
+else
+    echo "machine unknown in .bashrc: " $machine
+fi
 
 # modules
-#source ~/.profile
+source ~/.profile
