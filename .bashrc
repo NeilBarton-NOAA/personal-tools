@@ -16,7 +16,7 @@ bind '"\e[A": history-search-backward' 2>/dev/null
 bind '"\e[B": history-search-forward' 2>/dev/null
 
 ##  Set the number of commands to be maintained in history within a session.
-export HISTSIZE=100
+export HISTSIZE=1000
 ##  Set the number of commands to be maintained in history across logins.
 #export HISTFILESIZE=0
 
@@ -37,5 +37,7 @@ else
     echo "machine unknown in .bashrc: " $machine
 fi
 
+# PATH
+export PATH="$HOME/TOOLS/bin:$PATH"
 # modules
 source ~/.profile
