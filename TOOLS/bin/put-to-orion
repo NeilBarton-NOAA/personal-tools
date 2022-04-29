@@ -1,0 +1,6 @@
+#!/bin/sh
+set -u
+LOCAL_FILE=${1:-$PWD}
+REMOTE_FOLDER=${2:-/home/nbarton}
+ 
+scp ${LOCAL_FILE} nbarton@orion-dtn.hpc.msstate.edu:${REMOTE_FOLDER} 

@@ -1,0 +1,6 @@
+#!/bin/sh
+set -u
+REMOTE_FILE=$1
+LOCAL_PATH=${2:-$PWD}
+ 
+scp nbarton@orion-dtn.hpc.msstate.edu:${REMOTE_FILE} ${LOCAL_PATH}
