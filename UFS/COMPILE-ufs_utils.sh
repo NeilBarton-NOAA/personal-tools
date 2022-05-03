@@ -14,7 +14,7 @@ fi
 ########################
 # build model
 cd ${TOPDIR}/${code}
-sh build_all.sh -c
+sh build_all.sh
 cd fix
 sh link_fixdirs.sh emc ${m} 
 echo 'DONE'

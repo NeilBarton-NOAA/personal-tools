@@ -1,6 +1,7 @@
 #!/bin/sh
 source $PWD/MACHINE-config.sh
-TOPDIR=$WORKDIR
+TOPDIR=$WORKDIR/CODE
+mkdir -p $TOPDIR
 cd $TOPDIR
 echo $PWD
 ########################
