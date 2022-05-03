@@ -1,0 +1,6 @@
+#!/bin/sh
+set -u
+LOCAL_FILE=${1:-$PWD}
+REMOTE_FOLDER=${2:-/scratch2/NCEPDEV/stmp1/Neil.Barton}
+
+scp ${LOCAL_FILE} Neil.Barton@dtn-hera.fairmont.rdhpcs.noaa.gov:${REMOTE_FOLDER}
