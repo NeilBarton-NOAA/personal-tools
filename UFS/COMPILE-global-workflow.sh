@@ -1,6 +1,6 @@
 #!/bin/sh
 source $PWD/MACHINE-config.sh
-TOPDIR=$WORKDIR/CODE
+TOPDIR=$NPB_WORKDIR/CODE
 mkdir -p $TOPDIR
 cd $TOPDIR
 machine=$(uname -n)

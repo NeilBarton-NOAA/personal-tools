@@ -4,33 +4,33 @@ set -u
 source $PWD/MACHINE-config.sh
 ####################################
 APP=ATM #S2SW, ATM
-PSLOT=TEST_CYCLE
-CODE_DIR=${WORKDIR}/global-workflow
+PSLOT=TEST
+CODE_DIR=${NPB_WORKDIR}/global-workflow
 SCRIPT_DIR=${CODE_DIR}/ush/rocoto
 CONFIGDIR=${CODE_DIR}/parm/config
 IDATE=2013040100
 EDATE=2013041100
 RES=384
 GFS_CYC=1
-COMROT=$WORKDIR/COMROOT
-EXPDIR=$WORKDIR/EXPDIR
-ICSDIR=$WORKDIR/ICDIR/${PSLOT}
+COMROT=${NPB_WORKDIR}/COMROOT
+EXPDIR=${NPB_WORKDIR}/EXPDIR
+ICSDIR=${NPB_WORKDIR}/ICDIR/${PSLOT}
 #RUN_TYPE=forecast-only 
 RUN_TYPE=cycled
 
 ####################################
 #echo " "
 #echo "Set up script:"
-#${SCRIPT_DIR}/setup_expt.py ${RUN_TYPE} \
-#--app $APP \
-#--pslot $PSLOT \
-#--configdir $CONFIGDIR \
-#--idate $IDATE \
-#--edate $EDATE \
-#--gfs_cyc $GFS_CYC \
-#--comrot $COMROT \
-#--expdir $EXPDIR \
-#--icsdir $ICSDIR
+${SCRIPT_DIR}/setup_expt.py ${RUN_TYPE} \
+--app $APP \
+--pslot $PSLOT \
+--configdir $CONFIGDIR \
+--idate $IDATE \
+--edate $EDATE \
+--gfs_cyc $GFS_CYC \
+--comrot $COMROT \
+--expdir $EXPDIR \
+--icsdir $ICSDIR
 ##--res $RES \
 ##--aerosols \
 
@@ -39,9 +39,10 @@ config_file=${EXPDIR}/${PSLOT}/config.base
 echo " "
 echo "Editing config.base file: $config_file"
 sed -i 's/fv3-cpu/marine-cpu/g' ${config_file}
-sed -i "s:${HOMEDIR}:${WORKDIR}:g" ${config_file}
+sed -i "s:${HOMEDIR}:${NPB_WORKDIR}:g" ${config_file}
 echo $config_file
 
+exit 1
 ####################################
 echo " "
 echo "setup workflow after any changes:"
