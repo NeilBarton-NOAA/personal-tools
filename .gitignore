@@ -13,6 +13,11 @@
 .ssh/authorized_keys
 .ssh/id*
 .ssh/known_hosts
+.sh_history
 .vim/
 .viminfo
+.Xauthority
 .zshrc
+
+
+

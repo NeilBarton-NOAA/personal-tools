@@ -1,0 +1,18 @@
+#!/bin/sh
+set -u
+
+#declare -p dbs xmls
+dbs=( $(crontab -l | grep rocotorun | awk '{print $8}') )
+xmls=( $(crontab -l | grep rocotorun | awk '{print $10}') )
+N=$(( ${#dbs[@]} - 1 ))
+
+for i in $(seq 0 $N); do
+    db=${dbs[$i]}
+    xml=${xmls[$i]}
+    echo $(basename ${db::-3})
+    echo "db=$db"
+    echo "xml=$xml"
+    echo 
+    echo
+done
+

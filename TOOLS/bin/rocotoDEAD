@@ -1,0 +1,54 @@
+#!/bin/sh
+set -u
+db=F
+xml=F
+run=F
+while getopts ":d:w:r:" opt; do
+    case $opt in
+        d ) db=$OPTARG;;
+        w ) xml=$OPTARG;;
+        r ) run=$OPTARG;;
+    esac
+done
+
+printdeadtasks () {
+    db=$1
+    xml=$2
+    echo $(basename ${db})
+    if (( $(rocotostat -d ${db} -w ${xml} | grep DEAD | wc -l) == 0 )); then
+        echo ' no dead tasks'
+    else
+        rocotostat -d ${db} -w ${xml} | grep DEAD 
+    fi
+}
+
+rundeadtasks () {
+    db=$1
+    xml=$2
+    echo 'rerunning tasks'
+    ts=( $(rocotostat -d ${db} -w ${xml} | grep DEAD | awk '{print $2}') )
+    cs=( $(rocotostat -d ${db} -w ${xml} | grep DEAD | awk '{print $1}') )
+    ND=$(( ${#ts[@]} - 1 ))
+    for j in $(seq 0 $ND); do
+        rocotorewind -d ${db} -w ${xml} -c ${cs[$j]} -t ${ts[$j]}
+    done
+}
+
+if [[ $db == F ]] || [[ $xml == F ]]; then
+    dbs=( $(crontab -l | grep rocotorun | awk '{print $8}') )
+    xmls=( $(crontab -l | grep rocotorun | awk '{print $10}') )
+    N=$(( ${#dbs[@]} - 1 ))
+    for i in $(seq 0 $N); do
+        printdeadtasks ${dbs[$i]} ${xmls[$i]} 
+    done
+    if [[ $run == T ]]; then
+        rundeadtasks ${dbs[$i]} ${xmls[$i]} 
+        rocotorun -d ${dbs[$i]} -w ${xmls[$i]} 
+    fi
+else
+    printdeadtasks ${db} ${xml} 
+    if [[ $run == T ]]; then
+        rundeadtasks ${db} ${xml} 
+        rocotorun -d ${db} -w ${xml} 
+    fi
+fi

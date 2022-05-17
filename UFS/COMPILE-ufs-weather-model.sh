@@ -1,12 +1,11 @@
 #!/bin/sh
 source $PWD/MACHINE-config.sh
-TOPDIR=$WORKDIR/CODE
+TOPDIR=$NPB_WORKDIR/CODE
 mkdir -p $TOPDIR
 cd $TOPDIR
 echo $PWD
 ########################
 # check out code
-
 if [[ ! -d ufs-weather-model ]]; then
     git clone https://github.com/ufs-community/ufs-weather-model.git
     cd ufs-weather-model
@@ -15,8 +14,10 @@ else
     cd ufs-weather-model
 fi
 echo $PWD
+
 ########################
 # build model
+module purge
 module use modulefiles
 module load ${module_file}
 

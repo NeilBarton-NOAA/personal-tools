@@ -20,12 +20,16 @@ export HISTSIZE=1000
 ##  Set the number of commands to be maintained in history across logins.
 #export HISTFILESIZE=0
 
+# env vars expand to directories
+shopt -s direxpand
+
 # aliases
 alias ls='ls -B --group-directories-first --color=auto'
 alias dirs='dirs -v'
 alias psu="ps U $USER"
 alias gitgeturl="git config --get remote.origin.url"
-alias qme="squeue -u $USER"
+alias qme="squeue -u $USER --format='%.18i %.50j %.2t %.8M %.10l %.6D'"
+
 if [[ $machine == *hfe* ]]; then
     alias sd="cd /scratch2/NCEPDEV/stmp1/Neil.Barton"
     export NPB_WORKDIR=/scratch2/NCEPDEV/stmp1/Neil.Barton
@@ -37,7 +41,5 @@ else
     echo "machine unknown in .bashrc: " $machine
 fi
 
-# PATH
-export PATH="$HOME/TOOLS/bin:$PATH"
 # modules
 source ~/.profile

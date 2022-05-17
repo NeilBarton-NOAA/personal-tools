@@ -1,0 +1,14 @@
+#!/bin/sh
+set -u
+while getopts ":d:w:c:t:" opt; do
+    case $opt in
+        d ) db=$OPTARG;;
+        w ) xml=$OPTARG;;
+        c ) c=$OPTARG;;
+        t ) t=$OPTARG;;
+    esac
+done
+ 
+log=$(rocotocheck -d $db -w $xml -c $c -t $t | grep log | awk '{print $2}')
+cat $log
+

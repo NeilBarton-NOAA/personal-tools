@@ -1,7 +1,6 @@
 #!/bin/sh
 source $PWD/MACHINE-config.sh
 TOPDIR=$NPB_WORKDIR/CODE
-cd $TOPDIR
 machine=$(uname -n)
 code=UFS_UTILS
 ########################

@@ -1,0 +1,4 @@
+#%Module1.0############### 
+
+module-whatis Personal Tools from Neil Barton
+prepend-path PATH ~/TOOLS/bin

@@ -1,0 +1,11 @@
+#!/bin/sh
+set -u
+while getopts ":d:w:r:" opt; do
+    case $opt in
+        d ) db=$OPTARG;;
+        w ) xml=$OPTARG;;
+    esac
+done
+
+echo $(basename $db)
+rocotostat -d $db -w $xml | grep -v '-'
