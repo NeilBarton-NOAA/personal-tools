@@ -1,5 +1,8 @@
 #!/bin/sh
 set -u
+
+db=F
+xml=F
 while getopts ":d:w:r:" opt; do
     case $opt in
         d ) db=$OPTARG;;
@@ -7,5 +10,17 @@ while getopts ":d:w:r:" opt; do
     esac
 done
 
-echo $(basename $db)
-rocotostat -d $db -w $xml | grep -v '-'
+
+
+if [[ $db == F ]] || [[ $xml == F ]]; then
+    dbs=( $(crontab -l | grep rocotorun | awk '{print $8}') )
+    xmls=( $(crontab -l | grep rocotorun | awk '{print $10}') )
+    N=$(( ${#dbs[@]} - 1 ))
+    for i in $(seq 0 $N); do
+        echo $(basename ${dbs[$i]})
+        rocotostat -d ${dbs[$i]} -w ${xmls[$i]} | grep -v '-' | grep -v 'SUCCEEDED' | grep -v '='
+    done
+else
+    echo $(basename $db)
+    rocotostat -d $db -w $xml | grep -v '-'
+fi

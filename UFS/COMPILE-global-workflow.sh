@@ -4,7 +4,7 @@ TOPDIR=$NPB_WORKDIR/CODE
 mkdir -p $TOPDIR
 cd $TOPDIR
 machine=$(uname -n)
-branch=pre_p8b
+branch=develop #pre_p8b
 code=global-workflow_${branch}
 
 ########################
@@ -22,6 +22,6 @@ fi
 # build model
 cd ${TOPDIR}/${code}/sorc
 sh checkout.sh
-sh build_all.sh -c
+sh build_all.sh #-c not needed for current develop
 sh link_workflow.sh emc ${m} coupled
 echo 'DONE'

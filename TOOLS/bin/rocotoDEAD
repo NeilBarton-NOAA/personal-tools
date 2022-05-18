@@ -15,10 +15,10 @@ printdeadtasks () {
     db=$1
     xml=$2
     echo $(basename ${db})
-    if (( $(rocotostat -d ${db} -w ${xml} | grep DEAD | wc -l) == 0 )); then
-        echo ' no dead tasks'
+    if (( $(rocotostat -d ${db} -w ${xml} | grep -E 'DEAD|FAILED' | wc -l) == 0 )); then
+        echo ' no dead or failed tasks'
     else
-        rocotostat -d ${db} -w ${xml} | grep DEAD 
+        rocotostat -d ${db} -w ${xml} | grep -E 'DEAD|FAILED' 
     fi
 }
 
@@ -26,8 +26,8 @@ rundeadtasks () {
     db=$1
     xml=$2
     echo 'rerunning tasks'
-    ts=( $(rocotostat -d ${db} -w ${xml} | grep DEAD | awk '{print $2}') )
-    cs=( $(rocotostat -d ${db} -w ${xml} | grep DEAD | awk '{print $1}') )
+    ts=( $(rocotostat -d ${db} -w ${xml} | grep -E 'DEAD|FAILED' | awk '{print $2}') )
+    cs=( $(rocotostat -d ${db} -w ${xml} | grep -E 'DEAD|FAILED' | awk '{print $1}') )
     ND=$(( ${#ts[@]} - 1 ))
     for j in $(seq 0 $ND); do
         rocotorewind -d ${db} -w ${xml} -c ${cs[$j]} -t ${ts[$j]}
