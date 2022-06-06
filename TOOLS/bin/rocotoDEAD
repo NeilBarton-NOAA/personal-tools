@@ -30,7 +30,7 @@ rundeadtasks () {
     cs=( $(rocotostat -d ${db} -w ${xml} | grep -E 'DEAD|FAILED' | awk '{print $1}') )
     ND=$(( ${#ts[@]} - 1 ))
     for j in $(seq 0 $ND); do
-        rocotorewind -d ${db} -w ${xml} -c ${cs[$j]} -t ${ts[$j]}
+        rocotoboot -d ${db} -w ${xml} -c ${cs[$j]} -t ${ts[$j]}
     done
 }
 
@@ -40,15 +40,14 @@ if [[ $db == F ]] || [[ $xml == F ]]; then
     N=$(( ${#dbs[@]} - 1 ))
     for i in $(seq 0 $N); do
         printdeadtasks ${dbs[$i]} ${xmls[$i]} 
+        if [[ $run == T ]]; then
+            rundeadtasks ${dbs[$i]} ${xmls[$i]} 
+        fi
     done
-    if [[ $run == T ]]; then
-        rundeadtasks ${dbs[$i]} ${xmls[$i]} 
-        rocotorun -d ${dbs[$i]} -w ${xmls[$i]} 
-    fi
 else
+    rocotorun -d ${db} -w ${xml} 
     printdeadtasks ${db} ${xml} 
     if [[ $run == T ]]; then
         rundeadtasks ${db} ${xml} 
-        rocotorun -d ${db} -w ${xml} 
     fi
 fi

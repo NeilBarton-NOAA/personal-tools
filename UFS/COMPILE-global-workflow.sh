@@ -4,14 +4,16 @@ TOPDIR=$NPB_WORKDIR/CODE
 mkdir -p $TOPDIR
 cd $TOPDIR
 machine=$(uname -n)
-branch=develop #pre_p8b
-code=global-workflow_${branch}
-
+REPO=NeilBarton-NOAA 
+#REPO=NOAA-EMC
+branch=develop 
+#branch=pre_p8b
+code=global-workflow_${branch}_${REPO}
 ########################
 # check out code
 cd ${TOPDIR}
 if [[ ! -d ${code} ]]; then
-    git clone https://github.com/NOAA-EMC/global-workflow.git ${code}
+    git clone https://github.com/${REPO}/global-workflow.git ${code}
     cd ${code}
     git checkout $branch
 else
@@ -22,6 +24,6 @@ fi
 # build model
 cd ${TOPDIR}/${code}/sorc
 sh checkout.sh
-sh build_all.sh #-c not needed for current develop
+sh build_all.sh  #not needed for current develop
 sh link_workflow.sh emc ${m} coupled
 echo 'DONE'

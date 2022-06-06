@@ -1,15 +1,13 @@
 #!/bin/sh
-year=2020
-month=03
-day=31
-hour=00
+DTG=2012010100
 CRES_HIRES=C384 #192
 CRES_ENKF=C192
+#CRES_ENKF=C384
 LEVS=128
 source ${PWD}/MACHINE-config.sh
 TOPDIR=${NPB_WORKDIR}/CODE/UFS_UTILS/util/gdas_init
-EXTRACT_DIR=${NPB_WORKDIR}/ICs/${year}${month}${day}${hour}/ORIG_RES
-OUTDIR=${NPB_WORKDIR}/ICs/${year}${month}${day}${hour}
+EXTRACT_DIR=${NPB_WORKDIR}/ICs/${DTG}/ORIG_RES
+OUTDIR=${NPB_WORKDIR}/ICs/${DTG}
 
 ########################
 # edit config file

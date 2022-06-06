@@ -35,7 +35,7 @@ if [[ $machine == *hfe* ]]; then
     export NPB_WORKDIR=/scratch2/NCEPDEV/stmp1/Neil.Barton
 elif [[ ${machine} == *Orion* ]]; then
     alias sd="cd /work/noaa/marine/nbarton"
-    alias ssd="cd /work/noaa/stmp/nbarton"
+    alias sd2="cd /work/noaa/stmp/nbarton"
     export NPB_WORKDIR=/work/noaa/marine/nbarton
 else
     echo "machine unknown in .bashrc: " $machine
