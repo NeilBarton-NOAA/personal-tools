@@ -15,11 +15,15 @@ printstats () {
     db=$1
     xml=$2
     echo $(basename ${db})
-    rocotorun -d ${db} -w ${xml}
-    rocotostat -d ${db} -w ${xml} 2>/dev/null | head -n 1 
-    rocotostat -d ${db} -w ${xml} 2>/dev/null | grep 'SUCCEEDED' | head -n 1
-    rocotostat -d ${db} -w ${xml} | grep -v 'CYCLE' | grep -v '-' | grep -v 'SUCCEEDED' | grep -v '='
-    rocotostat -d ${db} -w ${xml} | grep 'SUCCEEDED' | tail -n 1
+    echo "db=$db"
+    echo "xml=$xml"
+    rocotorun -d ${db} -w ${xml} 
+    rocotostat -d ${db} -w ${xml} >& temp.out
+    head -n 1 temp.out 
+    grep 'SUCCEEDED' temp.out | head -n 1
+    grep -v '=' temp.out | grep -v 'SUCCEEDED' | grep -v 'CYCLE' | awk '$6 != "-"' 
+    grep 'SUCCEEDED' temp.out | tail -n 1
+    rm temp.out
     echo ""
     echo ""
 }
