@@ -11,16 +11,26 @@ while getopts ":d:w:r:" opt; do
 done
 
 
+printstats () {
+    db=$1
+    xml=$2
+    echo $(basename ${db})
+    rocotorun -d ${db} -w ${xml}
+    rocotostat -d ${db} -w ${xml} 2>/dev/null | head -n 1 
+    rocotostat -d ${db} -w ${xml} 2>/dev/null | grep 'SUCCEEDED' | head -n 1
+    rocotostat -d ${db} -w ${xml} | grep -v 'CYCLE' | grep -v '-' | grep -v 'SUCCEEDED' | grep -v '='
+    rocotostat -d ${db} -w ${xml} | grep 'SUCCEEDED' | tail -n 1
+    echo ""
+    echo ""
+}
 
 if [[ $db == F ]] || [[ $xml == F ]]; then
     dbs=( $(crontab -l | grep rocotorun | awk '{print $8}') )
     xmls=( $(crontab -l | grep rocotorun | awk '{print $10}') )
     N=$(( ${#dbs[@]} - 1 ))
     for i in $(seq 0 $N); do
-        echo $(basename ${dbs[$i]})
-        rocotostat -d ${dbs[$i]} -w ${xmls[$i]} | grep -v '-' | grep -v 'SUCCEEDED' | grep -v '='
+        printstats ${dbs[$i]} ${xmls[$i]}
     done
 else
-    echo $(basename $db)
-    rocotostat -d $db -w $xml | grep -v '-'
+    printstats ${db} ${xml}
 fi

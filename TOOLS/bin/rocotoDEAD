@@ -15,6 +15,7 @@ printdeadtasks () {
     db=$1
     xml=$2
     echo $(basename ${db})
+    rocotorun -d ${db} -w ${xml} 
     if (( $(rocotostat -d ${db} -w ${xml} | grep -E 'DEAD|FAILED' | wc -l) == 0 )); then
         echo ' no dead or failed tasks'
     else
@@ -45,7 +46,6 @@ if [[ $db == F ]] || [[ $xml == F ]]; then
         fi
     done
 else
-    rocotorun -d ${db} -w ${xml} 
     printdeadtasks ${db} ${xml} 
     if [[ $run == T ]]; then
         rundeadtasks ${db} ${xml} 
