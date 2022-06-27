@@ -3,57 +3,44 @@ set -u
 
 source $PWD/MACHINE-config.sh
 ####################################
-#APP=ATM
-#PSLOT=TEST_DA
-#branch=pre_p8b
-#RUN_TYPE=cycled
-#IDATE=2020033100
-#EDATE=2020041100
-
-#APP=S2SW 
-#PSLOT=DEV_CF_AFA
-#branch=develop
-#RUN_TYPE=forecast-only 
-#IDATE=2012010100
-#EDATE=2020041100
-
+#IDATE=2020030100
+IDATE=2018030100
+#IDATE=2020040100
+EDATE=$( $PWD/DTG-add-time.sh $IDATE 3 ) 
 #APP=S2S 
-APP=ATM
-#APP=S2SW 
-#branch=develop
+#APP=ATM
+APP=S2SW 
 branch=pre_p8b
+branch=${branch:-develop}
+PSLOT=TEST_ICs_${APP}_IDATE_${IDATE}
 if [[ $branch == develop ]]; then
-    PSLOT=CF_ADA_DEV_${APP}
-else
-    PSLOT=CF_ADA_PP8B_${APP}
+    PSLOT="dev_"${PSLOT}
 fi
 MAIL=F
 RUN_TYPE=cycled 
-IDATE=2012010100
-EDATE=2012010300
+#IDATE=2012010100
+#EDATE=2012010500
 #IDATE=2020033100
 #EDATE=2020040200
-#IDATE=2020030100
-#EDATE=2020030300
 
 REPO=NeilBarton-NOAA 
 CODE_DIR=${NPB_WORKDIR}/CODE/global-workflow_${branch}_${REPO}
 SCRIPT_DIR=${CODE_DIR}/ush/rocoto
 CONFIGDIR=${CODE_DIR}/parm/config
 RESDET=384
-GFS_CYC=1
-COMROT=${NPB_WORKDIR}/COMROOT
-EXPDIR=${NPB_WORKDIR}/EXPDIR
+GFS_CYC=0
+COMROT=${NPB_WORKDIR}/RUNs/$PSLOT #/COMROT
+EXPDIR=${NPB_WORKDIR}/RUNs/$PSLOT #/EXPDIR
 ICSDIR=${NPB_WORKDIR}/ICs
-#ICSDIR=${NPB_WORKDIR}/ICDIR/${PSLOT}
-if [[ $RUN_TYPE == forecast-only ]]; then
+CDUMP=gdas
+if [[ $CDUMP == gfs ]]; then
     EDATE=$IDATE
 fi
 
 ####################################
 echo " "
 echo "Set up script:"
-echo $SCRIPT_DIR
+echo ${SCRIPT_DIR}/setup_expt.py
 ${SCRIPT_DIR}/setup_expt.py ${RUN_TYPE} \
 --app $APP \
 --pslot $PSLOT \
@@ -72,35 +59,54 @@ ${SCRIPT_DIR}/setup_expt.py ${RUN_TYPE} \
 
 ####################################
 # copy restart files
-COMROOT=${NPB_WORKDIR}/COMROOT/${PSLOT}
-if [[ $RUN_TYPE == cycled ]]; then
-    echo " "
-    echo "Liking Restart Files :"
-    echo "  from :" $NPB_WORKDIR/ICs/${IDATE}
-    echo "  to   :" $COMROOT
-    #cp -r ${NPB_WORKDIR}/ICs/${IDATE}/* ${COMROT}
-    #rsync -au ${NPB_WORKDIR}/ICs/${IDATE}/* ${COMROT}
-    rm -r ${COMROOT}/*
-    ln -fs ${NPB_WORKDIR}/ICs/${IDATE}/* ${COMROOT}
-fi
+#if [[ $APP == ATM ]]; then
+#if [[ $RUN_TYPE == cycled ]]; then
+#    echo " "
+#    echo "rsync restart files :"
+#    echo "  from :" $NPB_WORKDIR/ICs/${IDATE}
+#    dirs_sync="gdas.${IDATE:0:8}"
+#    NENS=${NENS:-20} 
+#    for mbr in $(seq -f '%03g' 1 $NENS); do
+#        dirs_sync="$dirs_sync enkfgdas.${IDATE:0:8}/${IDATE:8:2}/atmos/mem${mbr}"
+#    done
+#    if [[ $APP != ATM ]]; then
+#        dirs_sync="${dirs_sync} ice ocn wav"
+#    fi
+#    for d in $dirs_sync; do
+#        folder=${NPB_WORKDIR}/ICs/${IDATE}/${d}
+#        if [[ -d ${folder} ]]; then
+#            echo "       :" ${folder}
+#            mkdir -p ${COMROT}/${d}
+#            rsync -au ${folder}/ ${COMROT}/${d}  
+#        else
+#            echo "ERROR: ICs not found: $folder"
+#            exit 1
+#        fi
+#    done
+#    echo "  to   :" $COMROT
+#fi
 
 ####################################
-config_file=${EXPDIR}/${PSLOT}/config.base
+config_file=${EXPDIR}/config.base
 echo " "
 echo "Editing config.base file: $config_file"
 sed -i 's/fv3-cpu/marine-cpu/g' ${config_file}
-sed -i "s:${HOMEDIR}:${NPB_HOMEDIR}:g" ${config_file}
-sed -i "s:${STMPDIR}:${NPB_STMPDIR}:g" ${config_file}
+sed -i "s:${HOMEDIR}:${NPB_HOMEDIR}/${PSLOT}:g" ${config_file}
+sed -i "s:${STMPDIR}:${NPB_STMPDIR}/${PSLOT}:g" ${config_file}
 sed -i 's:DOIAU="YES":DOIAU="NO":g' ${config_file}
 sed -i 's:HPSS_PROJECT=emc-global:HPSS_PROJECT=emc-marine:g' ${config_file}
+sed -i s:${EXPDIR}/'$PSLOT':${EXPDIR}:g ${config_file}
+sed -i s:${COMROT}/'$PSLOT':${COMROT}:g ${config_file}
+sed -i s:'$STMP'/RUNDIRS/'$PSLOT':'$STMP'/RUNDIRS:g ${config_file}
+sed -i s:'$NOSCRUB'/archive/'$PSLOT':'$NOSCRUB'/archive:g ${config_file}
 
-####################################
+##################################
 echo " "
 echo "setup workflow after any changes:"
 if [[ $RUN_TYPE == forecast-only ]]; then
-    ${SCRIPT_DIR}/setup_workflow_fcstonly.py --expdir $EXPDIR/$PSLOT
+    ${SCRIPT_DIR}/setup_workflow_fcstonly.py --expdir $EXPDIR 
 elif [[ $RUN_TYPE == cycled ]]; then
-    ${SCRIPT_DIR}/setup_workflow.py --expdir $EXPDIR/$PSLOT
+    ${SCRIPT_DIR}/setup_workflow.py --expdir $EXPDIR 
 else
     echo "RUN_TYPE is unkwown: $RUN_TYPE"
     exit 1
@@ -109,13 +115,12 @@ fi
 ####################################
 echo " " 
 echo "start crontab:" 
-cron_file=$EXPDIR/$PSLOT/$PSLOT.crontab
+cron_file=$EXPDIR/$PSLOT.crontab
 if [[ $MAIL == T ]]; then
     sed -i 's:MAILTO="":MAILTO="neil.barton@noaa.gov":g' $cron_file
 fi
-
-db_file=$EXPDIR/${PSLOT}/${PSLOT}.db
-xml_file=$EXPDIR/${PSLOT}/${PSLOT}.xml
+db_file=$EXPDIR/${PSLOT}.db
+xml_file=$EXPDIR/${PSLOT}.xml
 crontab -l | cat - $cron_file | crontab -
 rocotorun -d $db_file -w $xml_file
 

@@ -1,14 +1,17 @@
 #!/bin/sh
+set -u
 source $PWD/MACHINE-config.sh
 TOPDIR=$NPB_WORKDIR/CODE
 machine=$(uname -n)
-code=UFS_UTILS
+REPO=NeilBarton-NOAA 
+#REPO=NOAA-EMC
+code=UFS_UTILS_${REPO}
 ########################
 # check out code
 mkdir -p ${TOPDIR}
 cd ${TOPDIR}
 if [[ ! -d ${code} ]]; then
-    git clone --recursive https://github.com/NOAA-EMC/UFS_UTILS.git ${code}
+    git clone --recursive https://github.com/${REPO}/UFS_UTILS.git ${code}
 fi
 
 ########################

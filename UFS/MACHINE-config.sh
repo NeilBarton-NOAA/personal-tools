@@ -4,9 +4,9 @@ if [[ $machine == *hfe* ]]; then
     module_file=ufs_hera.intel 
     m=hera
     export HOMEDIR=/scratch1/NCEPDEV/global/'$USER'
-    export NPB_HOMEDIR=/scratch2/NCEPDEV/stmp1/'$USER'
-    export STMPDIR=/scratchr1/NCEPDEV/stmp2/'$USER'
-    export NPB_STMPDIR=/scratch2/NCEPDEV/stmp1/'$USER'
+    export STMPDIR=/scratch1/NCEPDEV/stmp2/'$USER'
+    export NPB_HOMEDIR=/scratch2/NCEPDEV/stmp1/'$USER'/RUNs
+    export NPB_STMPDIR=/scratch2/NCEPDEV/stmp1/'$USER'/RUNs
     export NPB_WORKDIR=/scratch2/NCEPDEV/stmp1/$USER
 elif [[ ${machine} == *Orion* ]]; then
     module_file=ufs_orion.intel
