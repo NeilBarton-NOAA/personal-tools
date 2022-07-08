@@ -3,33 +3,32 @@ set -u
 
 source $PWD/MACHINE-config.sh
 ####################################
-#IDATE=2020030100
-IDATE=2018030100
-#IDATE=2020040100
+IDATE=2020040100
+#IDATE=2018030100
+#IDATE=2021032200
 EDATE=$( $PWD/DTG-add-time.sh $IDATE 3 ) 
-#APP=S2S 
 #APP=ATM
 APP=S2SW 
-branch=pre_p8b
+ENKF=T
+#branch=pre_p8b
+branch=S2SW_atmosDA
 branch=${branch:-develop}
-PSLOT=TEST_ICs_${APP}_IDATE_${IDATE}
+PSLOT=${ENKF}_ENKF_${APP}_IDATE_${IDATE}
 if [[ $branch == develop ]]; then
     PSLOT="dev_"${PSLOT}
 fi
 MAIL=F
 RUN_TYPE=cycled 
-#IDATE=2012010100
-#EDATE=2012010500
-#IDATE=2020033100
-#EDATE=2020040200
-
 REPO=NeilBarton-NOAA 
-CODE_DIR=${NPB_WORKDIR}/CODE/global-workflow_${branch}_${REPO}
+CODE_DIR=${NPB_WORKDIR}/CODE/global-workflow_${branch}_${REPO}_${APP}
 SCRIPT_DIR=${CODE_DIR}/ush/rocoto
 CONFIGDIR=${CODE_DIR}/parm/config
-RESDET=384
+#RESDET=96
+#RESENS=96
+#RESDET=384
+#RESENS=384
 GFS_CYC=0
-COMROT=${NPB_WORKDIR}/RUNs/$PSLOT #/COMROT
+COMROT=${NPB_WORKDIR}/RUNs/$PSLOT/COMROT
 EXPDIR=${NPB_WORKDIR}/RUNs/$PSLOT #/EXPDIR
 ICSDIR=${NPB_WORKDIR}/ICs
 CDUMP=gdas
@@ -99,7 +98,9 @@ sed -i s:${EXPDIR}/'$PSLOT':${EXPDIR}:g ${config_file}
 sed -i s:${COMROT}/'$PSLOT':${COMROT}:g ${config_file}
 sed -i s:'$STMP'/RUNDIRS/'$PSLOT':'$STMP'/RUNDIRS:g ${config_file}
 sed -i s:'$NOSCRUB'/archive/'$PSLOT':'$NOSCRUB'/archive:g ${config_file}
-
+if [[ $ENKF == F ]]; then
+sed -i s:'DOHYBVAR="YES":DOHYBVAR="NO"':g ${config_file}
+fi
 ##################################
 echo " "
 echo "setup workflow after any changes:"

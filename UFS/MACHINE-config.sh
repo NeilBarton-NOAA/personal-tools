@@ -1,7 +1,7 @@
 #!/bin/sh
 machine=$(uname -n)
 if [[ $machine == *hfe* ]]; then
-    module_file=ufs_hera.intel 
+    export module_file=ufs_hera.intel 
     m=hera
     export HOMEDIR=/scratch1/NCEPDEV/global/'$USER'
     export STMPDIR=/scratch1/NCEPDEV/stmp2/'$USER'

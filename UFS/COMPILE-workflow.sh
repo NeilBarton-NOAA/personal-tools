@@ -6,9 +6,10 @@ cd $TOPDIR
 machine=$(uname -n)
 REPO=NeilBarton-NOAA 
 #REPO=NOAA-EMC
-branch=develop 
+#branch=develop 
 #branch=pre_p8b
-code=global-workflow_${branch}_${REPO}
+branch=S2SW_atmosDA
+code=global-workflow_${branch}_${REPO}_ATM
 ########################
 # check out code
 cd ${TOPDIR}
@@ -24,6 +25,6 @@ fi
 # build model
 cd ${TOPDIR}/${code}/sorc
 sh checkout.sh
-sh build_all.sh  #not needed for current develop
+sh build_all.sh #-c #not needed for current develop
 sh link_workflow.sh emc ${m} coupled
 echo 'DONE'
