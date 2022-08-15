@@ -31,8 +31,10 @@ alias gitgeturl="git config --get remote.origin.url"
 alias qme="squeue -u $USER --format='%.18i %.50j %.2t %.8M %.10l %.6D'"
 
 if [[ $machine == *hfe* ]]; then
-    alias sd="cd /scratch2/NCEPDEV/stmp1/Neil.Barton"
-    export NPB_WORKDIR=/scratch2/NCEPDEV/stmp1/Neil.Barton
+    #export NPB_WORKDIR=/scratch1/NCEPDEV/stmp2/Neil.Barton
+    #export NPB_WORKDIR=/scratch2/NCEPDEV/stmp1/Neil.Barton
+    export NPB_WORKDIR=/scratch2/NCEPDEV/stmp3/Neil.Barton
+    alias sd="cd $NPB_WORKDIR"
 elif [[ ${machine} == *Orion* ]]; then
     alias sd="cd /work/noaa/marine/nbarton"
     alias sd2="cd /work/noaa/stmp/nbarton"

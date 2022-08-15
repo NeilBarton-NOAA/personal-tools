@@ -17,13 +17,14 @@ printstats () {
     echo $(basename ${db})
     echo "db=$db"
     echo "xml=$xml"
+    temp_file=~/temp.out
     rocotorun -d ${db} -w ${xml} 
-    rocotostat -d ${db} -w ${xml} >& temp.out
-    head -n 1 temp.out 
-    grep 'SUCCEEDED' temp.out | head -n 1
-    grep -v '=' temp.out | grep -v 'SUCCEEDED' | grep -v 'CYCLE' | awk '$6 != "-"' 
-    grep 'SUCCEEDED' temp.out | tail -n 1
-    rm temp.out
+    rocotostat -d ${db} -w ${xml} >& $temp_file
+    head -n 1 $temp_file
+    grep 'SUCCEEDED' $temp_file | head -n 1
+    grep -v '=' $temp_file | grep -v 'SUCCEEDED' | grep -v 'CYCLE' | awk '$6 != "-"' 
+    grep 'SUCCEEDED' $temp_file | tail -n 1
+    rm $temp_file
     echo ""
     echo ""
 }

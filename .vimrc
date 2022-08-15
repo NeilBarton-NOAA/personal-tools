@@ -1,6 +1,6 @@
 filetype plugin on
 set expandtab
-set tabstop=4
+set tabstop=2
 set statusline+=%F
 set autoindent
 set laststatus=2
