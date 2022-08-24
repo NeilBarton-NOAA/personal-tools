@@ -25,6 +25,7 @@ if [[ ! -d ${code} ]]; then
     git checkout $branch
 else
     cd ${code}
+    git pull
 fi
 
 ########################

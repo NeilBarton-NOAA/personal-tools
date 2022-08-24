@@ -17,12 +17,14 @@ else
 fi
 echo $PWD
 
-########################
+####################################
+# The model compiles during the RT test scripts
+# But if wanted to compile, use the below
+####################################
 # build model
 #module purge
 #module use modulefiles
 #module load ${module_file}
-
 # ATM
 #export CMAKE_FLAGS="-DAPP=ATM -DCCPP_SUITES=FV3_GFS_v16"
 # coupledmodel

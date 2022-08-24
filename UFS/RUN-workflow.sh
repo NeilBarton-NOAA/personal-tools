@@ -9,10 +9,10 @@ source $PWD/MACHINE-config.sh
 ####################################
 IDATE=2020040100
 EDATE=$( $PWD/DTG-add-time.sh $IDATE 3 ) 
-#REPO=NOAA-EMC # default is NeilBarton-NOAA
-branch=S2SW_atmosDA_dev # default is develope
+#branch=S2SW_atmosDA_dev # default is develop
+branch=develop
 ENKF=T
-#APP=S2SW
+APP=S2SW
 APP=ATM
 #CDUMP=gfs
 IAU=T
@@ -40,9 +40,6 @@ IAU=${IAU:-T}
 PSLOT=${PSLOT:-${ENKF}_ENKF_${APP}_IDATE_${IDATE}}
 branch=${branch:-develop}
 CODE_DIR=${CODE_DIR:-${NPB_WORKDIR}/CODE/global-workflow_${branch}_${REPO}}
-if [[ $branch == develop ]]; then
-    PSLOT="dev_"${PSLOT}
-fi
 CDUMP=${CDUMP:-gdas} 
 RUN_TYPE=${RUN_TYPE:-cycled} 
 [[ $CDUMP == gfs ]] && RUN_TYPE=forecast-only
@@ -123,8 +120,10 @@ sed -i s:'HPSSARCH="YES":HPSSARCH="NO"':g ${config_file}
 [[ $ENKF == F ]] && sed -i s:'DOHYBVAR="YES":DOHYBVAR="NO"':g ${config_file}
 [[ $IAU == F ]] && sed -i 's:DOIAU="YES":DOIAU="NO":g' ${config_file}
 [[ $IAU == T ]] && sed -i 's/DOIAU=${DOIAU:-"NO"}/DOIAU=${DOIAU:-"YES"}/g' ${config_file}
+if [[ ${APP:0:3} == S2S ]] && [[ $RUN_TYPE == cycled ]]; then
 sed -i 's:imp_physics=8:imp_physics=11:g' ${config_file}
 sed -i 's:CCPP_SUITE="FV3_GFS_v17_coupled_p8":CCPP_SUITE="FV3_GFS_v16_coupled":g' ${config_file}
+fi
 
 fi
 
