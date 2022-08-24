@@ -14,6 +14,7 @@ done
 printdeadtasks () {
     db=$1
     xml=$2
+    echo $(basename ${db})
     echo "db=${db}"
     echo "xml=${xml}"
     rocotorun -d ${db} -w ${xml} 

@@ -10,3 +10,5 @@
 [user]
 	email = neil.barton@noaa.gov
 	name = NeilBarton-NOAA
+[push]
+	default = simple

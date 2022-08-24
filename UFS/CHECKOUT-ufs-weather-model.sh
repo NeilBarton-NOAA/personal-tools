@@ -19,12 +19,12 @@ echo $PWD
 
 ########################
 # build model
-module purge
-module use modulefiles
-module load ${module_file}
+#module purge
+#module use modulefiles
+#module load ${module_file}
 
 # ATM
 #export CMAKE_FLAGS="-DAPP=ATM -DCCPP_SUITES=FV3_GFS_v16"
 # coupledmodel
-export CMAKE_FLAGS="-DAPP=S2SWA -DCCPP_SUITES=FV3_GFS_v16_coupled_nsstNoahmpUGWPv1,FV3_GFS_v17_coupled_p8"
-./build.sh
+#export CMAKE_FLAGS="-DAPP=S2SWA -DCCPP_SUITES=FV3_GFS_v16_coupled_nsstNoahmpUGWPv1,FV3_GFS_v17_coupled_p8"
+#./build.sh

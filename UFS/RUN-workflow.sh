@@ -9,11 +9,23 @@ source $PWD/MACHINE-config.sh
 ####################################
 IDATE=2020040100
 EDATE=$( $PWD/DTG-add-time.sh $IDATE 3 ) 
-REPO=NOAA-EMC # default is NeilBarton-NOAA
-#branch=S2SW_atmosDA_dev # default is develope
-ENKF=F
-CDUMP=gfs
-PSLOT=FORECAST_TEST
+#REPO=NOAA-EMC # default is NeilBarton-NOAA
+branch=S2SW_atmosDA_dev # default is develope
+ENKF=T
+#APP=S2SW
+APP=ATM
+#CDUMP=gfs
+IAU=T
+#PSLOT=${APP}_IAU${IAU}
+PSLOT=${APP}_ENKF_IAU${IAU}
+
+####################################
+# Sub-Components of script
+RUN_SETUP_EXPT=T
+RUN_LINK_ICs=T
+RUN_EDIT_CONFIG=T
+RUN_SETUP_XML=T
+RUN_CRONTAB=T
 
 ########################
 # defaults
@@ -23,6 +35,8 @@ RESENS=${RESENS:-192}
 REPO=${REPO:-NeilBarton-NOAA}
 NENS=${NENS:-20} 
 GFS_CYC=${GFS_CYC:-0}
+ENKF=${ENKF:-T}
+IAU=${IAU:-T}
 PSLOT=${PSLOT:-${ENKF}_ENKF_${APP}_IDATE_${IDATE}}
 branch=${branch:-develop}
 CODE_DIR=${CODE_DIR:-${NPB_WORKDIR}/CODE/global-workflow_${branch}_${REPO}}
@@ -53,6 +67,8 @@ fi
 
 ####################################
 # setup_expt.py script
+if [[ $RUN_SETUP_EXPT == T ]]; then
+
 echo " "
 echo "Set up script:"
 echo ${SCRIPT_DIR}/setup_expt.py
@@ -76,16 +92,21 @@ OPTIONS="${OPTIONS} --suffix_pslot 'F' "
 fi
 ${SCRIPT_DIR}/setup_expt.py ${RUN_TYPE} ${OPTIONS}
 if [[ $? != 0 ]]; then
-    echo 'setup_expt.py failed'
-    exit 1
+   echo 'setup_expt.py failed'
+   exit 1
+fi
+
+fi
+####################################
+# link restart files to COMROT
+if [[ $RUN_LINK_ICs == T ]]; then
+  ${PWD}/LINK-ICs.sh ${IDATE} ${COMROT} ${APP} ${RESDET} ${RESENS} ${NENS} 
 fi
 
 ####################################
-# link restart files to COMROT
-${PWD}/LINK-ICs.sh ${IDATE} ${COMROT} ${APP} ${RESDET} ${RESENS} ${NENS} 
-
-####################################
 # edit options for run
+if [[ $RUN_EDIT_CONFIG == T ]]; then 
+
 config_file=${EXPDIR}/config.base
 echo " "
 echo "Editing config.base file: $config_file"
@@ -98,15 +119,19 @@ sed -i s:${COMROT}/'$PSLOT':${COMROT}:g ${config_file}
 sed -i s:'$STMP'/RUNDIRS/'$PSLOT':$RUNDIR:g ${config_file}
 sed -i s:'$NOSCRUB'/archive/'$PSLOT':'$NOSCRUB'/archive:g ${config_file}
 sed -i s:'HPSSARCH="YES":HPSSARCH="NO"':g ${config_file}
-
 [[ $RUN_TYPE == forecast-only ]] && sed -i 's:DOIAU="YES":DOIAU="NO":g' ${config_file}
 [[ $ENKF == F ]] && sed -i s:'DOHYBVAR="YES":DOHYBVAR="NO"':g ${config_file}
-
+[[ $IAU == F ]] && sed -i 's:DOIAU="YES":DOIAU="NO":g' ${config_file}
+[[ $IAU == T ]] && sed -i 's/DOIAU=${DOIAU:-"NO"}/DOIAU=${DOIAU:-"YES"}/g' ${config_file}
 sed -i 's:imp_physics=8:imp_physics=11:g' ${config_file}
 sed -i 's:CCPP_SUITE="FV3_GFS_v17_coupled_p8":CCPP_SUITE="FV3_GFS_v16_coupled":g' ${config_file}
 
+fi
+
 ##################################
 # set up rocotoco xml file
+if [[ $RUN_SETUP_XML == T ]]; then
+
 echo " "
 echo "setup workflow after changes config.base:"
 ${SCRIPT_DIR}/setup_xml.py $EXPDIR 
@@ -115,8 +140,12 @@ if [[ $? != 0 ]]; then
     exit 1
 fi
 
+fi
+
 ####################################
 # validate xml file
+if [[ $RUN_CRONTAB == T ]]; then
+
 db_file=$EXPDIR/${PSLOT}.db
 xml_file=$EXPDIR/${PSLOT}.xml
 rocotorun -d $db_file -w $xml_file
@@ -142,3 +171,4 @@ echo " "
 echo "db=${db_file}"
 echo "xml=${xml_file}"
 
+fi

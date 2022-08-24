@@ -35,7 +35,7 @@ if [[ $APP == ATM || ${APP:0:3} == S2S ]]; then
     LINK_FILES $ICSDIR/$RESDET/control/INPUT $COMROT/gdas.${DTG:0:8}/${DTG:8:10}/atmos/INPUT
     # ensemble files
     for mbr in $(seq -f '%03g' 1 $NENS); do
-        LINK_FILES ${ICSDIR}/${RESENS}/mem${mbr}/INPUT $COMROT/enkfgdas.${DTG:0:8}/${DTG:8:10}/mem${mbr}/INPUT
+        LINK_FILES ${ICSDIR}/${RESENS}/mem${mbr}/INPUT $COMROT/enkfgdas.${DTG:0:8}/${DTG:8:10}/atmos/mem${mbr}/INPUT
     done
 fi
 

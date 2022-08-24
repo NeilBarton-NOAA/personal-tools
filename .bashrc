@@ -2,6 +2,7 @@
 ################################################################################
 ##  Source global definitions: The next line must be the first non-commented line.
 [ -f /etc/bashrc ] && . /etc/bashrc
+umask 022
 machine=$(uname -n)
 
 ################################################################################
