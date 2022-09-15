@@ -9,11 +9,12 @@ REPO=NeilBarton-NOAA
 #REPO=NOAA-EMC
 #REPO=XianwuXue-NOAA
 
-branch=develop 
+#branch=develop 
 #branch=pre_p8b
 #branch=S2SW_atmosDA
 #branch=S2SW_atmosDA_dev
-#branch=feature/ges_v13_coupled_post
+#branch=feature/gefs_v13_coupled_post
+branch=ATM_3DVAR_IAUT
 
 code=global-workflow_${branch////\_}_${REPO}
 ########################
@@ -33,7 +34,7 @@ fi
 cd ${TOPDIR}/${code}/sorc
 cat <<EOF > setup_all_ufs.sh
 #!/bin/sh
-sh checkout.sh #-g
+sh checkout.sh -g
 sh build_all.sh #-c #not needed for current develop
 sh link_workflow.sh emc ${m} 
 EOF

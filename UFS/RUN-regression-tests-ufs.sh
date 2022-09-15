@@ -7,7 +7,7 @@ set -u
 source $PWD/MACHINE-config.sh
 REPO=NeilBarton-NOAA 
 CODE_DIR=$NPB_WORKDIR/CODE/ufs-weather-model_${REPO}
-export RUNDIR_ROOT=${NPB_WORKDIR}/RUNs/RTs/WOR
+export RUNDIR_ROOT=${NPB_WORKDIR}/RUNs/RTs
 export ACCNR=marine-cpu
 source $PWD/MACHINE-config.sh
 # Coupled Control
@@ -29,8 +29,11 @@ source $PWD/MACHINE-config.sh
 #RUN     | cpld_bmark_esmfthreads_p8 |  | fv3 | 
 #"
 case="
-RUN     | cpld_bmark_esmfthreads_p8_TEST |  | fv3 |
+RUN     | cpld_bmark_esmfthreads_p8 |  | fv3 |
 "
+#case="
+#RUN     | cpld_bmark_p8             |  | fv3 | 
+#"
 ############
 # run tests
 config_file=$PWD/CONF/RUN_CASE
@@ -41,7 +44,29 @@ cat << EOF > $PWD/CONF/RUN_CASE
 $case
 EOF
 echo $case
-#${CODE_DIR}/tests/rt.sh -k -l ${config_file} #>rt_output.txt 2>&1 &
+echo ${CODE_DIR}/tests/rt.sh
+#ATM-MED-CHM
+export INPES_cpl_bmrk=32
+export JNPES_cpl_bmrk=24
+export THRD_cpl_bmrk=1
+#OCN
+export OCN_tasks_cpl_bmrk=200
+export OCN_thrds_cpl_bmrk=1
+#ICE
+export ICE_tasks_cpl_bmrk=80
+export ICE_thrds_cpl_bmrk=1
+#WAV
+export WAV_tasks_cpl_bmrk=280
+export WAV_thrds_cpl_bmrk=1
+# FCST and clock
+export DAYS=1
+export WLCLK_dflt=120
+export RT_SUFFIX=_TEST_DAYS_${DAYS}_\
+ATM_$(( ${INPES_cpl_bmrk} * ${JNPES_cpl_bmrk} * 6 ))-${THRD_cpl_bmrk}_\
+OCN_${OCN_tasks_cpl_bmrk}-${OCN_thrds_cpl_bmrk}_\
+ICE_${ICE_tasks_cpl_bmrk}-${ICE_thrds_cpl_bmrk}_\
+WAV_${WAV_tasks_cpl_bmrk}-${WAV_thrds_cpl_bmrk} 
 ${CODE_DIR}/tests/rt.sh -kl ${config_file} >rt_output.txt 2>&1 &
+#-f 
 #-r option to use with rocoto
-
+tail -f rt_output.txt

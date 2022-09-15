@@ -8,16 +8,13 @@ source $PWD/MACHINE-config.sh
 
 ####################################
 IDATE=2020040100
+#IDATE=2018010100
 EDATE=$( $PWD/DTG-add-time.sh $IDATE 3 ) 
 #branch=S2SW_atmosDA_dev # default is develop
-branch=develop
-ENKF=T
-APP=S2SW
-APP=ATM
-#CDUMP=gfs
-IAU=T
-#PSLOT=${APP}_IAU${IAU}
-PSLOT=${APP}_ENKF_IAU${IAU}
+branch=ATM_3DVAR_IAUT
+ENKF=F
+IAU=F
+PSLOT=${APP}_ENKF${ENKF}_IAU${IAU}
 
 ####################################
 # Sub-Components of script
@@ -37,22 +34,26 @@ NENS=${NENS:-20}
 GFS_CYC=${GFS_CYC:-0}
 ENKF=${ENKF:-T}
 IAU=${IAU:-T}
+HPSSARCH=${HPSSARCH:-T}
 PSLOT=${PSLOT:-${ENKF}_ENKF_${APP}_IDATE_${IDATE}}
 branch=${branch:-develop}
-CODE_DIR=${CODE_DIR:-${NPB_WORKDIR}/CODE/global-workflow_${branch}_${REPO}}
+CODE_DIR=${CODE_DIR:-${NPB_WORKDIR}/CODE/global-workflow_${branch////\_}_${REPO}}
 CDUMP=${CDUMP:-gdas} 
 RUN_TYPE=${RUN_TYPE:-cycled} 
-[[ $CDUMP == gfs ]] && RUN_TYPE=forecast-only
-[[ $RUN_TYPE == forecast-only ]] && EDATE=$IDATE
 SCRIPT_DIR=${CODE_DIR}/workflow
+# options depending on configuration
+[[ $RUN_TYPE == gefs ]] && NENS=1
+[[ $RUN_TYPE == gefs ]] && GFS_CYC=1
+[[ $RUN_TYPE == gefs ]] && RESENS=${RESDET}
+[[ $CDUMP == gfs ]] && RUN_TYPE=forecast-only
+[[ $RUN_TYPE != cycled ]] && EDATE=${IDATE}
 
 ####################################
 # personalized options
 ICSDIR=${NPB_WORKDIR}/ICs
-NPB_HOMEDIR=${NPB_WORKDIR}/RUNs
-EXPDIR=${NPB_HOMEDIR}/$PSLOT 
-COMROT=${NPB_HOMEDIR}/$PSLOT/COMROT
-RUNDIR=${NPB_HOMEDIR}/$PSLOT/RUNDIR
+COMROT=${NPB_WORKDIR}/RUNs
+EXPDIR=${COMROT}/${PSLOT} 
+CONFIGS_DIR=${EXPDIR}/${PSLOT}
 MAIL=F
 
 ####################################
@@ -66,8 +67,6 @@ fi
 # setup_expt.py script
 if [[ $RUN_SETUP_EXPT == T ]]; then
 
-echo " "
-echo "Set up script:"
 echo ${SCRIPT_DIR}/setup_expt.py
 OPTIONS=""
 OPTIONS="${OPTIONS} --app ${APP} "
@@ -75,17 +74,16 @@ OPTIONS="${OPTIONS} --pslot ${PSLOT} "
 OPTIONS="${OPTIONS} --idate ${IDATE} "
 OPTIONS="${OPTIONS} --edate ${EDATE} "
 OPTIONS="${OPTIONS} --resdet ${RESDET} "
+if [[ $RUN_TYPE != gefs ]]; then
 OPTIONS="${OPTIONS} --cdump ${CDUMP} "
+fi
 OPTIONS="${OPTIONS} --gfs_cyc ${GFS_CYC} "
 OPTIONS="${OPTIONS} --comrot ${COMROT} "
 OPTIONS="${OPTIONS} --expdir ${EXPDIR} "
 OPTIONS="${OPTIONS} --icsdir ${ICSDIR} "
-if [[ $RUN_TYPE == cycled ]]; then
+if [[ $RUN_TYPE != forecast-only ]]; then
 OPTIONS="${OPTIONS} --resens ${RESENS} "
 OPTIONS="${OPTIONS} --nens ${NENS} "
-fi
-if [[ $REPO == NeilBarton-NOAA ]]; then
-OPTIONS="${OPTIONS} --suffix_pslot 'F' "
 fi
 ${SCRIPT_DIR}/setup_expt.py ${RUN_TYPE} ${OPTIONS}
 if [[ $? != 0 ]]; then
@@ -97,26 +95,19 @@ fi
 ####################################
 # link restart files to COMROT
 if [[ $RUN_LINK_ICs == T ]]; then
-  ${PWD}/LINK-ICs.sh ${IDATE} ${COMROT} ${APP} ${RESDET} ${RESENS} ${NENS} 
+  ${PWD}/LINK-ICs.sh ${IDATE} ${COMROT}/${PSLOT} ${APP} ${RESDET} ${RESENS} ${NENS} 
 fi
 
 ####################################
 # edit options for run
 if [[ $RUN_EDIT_CONFIG == T ]]; then 
 
-config_file=${EXPDIR}/config.base
+config_file=${CONFIGS_DIR}/config.base
 echo " "
 echo "Editing config.base file: $config_file"
 sed -i 's/fv3-cpu/marine-cpu/g' ${config_file}
-sed -i "s:${HOMEDIR}:${NPB_HOMEDIR}/${PSLOT}:g" ${config_file}
-sed -i "s:${STMPDIR}:${NPB_HOMEDIR}/${PSLOT}:g" ${config_file}
 sed -i 's:HPSS_PROJECT=emc-global:HPSS_PROJECT=emc-marine:g' ${config_file}
-sed -i s:${EXPDIR}/'$PSLOT':${EXPDIR}:g ${config_file}
-sed -i s:${COMROT}/'$PSLOT':${COMROT}:g ${config_file}
-sed -i s:'$STMP'/RUNDIRS/'$PSLOT':$RUNDIR:g ${config_file}
-sed -i s:'$NOSCRUB'/archive/'$PSLOT':'$NOSCRUB'/archive:g ${config_file}
-sed -i s:'HPSSARCH="YES":HPSSARCH="NO"':g ${config_file}
-[[ $RUN_TYPE == forecast-only ]] && sed -i 's:DOIAU="YES":DOIAU="NO":g' ${config_file}
+[[ $HPSSARCH == F ]] && sed -i s:'HPSSARCH="YES":HPSSARCH="NO"':g ${config_file}
 [[ $ENKF == F ]] && sed -i s:'DOHYBVAR="YES":DOHYBVAR="NO"':g ${config_file}
 [[ $IAU == F ]] && sed -i 's:DOIAU="YES":DOIAU="NO":g' ${config_file}
 [[ $IAU == T ]] && sed -i 's/DOIAU=${DOIAU:-"NO"}/DOIAU=${DOIAU:-"YES"}/g' ${config_file}
@@ -133,7 +124,8 @@ if [[ $RUN_SETUP_XML == T ]]; then
 
 echo " "
 echo "setup workflow after changes config.base:"
-${SCRIPT_DIR}/setup_xml.py $EXPDIR 
+echo $CONFIGS_DIR
+${SCRIPT_DIR}/setup_xml.py $CONFIGS_DIR
 if [[ $? != 0 ]]; then
     echo 'setup_xml.py failed'
     exit 1
@@ -145,8 +137,16 @@ fi
 # validate xml file
 if [[ $RUN_CRONTAB == T ]]; then
 
-db_file=$EXPDIR/${PSLOT}.db
-xml_file=$EXPDIR/${PSLOT}.xml
+set +u
+source $config_file
+ln -s $RUNDIR $COMROT/$PSLOT/RUNDIR
+set -u
+
+xml_file=$(ls $CONFIGS_DIR/*.xml)
+db_file=${xml_file:0:-3}db 
+cron_file=${xml_file:0:-3}crontab
+echo $db_file 
+echo $xml_file
 rocotorun -d $db_file -w $xml_file
 if [[ $? != 0 ]]; then
     echo 'rocotorun failed, issues in xml file'
@@ -157,7 +157,6 @@ fi
 # start crontab
 echo " " 
 echo "start crontab:" 
-cron_file=$EXPDIR/$PSLOT.crontab
 echo $cron_file
 if [[ $MAIL == T ]]; then
     sed -i 's:MAILTO="":MAILTO="neil.barton@noaa.gov":g' $cron_file
