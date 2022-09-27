@@ -7,7 +7,7 @@ set -u
 source $PWD/MACHINE-config.sh
 REPO=NeilBarton-NOAA 
 CODE_DIR=$NPB_WORKDIR/CODE/ufs-weather-model_${REPO}
-export RUNDIR_ROOT=${NPB_WORKDIR}/RUNs/RTs
+export RUNDIR_ROOT=${NPB_WORKDIR}/RUNs/RTs_MOM6IO
 export ACCNR=marine-cpu
 source $PWD/MACHINE-config.sh
 # Coupled Control
@@ -46,22 +46,23 @@ EOF
 echo $case
 echo ${CODE_DIR}/tests/rt.sh
 #ATM-MED-CHM
-export INPES_cpl_bmrk=32
-export JNPES_cpl_bmrk=24
+export INPES_cpl_bmrk=8
+export JNPES_cpl_bmrk=8
 export THRD_cpl_bmrk=1
 #OCN
-export OCN_tasks_cpl_bmrk=200
+export OCN_tasks_cpl_bmrk=480
 export OCN_thrds_cpl_bmrk=1
 #ICE
-export ICE_tasks_cpl_bmrk=80
+export ICE_tasks_cpl_bmrk=48
 export ICE_thrds_cpl_bmrk=1
 #WAV
-export WAV_tasks_cpl_bmrk=280
+export WAV_tasks_cpl_bmrk=80
 export WAV_thrds_cpl_bmrk=1
 # FCST and clock
 export DAYS=1
 export WLCLK_dflt=120
-export RT_SUFFIX=_TEST_DAYS_${DAYS}_\
+export RESTART_N_SET=24
+export RT_SUFFIX=_DAYS_${DAYS}_RESTART_${RESTART_N_SET}_\
 ATM_$(( ${INPES_cpl_bmrk} * ${JNPES_cpl_bmrk} * 6 ))-${THRD_cpl_bmrk}_\
 OCN_${OCN_tasks_cpl_bmrk}-${OCN_thrds_cpl_bmrk}_\
 ICE_${ICE_tasks_cpl_bmrk}-${ICE_thrds_cpl_bmrk}_\

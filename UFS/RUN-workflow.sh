@@ -5,24 +5,25 @@
 ####################################
 set -u
 source $PWD/MACHINE-config.sh
-
+which python
 ####################################
 IDATE=2020040100
 #IDATE=2018010100
 EDATE=$( $PWD/DTG-add-time.sh $IDATE 3 ) 
 #branch=S2SW_atmosDA_dev # default is develop
-branch=ATM_3DVAR_IAUT
+#branch=ATM_3DVAR_IAUT
 ENKF=F
 IAU=F
-PSLOT=${APP}_ENKF${ENKF}_IAU${IAU}
+CDUMP=gdas
+PSLOT=TEST_CDUMP_${CDUMP}
 
 ####################################
 # Sub-Components of script
 RUN_SETUP_EXPT=T
-RUN_LINK_ICs=T
-RUN_EDIT_CONFIG=T
+RUN_LINK_ICs=F
+RUN_EDIT_CONFIG=F
 RUN_SETUP_XML=T
-RUN_CRONTAB=T
+RUN_CRONTAB=F
 
 ########################
 # defaults
