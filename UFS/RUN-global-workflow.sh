@@ -5,7 +5,7 @@
 ####################################
 set -u
 source $PWD/MACHINE-config.sh
-which python
+
 ####################################
 IDATE=2020040100
 #IDATE=2018010100
@@ -14,14 +14,15 @@ EDATE=$( $PWD/DTG-add-time.sh $IDATE 3 )
 #branch=ATM_3DVAR_IAUT
 ENKF=F
 IAU=F
-CDUMP=gdas
-PSLOT=TEST_CDUMP_${CDUMP}
+CDUMP=gfs
+APP=ATM
+PSLOT=TEST_${CDUMP}
 
 ####################################
 # Sub-Components of script
 RUN_SETUP_EXPT=T
 RUN_LINK_ICs=F
-RUN_EDIT_CONFIG=F
+RUN_EDIT_CONFIG=T
 RUN_SETUP_XML=T
 RUN_CRONTAB=F
 
@@ -43,10 +44,6 @@ CDUMP=${CDUMP:-gdas}
 RUN_TYPE=${RUN_TYPE:-cycled} 
 SCRIPT_DIR=${CODE_DIR}/workflow
 # options depending on configuration
-[[ $RUN_TYPE == gefs ]] && NENS=1
-[[ $RUN_TYPE == gefs ]] && GFS_CYC=1
-[[ $RUN_TYPE == gefs ]] && RESENS=${RESDET}
-[[ $CDUMP == gfs ]] && RUN_TYPE=forecast-only
 [[ $RUN_TYPE != cycled ]] && EDATE=${IDATE}
 
 ####################################
@@ -75,9 +72,7 @@ OPTIONS="${OPTIONS} --pslot ${PSLOT} "
 OPTIONS="${OPTIONS} --idate ${IDATE} "
 OPTIONS="${OPTIONS} --edate ${EDATE} "
 OPTIONS="${OPTIONS} --resdet ${RESDET} "
-if [[ $RUN_TYPE != gefs ]]; then
 OPTIONS="${OPTIONS} --cdump ${CDUMP} "
-fi
 OPTIONS="${OPTIONS} --gfs_cyc ${GFS_CYC} "
 OPTIONS="${OPTIONS} --comrot ${COMROT} "
 OPTIONS="${OPTIONS} --expdir ${EXPDIR} "
