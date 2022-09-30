@@ -41,13 +41,16 @@ class ufs(object):
     def all_plot(cls):
         df = cls.df.sort_values('PETs')
         X = df['PETs'] 
-        Y = df['WALLTIME'] * 3600.
+        Y = df['WALLTIMEsec']
         fig, ax = plt.subplots()
         ax.plot(X,Y, '-ok', label = 'Total Walltime')
-        #for i in np.arange(len(X)):
-        #    ax.text(X[i], Y[i], str(i+1))
+        for i in np.arange(len(X)):
+            ax.text(float(X[i]), float(Y[i]), str(i+1))
         for C in cls.all_comps:
-            ax.plot(X, df[C + 'sec_max'], label = C + ' RunPhase', alpha = 0.5)
+            style = '-' if C[0:3] == 'MED' else '--'
+            ax.plot(X, df[C + 'sec_max'], style, label = C + ' RunPhase', alpha = 0.5)
+        TARGET = 8 * 3600.0 / df['TAU'][1] / 24.0
+        ax.plot(X,[TARGET, TARGET], ':k', label = 'Target: 8 min / day')
         ax.set_ylabel('secs')
         ax.set_xlabel('Total PETs')
         ax.legend(loc='center left', bbox_to_anchor=(1., 0.5), frameon = False)
