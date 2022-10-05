@@ -15,8 +15,8 @@ if __name__ == '__main__':
     ARGS = tt.args.get()
     
     files = tt.esmfprofile.getfiles(ARGS.TOPDIR)
-    # get data from each file/directorymaybe parralize this
-    MODEL_SUMMARY = []
+    # get data from each file/directory maybe parralize this
+    MODEL_SUMMARY, MED_VARS = [], []
     for i, f in enumerate(files):
         # set up dictionary
         print(i+1, os.path.dirname(f))
@@ -32,6 +32,7 @@ if __name__ == '__main__':
         
         # ESMF.Profile.summary read depenedent on tt.nameruns()
         ESMF_df, MED_VAR = tt.esmfprofile.to_panda(f)
+        for M in MED_VAR: MED_VARS.append(M)
         
         # examine if components are on same pets and generalize some names
         DICT = tt.esmfprofile.panda_addto_dict(ESMF_df, DICT, MED_VAR)
@@ -43,6 +44,7 @@ if __name__ == '__main__':
         DICT['MINpDAYgoal'] = 8
         MODEL_SUMMARY.append(DICT)
     
+    ARGS.MED_VAR = [*set(MED_VARS)]
     #make panda data frame for model summary
     MODEL_header = []
     for key, value in DICT.items():
@@ -68,22 +70,25 @@ if __name__ == '__main__':
         for C in tt.plot.ufs.all_comps:
             print('\t',C)
             tt.plot.ufs.comp = C
+            tt.plot.ufs.FILTER = C + 'thr'
+            #tt.plot.ufs.FILTER = 'RESTART_N'
             tt.plot.ufs.x_axis = 'pe'
             tt.plot.ufs.x_label = 'MPI tasks X Threads'
-            tt.plot.ufs.comp_plot()
+            #tt.plot.ufs.comp_plot()
             tt.plot.ufs.x_axis = 'mpi'
             tt.plot.ufs.x_label = 'MPI tasks'
-            tt.plot.ufs.comp_plot()
+            #tt.plot.ufs.comp_plot()
         print('\t','TOTAL WALLTIME')
         COMPS_PLOT = MODEL_df['COMPS'][1].copy() 
+        COMPS_PLOT.remove('MED')
         if 'ATM' in COMPS_PLOT:
             COMPS_PLOT.append('ATMIO')
-        for M in MODEL_df['MED_VAR'][1]:
+        for M in ARGS.MED_VAR:
             COMPS_PLOT.append(M)
         tt.plot.ufs.all_comps = COMPS_PLOT
         tt.plot.ufs.all_plot()
-        #import matplotlib.pyplot as plt
-        #plt.show()
+        import matplotlib.pyplot as plt
+        plt.show()
 
 
 

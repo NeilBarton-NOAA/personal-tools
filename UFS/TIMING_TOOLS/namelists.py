@@ -35,16 +35,16 @@ def read_model_configure(dir_name):
     for line in open(config_file):
         if 'nhours_fcst' in line:
             DICT['TAU'] = int(line.split(':')[-1])
-    if 'restart_interval:' in line:
-      DICT['RESTART_N'] = int(line.split('restart_interval:')[1].strip().split(' ')[0])
+        if 'restart_interval:' in line:
+            DICT['RESTART_N'] = int(line.split('restart_interval:')[1].strip().split(' ')[0])
     config_file = dir_name + '/input.nml'
     for line in open(config_file):
         if 'npx' in line:
             ATMres = str(int(line.split('npx =')[-1].strip()) - 1)
         if 'levp =' in line:
             ATMlev = line.split('levp = ')[-1].strip()
-        if 'layout =' in line:
-            DICT['ATMlayout'] = line.split('layout = ')[-1].strip()
+        if ' layout =' in line:
+            DICT['ATMlayout'] = line.split(' layout = ')[-1].strip()
     DICT['ATMres'] = 'C' + ATMres + 'L' + ATMlev 
     DICT['CHMres'] = DICT['ATMres']
     return DICT

@@ -31,7 +31,6 @@ def getfiles(TOPDIR):
 
 ####################################
 def panda_addto_dict(df, DICT, MED_VAR):
-    DICT['MED_VAR'] = MED_VAR
     DICT['PETs'] = int(df['PETs'].max()) 
     LOOP_ALL = []
     for C in DICT['COMPS']:
@@ -63,13 +62,17 @@ def panda_addto_dict(df, DICT, MED_VAR):
             else:
                 DICT[C+'sec_mean'] = round(df[df['Region'] == C].loc[df['Count'] == LOOP].sum()['Mean (s)'],1)
                 DICT[C+'sec_max'] = round(df[df['Region'] == C].loc[df['Count'] == LOOP].sum()['Max (s)'],1)
-    DICT['TOstd'] = 0
+        # loop through TO mediator items
+        MED_NAMES = [C + '-TO-MED', 'MED-TO-' + C]
+        for MED_NAME in MED_NAMES:
+            DICT[MED_NAME +'sec_mean'] = round(df[df['Region'] == MED_NAME].loc[df['Phase'] == 'RunPhase1']\
+                .loc[df['Count'] > 1].sum()['Mean (s)'],1)
+            DICT[MED_NAME +'sec_max'] = round(df[df['Region'] == MED_NAME].loc[df['Phase'] == 'RunPhase1']\
+                .loc[df['Count'] > 1].sum()['Max (s)'],1)
+    
+    # calc Z score of mediator items (may not be needed) 
     me, ma = [], []
     for M in MED_VAR: 
-        DICT[M+'sec_mean'] = round(df[df['Region'] == M].loc[df['Phase'] == 'RunPhase1']\
-            .loc[df['Count'] > 1].sum()['Mean (s)'],1)
-        DICT[M+'sec_max'] = round(df[df['Region'] == M].loc[df['Phase'] == 'RunPhase1']\
-            .loc[df['Count'] > 1].sum()['Max (s)'],1)
         me.append(DICT[M+'sec_mean'])
         ma.append(DICT[M+'sec_max'])
     me = np.array(me)

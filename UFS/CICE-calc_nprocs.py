@@ -21,8 +21,8 @@ from functools import reduce
 ####################################
 # parse agruments
 parser = argparse.ArgumentParser(description="description: calculates the CICE compile options for different Resolutions.")
-parser.add_argument('RES', metavar = 'resolution', action='store', \
-					nargs=1, default=None, \
+parser.add_argument('RES', metavar = 'resolution', action = 'store', \
+					nargs='?', default=["0.25"], \
 					help="Resolution of the CICE model. examples include: 0.25")
 parser.add_argument('-s', '--shape', metavar = 'processor shape (e.g., slenderx1, slenderx2) in x-direction', action='store', \
 					default=[2], nargs=1, help="processor shape used in the mode. usually 1 or 2")

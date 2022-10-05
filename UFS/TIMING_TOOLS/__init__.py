@@ -74,7 +74,7 @@ def print_summary(df, ARGS):
     
     # filter through what to print from MODEL_header
     HEAD_PRINT = ['CONFIG', 'RESOLUTION', 'TAU', 'MINpDAY', 'MINpDAYgoal', 'PETs']
-    HEAD_COMPS = df['COMPS'][1] 
+    HEAD_COMPS = df['COMPS'][1].copy() 
     HEAD_COMPS.remove('MED')
     REMOVE_HEAD_PRINT = []
     for C in df['COMPS_SAMEPETS'][1]:
@@ -88,23 +88,22 @@ def print_summary(df, ARGS):
 
     for C in HEAD_COMPS: 
         HEAD_PRINT.append(C+'sec_max')
-        if C == 'ATM':
-            HEAD_PRINT.append('ATMIOsec_max')
 
     # remove items that share PEs
     for C in REMOVE_HEAD_PRINT:
         HEAD_PRINT.remove(C+'mpi-t')
         HEAD_PRINT.remove(C+'sec_max')
+    
+    if (df['ATMmpi-t'] != df['MEDmpi-t']).any():
+        HEAD_PRINT.append('MEDmpi-t')
 
     # if showing ATMIO stats
     if ARGS.SHOW_ATMIO:
-        HEAD_PRINT.insert(HEAD_PRINT.index('ATMIOsec_max'),'ATMsec_max')
+        HEAD_PRINT.insert(HEAD_PRINT.index('ATMsec_max') + 1,'ATMIOsec_max')
     else:
-        if (df['ATMsec_max'] > df['ATMIOsec_max']).all():
-            HEAD_PRINT.remove('ATMIOsec_max')
-        else:
-            print('WARNING: ATMIO is taking longer than ATM')
-            HEAD_PRINT.insert(HEAD_PRINT.index('ATMIOsec_max'),'ATMsec_max')
+        if  (( (df['ATMsec_max'] - df['ATMIOsec_max']) / df['ATMsec_max'] * 100.0 ) < 10.).any():
+            PRINT_ATMIO = True
+            HEAD_PRINT.insert(HEAD_PRINT.index('ATMsec_max') + 1,'ATMIOsec_max')
 
     # if showing loop
     if ARGS.SHOW_LOOP:
@@ -119,10 +118,17 @@ def print_summary(df, ARGS):
             except:
                 pass
 
+    # if showing MEDIATOR variables
     if ARGS.SHOW_MED:
-        MED_VAR = df['MED_VAR'][1]
-        for M in MED_VAR:
+        for M in ARGS.MED_VAR:
             HEAD_PRINT.append(M+'sec_max')
+    
+    # if shoing xy FV3 layout
+    if ARGS.SHOW_XYLAYOUT:
+        try:
+            HEAD_PRINT.insert(HEAD_PRINT.index('ATMmpi-t')+1,'ATMlayout')
+        except:
+            HEAD_PRINT.insert(HEAD_PRINT.index('ATM+CHMmpi-t')+1,'ATMlayout')
     
     # remove items that are the same 
     SUM = 'SHARED \n'
@@ -132,6 +138,8 @@ def print_summary(df, ARGS):
             TABS = ': \t\t' if len(H) < 5 else ': \t'
             SUM = SUM + H + TABS + str(df[H][1]) + '\n'
             HEAD_PRINT.remove(H)
+    if PRINT_ATMIO:
+        SUM = SUM + 'WARNING: ATMIOsec_max is close to or greater than ATMsec_max' + '\n'
 
     if ARGS.SORTBY not in HEAD_PRINT:
         print(ARGS.SORTBY, HEAD_PRINT)

@@ -8,6 +8,7 @@ class get:
     parser.add_argument('-sb', '--sortby', action='store', default=['MINpDAY'], nargs = 1, help='header to sort results, default is WALLTIME')
     parser.add_argument('-m', '--med', action='store_true', help='show mediator MPI, PE and Timings')
     parser.add_argument('-io', '--atmio', action='store_true', help='show ATM IO timings')
+    parser.add_argument('-xy', '--xylayout', action='store_true', help='show X,Y mpi layout for FV3')
     parser.add_argument('-l', '--loop', action='store_true', help='show what coupling loop component is on')
     parser.add_argument('-pe', '--pes', action='store_true', help='show PEs for components')
     parser.add_argument('-plot', '--plot', action='store_true', default=None, help='plot Secs for all or component')
@@ -20,6 +21,7 @@ class get:
             self.TOPDIR = TOPDIR[0]
         self.SHOW_MED =  args.med
         self.SHOW_ATMIO = args.atmio
+        self.SHOW_XYLAYOUT = args.xylayout
         self.SHOW_LOOP = args.loop
         self.SHOW_PES = args.pes
         self.SORTBY = args.sortby[0]
