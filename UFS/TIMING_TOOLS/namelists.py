@@ -7,8 +7,10 @@
 #   log.ww3 -> WW3
 ####################################
 def read_nemsconfigure(dir_name):
+    import numpy as np
     DICT = {}
     config_file = dir_name + '/nems.configure'
+    L = []
     for line in open(config_file): 
         if 'EARTH_component_list:' in line:
             DICT['COMPONENTS'] = line.strip('EARTH_component_list:').strip().replace(' ','-')
@@ -26,6 +28,15 @@ def read_nemsconfigure(dir_name):
                 int(line.split('_petlist_bounds:')[-1].strip().split(' ')[0])
             DICT[line.split('_petlist_bounds')[0].strip() + 'pet_end'] = \
                 int(line.split('_petlist_bounds:')[-1].strip().split(' ')[-1])
+        if '@' in line:
+            if len(line.strip()) > 1:
+                L.append(int(line.strip().strip('@')))
+    if len(L) > 2:
+        print('FATAL: more than two coupling loops found')
+        print(L)
+        exit(1)
+    DICT['LOOPslow'] = max(L)
+    DICT['LOOPfast'] = min(L)
     return DICT
 
 ####################################
@@ -37,6 +48,8 @@ def read_model_configure(dir_name):
             DICT['TAU'] = int(line.split(':')[-1])
         if 'restart_interval:' in line:
             DICT['RESTART_N'] = int(line.split('restart_interval:')[1].strip().split(' ')[0])
+        if 'dt_atmos' in line:
+            DICT['ATMdt'] = int(line.strip('dt_atmos:'))
     config_file = dir_name + '/input.nml'
     for line in open(config_file):
         if 'npx' in line:
@@ -70,9 +83,22 @@ def read_MOM_input(dir_name):
             J = int(line.split('NJGLOBAL = ')[1].split(' ')[0])
         if 'NK = ' in line:
             L = 'L' + line.split('NK = ')[1].split('!')[0].strip() 
+        if 'DT =' in line:
+            DICT['OCNdt'] = int(line.strip('DT =').split('!')[0])
+        if 'DT_THERM =' in line:
+            DICT['OCNdttherm'] = int(line.strip('DT_THERM =').split('!')[0])
     if I == 1440 and J == 1080:
         RES = '0.25'
     else:
         print('FATAL: OCNres unknown from I and J: I =', I, ' J =', J)
     DICT['OCNres'] = RES + L
+    return DICT
+
+####################################
+def read_ice_in(dir_name):
+    DICT = {}
+    config_file = dir_name + '/ice_in'
+    for line in open(config_file):
+        if '  dt  ' in line:
+            DICT['ICEdt'] = int(line.split('=')[-1])
     return DICT

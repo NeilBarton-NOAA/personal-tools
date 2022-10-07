@@ -14,18 +14,19 @@ echo "  list them "
 echo "  delete them or "
 echo "  cleans/removes the large files"
 echo "OPTIONS:"
-echo "  -td : controls top directory to search for runs (default ${TOPDIR})"
-echo "  -d  : deletes the directories in which the runs did not complete (default False)"
+echo "  -d  : controls top directory to search for runs (default ${TOPDIR})"
+echo "  -r  : deletes the directories in which the runs did not complete (default False)"
 echo "  -c  : cleans/deletes large files rom the directories (default False)"
 echo ""
 echo "No options lists the directories that did not finish the forecast run"
 }
-while getopts h?tdc: flag; do
+while getopts "d:rch" flag; do
     case "${flag}" in
-        h|\?) show_help; exit 0;;
-        t)  TOPDIR=${OPTARG};;
-        d)  delete=T;;
+        d)  TOPDIR=${OPTARG};;
+        r)  delete=T;;
         c)  clean=T;;
+        h)  show_help; exit 0;;
+        *)  show_help; exit 0;;
     esac
 done
 

@@ -98,6 +98,7 @@ def print_summary(df, ARGS):
         HEAD_PRINT.append('MEDmpi-t')
 
     # if showing ATMIO stats
+    PRINT_ATMIO = False
     if ARGS.SHOW_ATMIO:
         HEAD_PRINT.insert(HEAD_PRINT.index('ATMsec_max') + 1,'ATMIOsec_max')
     else:
