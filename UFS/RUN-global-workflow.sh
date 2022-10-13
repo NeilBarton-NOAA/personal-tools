@@ -11,20 +11,19 @@ IDATE=2020040100
 #IDATE=2018010100
 EDATE=$( $PWD/DTG-add-time.sh $IDATE 3 ) 
 #branch=S2SW_atmosDA_dev # default is develop
-#branch=ATM_3DVAR_IAUT
+branch=ATM_3DVAR_IAUT
 ENKF=F
 IAU=F
-CDUMP=gfs
 APP=ATM
-PSLOT=TEST_${CDUMP}
+PSLOT=${APP}_IAU-${IAU}
 
 ####################################
 # Sub-Components of script
 RUN_SETUP_EXPT=T
-RUN_LINK_ICs=F
+RUN_LINK_ICs=T
 RUN_EDIT_CONFIG=T
 RUN_SETUP_XML=T
-RUN_CRONTAB=F
+RUN_CRONTAB=T
 
 ########################
 # defaults
@@ -37,13 +36,17 @@ GFS_CYC=${GFS_CYC:-0}
 ENKF=${ENKF:-T}
 IAU=${IAU:-T}
 HPSSARCH=${HPSSARCH:-T}
-PSLOT=${PSLOT:-${ENKF}_ENKF_${APP}_IDATE_${IDATE}}
 branch=${branch:-develop}
 CODE_DIR=${CODE_DIR:-${NPB_WORKDIR}/CODE/global-workflow_${branch////\_}_${REPO}}
-CDUMP=${CDUMP:-gdas} 
-RUN_TYPE=${RUN_TYPE:-cycled} 
 SCRIPT_DIR=${CODE_DIR}/workflow
+CDUMP=${CDUMP:-gdas} 
+RUN_TYPE=${RUN_TYPE:-cycled}
 # options depending on configuration
+if [[ ${RUN_TYPE} == cycled ]]; then
+    PSLOT=${PSLOT:-${APP}_${IDATE}-${EDATE}}
+else
+    PSLOT=${PSLOT:-${APP}_${IDATE}}
+fi
 [[ $RUN_TYPE != cycled ]] && EDATE=${IDATE}
 
 ####################################
@@ -107,10 +110,10 @@ sed -i 's:HPSS_PROJECT=emc-global:HPSS_PROJECT=emc-marine:g' ${config_file}
 [[ $ENKF == F ]] && sed -i s:'DOHYBVAR="YES":DOHYBVAR="NO"':g ${config_file}
 [[ $IAU == F ]] && sed -i 's:DOIAU="YES":DOIAU="NO":g' ${config_file}
 [[ $IAU == T ]] && sed -i 's/DOIAU=${DOIAU:-"NO"}/DOIAU=${DOIAU:-"YES"}/g' ${config_file}
-if [[ ${APP:0:3} == S2S ]] && [[ $RUN_TYPE == cycled ]]; then
-sed -i 's:imp_physics=8:imp_physics=11:g' ${config_file}
-sed -i 's:CCPP_SUITE="FV3_GFS_v17_coupled_p8":CCPP_SUITE="FV3_GFS_v16_coupled":g' ${config_file}
-fi
+#if [[ ${APP:0:3} == S2S ]] && [[ $RUN_TYPE == cycled ]]; then
+#sed -i 's:imp_physics=8:imp_physics=11:g' ${config_file}
+#sed -i 's:CCPP_SUITE="FV3_GFS_v17_coupled_p8":CCPP_SUITE="FV3_GFS_v16_coupled":g' ${config_file}
+#fi
 
 fi
 

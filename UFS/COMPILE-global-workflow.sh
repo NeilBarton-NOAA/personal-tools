@@ -35,8 +35,8 @@ cd ${TOPDIR}/${code}/sorc
 cat <<EOF > setup_all_ufs.sh
 #!/bin/sh
 sh checkout.sh -g
-sh build_all.sh #-c #not needed for current develop
-sh link_workflow.sh emc ${m} 
+sh build_all.sh 
+sh link_workflow.sh  
 EOF
 chmod 755 setup_all_ufs.sh
 echo "compiling in ${TOPDIR}/${code}/sorc"
