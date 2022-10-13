@@ -13,7 +13,7 @@ EDATE=$( $PWD/DTG-add-time.sh $IDATE 3 )
 #branch=S2SW_atmosDA_dev # default is develop
 branch=ATM_3DVAR_IAUT
 ENKF=F
-IAU=F
+IAU=T
 APP=ATM
 PSLOT=${APP}_IAU-${IAU}
 
@@ -68,6 +68,7 @@ fi
 # setup_expt.py script
 if [[ $RUN_SETUP_EXPT == T ]]; then
 
+echo 'RUNNING: setup_expt.py'
 echo ${SCRIPT_DIR}/setup_expt.py
 OPTIONS=""
 OPTIONS="${OPTIONS} --app ${APP} "
@@ -122,7 +123,7 @@ fi
 if [[ $RUN_SETUP_XML == T ]]; then
 
 echo " "
-echo "setup workflow after changes config.base:"
+echo "RUNNING: setup_xml.py after changes config.base:"
 echo $CONFIGS_DIR
 ${SCRIPT_DIR}/setup_xml.py $CONFIGS_DIR
 if [[ $? != 0 ]]; then
@@ -144,8 +145,6 @@ set -u
 xml_file=$(ls $CONFIGS_DIR/*.xml)
 db_file=${xml_file:0:-3}db 
 cron_file=${xml_file:0:-3}crontab
-echo $db_file 
-echo $xml_file
 rocotorun -d $db_file -w $xml_file
 if [[ $? != 0 ]]; then
     echo 'rocotorun failed, issues in xml file'
@@ -155,7 +154,7 @@ fi
 ####################################
 # start crontab
 echo " " 
-echo "start crontab:" 
+echo "STARTING CRONTAB:" 
 echo $cron_file
 if [[ $MAIL == T ]]; then
     sed -i 's:MAILTO="":MAILTO="neil.barton@noaa.gov":g' $cron_file
@@ -164,7 +163,6 @@ crontab -l | cat - $cron_file | crontab -
 
 ####################################
 # echo crontab file
-echo " "
 echo "db=${db_file}"
 echo "xml=${xml_file}"
 
