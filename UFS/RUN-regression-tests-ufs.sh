@@ -24,7 +24,7 @@ source $PWD/MACHINE-config.sh
 
 # Coupled with ESMF threading
 #case="
-#COMPILE | -DAPP=S2SWA -DCCPP_SUITES=FV3_GFS_v17_coupled_p8,FV3_GFS_cpld_rasmgshocnsstnoahmp_ugwp  | - hera   | fv3 | 
+#COMPILE | -DAPP=S2SWA -DCCPP_SUITES=FV3_GFS_v17_coupled_p8,FV3_GFS_cpld_rasmgshocnsstnoahmp_ugwp  | - $m   | fv3 | 
 #"
 case="
 RUN     | cpld_bmark_esmfthreads_p8 |  | fv3 |
@@ -55,7 +55,9 @@ echo ${CODE_DIR}/tests/rt.sh
 #export WPG_cpl_bmrk=48
 #OCN
 #export OCN_tasks_cpl_bmrk=120
-#export OCN_thrds_cpl_bmrk=1
+export OCN_thrds_cpl_bmrk=2
+#OCNIO
+export MOM6_IO_LAYOUT='4,2'
 #ICE
 #export ICE_tasks_cpl_bmrk=48
 #export ICE_thrds_cpl_bmrk=1
@@ -66,7 +68,7 @@ echo ${CODE_DIR}/tests/rt.sh
 export DAYS=1
 export WLCLK_dflt=120
 export RESTART_N_SET=24
-SUFFIX=${case}_$( date +%Y%m%d_%H%m )
+SUFFIX=${case}_$( date +%s )
 export RT_SUFFIX=_${SUFFIX}
 ${CODE_DIR}/tests/rt.sh -kl ${config_file} >rt_output_${SUFFIX}.txt 2>&1 &
 tail -f rt_output_${SUFFIX}.txt

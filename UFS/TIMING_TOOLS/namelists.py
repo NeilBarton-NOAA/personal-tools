@@ -53,13 +53,16 @@ def read_model_configure(dir_name):
     config_file = dir_name + '/input.nml'
     for line in open(config_file):
         if 'npx' in line:
-            ATMres = str(int(line.split('npx =')[-1].strip()) - 1)
+            DICT['ATMres'] = 'C' + str(int(line.split('npx =')[-1].strip()) - 1)
         if 'levp =' in line:
             ATMlev = line.split('levp = ')[-1].strip()
         if ' layout =' in line:
             DICT['ATMlayout'] = line.split(' layout = ')[-1].strip()
-    DICT['ATMres'] = 'C' + ATMres + 'L' + ATMlev 
-    DICT['CHMres'] = DICT['ATMres']
+        if 'io_layout' in line:
+            DICT['ATMiolayout'] = line.strip('io_layout =').strip()
+    if 'ATMres' in DICT:
+        DICT['ATMres'] = DICT['ATMres'] + 'L' + ATMlev
+        DICT['CHMres'] = DICT['ATMres']
     return DICT
 
 ####################################
@@ -92,6 +95,10 @@ def read_MOM_input(dir_name):
     else:
         print('FATAL: OCNres unknown from I and J: I =', I, ' J =', J)
     DICT['OCNres'] = RES + L
+    config_file = dir_name + '/INPUT/MOM_layout'
+    for line in open(config_file):
+        if 'IO_LAYOUT' in line:
+            DICT['OCNiolayout'] = line.strip('IO_LAYOUT =').strip()
     return DICT
 
 ####################################

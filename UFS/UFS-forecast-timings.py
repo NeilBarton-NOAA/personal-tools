@@ -55,7 +55,7 @@ if __name__ == '__main__':
     # check to see if the SORTBY option is possible
     if ARGS.SORTBY not in MODEL_header:
         print("FATAL: SORTBY not found in header")
-        print("\t SORTBY:\t", SORTBY[0])
+        print("\t SORTBY:\t", ARGS.SORTBY)
         print("\t HEADER:\t", MODEL_header)
         exit(1)
     

@@ -83,7 +83,7 @@ def print_summary(df, ARGS):
         for SM in df['COMPS_SAMEPETS'][1]:
             if C not in SM:
                 HEAD_PRINT.append(C+'mpi-t')
-        if C == 'ATM':
+        if C == 'ATM' and 'ATMIOmpi' in df.columns:
             HEAD_PRINT.append('ATMIOmpi')
 
     for C in HEAD_COMPS: 
@@ -99,12 +99,15 @@ def print_summary(df, ARGS):
 
     # if showing ATMIO stats
     PRINT_ATMIO = False
-    if ARGS.SHOW_ATMIO:
+    if ARGS.SHOW_IO:
         HEAD_PRINT.insert(HEAD_PRINT.index('ATMsec_max') + 1,'ATMIOsec_max')
-    else:
+        HEAD_PRINT.append('ATMiolayout')
+        HEAD_PRINT.append('OCNiolayout')
+    elif 'ATMiosec_max' in df.columns:
         if  (( (df['ATMsec_max'] - df['ATMIOsec_max']) / df['ATMsec_max'] * 100.0 ) < 10.).any():
             PRINT_ATMIO = True
             HEAD_PRINT.insert(HEAD_PRINT.index('ATMsec_max') + 1,'ATMIOsec_max')
+            HEAD_PRINT.append('ATMiolayout')
 
     # if showing loop
     if ARGS.SHOW_LOOP:
@@ -131,6 +134,8 @@ def print_summary(df, ARGS):
         except:
             HEAD_PRINT.insert(HEAD_PRINT.index('ATM+CHMmpi-t')+1,'ATMlayout')
     
+    if 'RESTART_N' in df.columns:
+        HEAD_PRINT.append('RESTART_N')
     # remove items that are the same 
     SUM = 'SHARED \n'
     LOOP = HEAD_PRINT.copy()
@@ -144,7 +149,7 @@ def print_summary(df, ARGS):
 
     if ARGS.SORTBY not in HEAD_PRINT:
         print(ARGS.SORTBY, HEAD_PRINT)
-        HEAD_PRINT.append(SORTBY)
+        HEAD_PRINT.append(ARGS.SORTBY)
 
     df = df.sort_values(ARGS.SORTBY)
     fw = 'esmf_summary.txt'

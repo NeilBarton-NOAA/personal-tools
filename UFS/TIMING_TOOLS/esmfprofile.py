@@ -35,12 +35,22 @@ def panda_addto_dict(df, DICT, MED_VAR):
     LOOP_ALL = []
     for C in DICT['COMPS']:
         if C == 'ATM':
-            DICT[C+'mpi'] = int(df['PETs'].where(df['Region'] == 'fv3_fcst').max())
-            DICT[C+'pe'] = int(df['PEs'].where(df['Region'] == 'fv3_fcst').max()) 
-            DICT['ATMIOmpi'] = int(df['PETs'].where(df['Region'] == 'wrtComp_01').max())
-            DICT['ATMIOpe'] = int(df['PEs'].where(df['Region'] == 'wrtComp_01').max())
-            DICT['ATMIOsec_mean'] = round(df['Mean (s)'].where(df['Region'] == 'wrtComp_01').sum(),1)
-            DICT['ATMIOsec_max'] = round(df['Max (s)'].where(df['Region'] == 'wrtComp_01').sum(),1)
+            import pandas as pd
+            # create pandas from summaries
+            pd.options.display.max_rows = None
+            pd.options.display.max_columns = 99
+            pd.options.display.width = 500
+            pd.options.display.colheader_justify = 'center'
+            if (df['Region'] == 'fv3_fcst').any():
+                DICT[C+'mpi'] = int(df['PETs'].where(df['Region'] == 'fv3_fcst').max())
+                DICT[C+'pe'] = int(df['PEs'].where(df['Region'] == 'fv3_fcst').max()) 
+                DICT['ATMIOmpi'] = int(df['PETs'].where(df['Region'] == 'wrtComp_01').max())
+                DICT['ATMIOpe'] = int(df['PEs'].where(df['Region'] == 'wrtComp_01').max())
+                DICT['ATMIOsec_mean'] = round(df['Mean (s)'].where(df['Region'] == 'wrtComp_01').sum(),1)
+                DICT['ATMIOsec_max'] = round(df['Max (s)'].where(df['Region'] == 'wrtComp_01').sum(),1)
+            elif (df['Region'] == 'datm').any():
+                DICT[C+'mpi'] = int(df['PETs'].where(df['Region'] == C).max())
+                DICT[C+'pe'] = int(df['PEs'].where(df['Region'] == C).max()) 
         else:
             DICT[C+'mpi'] = int(df['PETs'].where(df['Region'] == C).max())
             DICT[C+'pe'] = int(df['PEs'].where(df['Region'] == C).max()) 
@@ -115,8 +125,13 @@ def to_panda(f):
                 elif ':' in text:
                     r = text.split(':')[0].replace(':','').strip()
                     p = text.split(':')[-1].strip()
+                elif text[0:4] in ['datm', 'DATM']:
+                    r = 'datm'
+                    p = text.strip('datm_')
                 else:
                     print('FATAL: script cannot parse column')
+                    print(f)
+                    print(line)
                     exit(1)
                 d.append(r)
                 d.append(p)
