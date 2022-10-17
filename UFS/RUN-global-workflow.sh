@@ -104,7 +104,7 @@ if [[ $RUN_EDIT_CONFIG == T ]]; then
 
 config_file=${CONFIGS_DIR}/config.base
 echo " "
-echo "Editing config.base file: $config_file"
+echo "EDITING: $config_file"
 sed -i 's/fv3-cpu/marine-cpu/g' ${config_file}
 sed -i 's:HPSS_PROJECT=emc-global:HPSS_PROJECT=emc-marine:g' ${config_file}
 sed -i "s:${HOMEDIR}:${COMROT}/GLOBAL:g" ${config_file}
@@ -125,7 +125,7 @@ if [[ $RUN_SETUP_XML == T ]]; then
 
 echo " "
 echo "RUNNING: setup_xml.py after changes config.base:"
-echo $CONFIGS_DIR
+echo "${SCRIPT_DIR}/setup_xml.py $CONFIGS_DIR"
 ${SCRIPT_DIR}/setup_xml.py $CONFIGS_DIR
 if [[ $? != 0 ]]; then
     echo 'setup_xml.py failed'
