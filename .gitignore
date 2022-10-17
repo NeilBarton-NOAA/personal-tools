@@ -3,6 +3,7 @@
 .bash_logout
 .bash_profile
 .cache
+.dbus
 .emacs
 .fontconfig
 .globus/
@@ -19,6 +20,5 @@
 .viminfo
 .Xauthority
 .zshrc
-
-
-
+UFS/CONF/rt.conf
+UFS/TIMING_TOOLS/__pycache__/

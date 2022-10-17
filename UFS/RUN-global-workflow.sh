@@ -13,7 +13,7 @@ EDATE=$( $PWD/DTG-add-time.sh $IDATE 3 )
 #branch=S2SW_atmosDA_dev # default is develop
 branch=ATM_3DVAR_IAUT
 ENKF=F
-IAU=T
+IAU=F
 APP=ATM
 PSLOT=${APP}_IAU-${IAU}
 
@@ -107,6 +107,7 @@ echo " "
 echo "Editing config.base file: $config_file"
 sed -i 's/fv3-cpu/marine-cpu/g' ${config_file}
 sed -i 's:HPSS_PROJECT=emc-global:HPSS_PROJECT=emc-marine:g' ${config_file}
+sed -i "s:${HOMEDIR}:${COMROT}/GLOBAL:g" ${config_file}
 [[ $HPSSARCH == F ]] && sed -i s:'HPSSARCH="YES":HPSSARCH="NO"':g ${config_file}
 [[ $ENKF == F ]] && sed -i s:'DOHYBVAR="YES":DOHYBVAR="NO"':g ${config_file}
 [[ $IAU == F ]] && sed -i 's:DOIAU="YES":DOIAU="NO":g' ${config_file}
