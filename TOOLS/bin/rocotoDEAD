@@ -3,11 +3,13 @@ set -u
 db=F
 xml=F
 run=F
-while getopts "d:w:r" opt; do
+set_complete=F
+while getopts "d:w:rc" opt; do
     case $opt in
         d ) db=$OPTARG;;
         w ) xml=$OPTARG;;
         r ) run=T;;
+        c ) set_complete=T;;
     esac
 done
 
@@ -38,6 +40,18 @@ rundeadtasks () {
     done
 }
 
+runsettaskscomplete () {
+    db=$1
+    xml=$2
+    echo 'setting tasks to complete'
+    ts=( $(rocotostat -d ${db} -w ${xml} | grep -E 'DEAD|FAILED' | awk '{print $2}') )
+    cs=( $(rocotostat -d ${db} -w ${xml} | grep -E 'DEAD|FAILED' | awk '{print $1}') )
+    ND=$(( ${#ts[@]} - 1 ))
+    for j in $(seq 0 $ND); do
+        rocotocomplete -d ${db} -w ${xml} -c ${cs[$j]} -t ${ts[$j]}
+    done
+}
+
 if [[ $db == F ]] || [[ $xml == F ]]; then
     dbs=( $(crontab -l | grep rocotorun | awk '{print $8}') )
     xmls=( $(crontab -l | grep rocotorun | awk '{print $10}') )
@@ -46,11 +60,15 @@ if [[ $db == F ]] || [[ $xml == F ]]; then
         printdeadtasks ${dbs[$i]} ${xmls[$i]} 
         if [[ $run == T ]]; then
             rundeadtasks ${dbs[$i]} ${xmls[$i]} 
+        elif [[ $set_complete == T ]]; then
+            runsettaskscomplete ${dbs[$i]} ${xmls[$i]}
         fi
     done
 else
     printdeadtasks ${db} ${xml} 
     if [[ $run == T ]]; then
         rundeadtasks ${db} ${xml} 
+    elif [[ $set_complete == T ]]; then
+        runsettaskscomplete ${db} ${xml}
     fi
 fi
