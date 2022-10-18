@@ -3,11 +3,11 @@ set -u
 db=F
 xml=F
 run=F
-while getopts ":d:w:r:" opt; do
+while getopts "d:w:r" opt; do
     case $opt in
         d ) db=$OPTARG;;
         w ) xml=$OPTARG;;
-        r ) run=$OPTARG;;
+        r ) run=T;;
     esac
 done
 
