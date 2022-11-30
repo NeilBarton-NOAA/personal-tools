@@ -42,7 +42,8 @@ if __name__ == '__main__':
         
         # calc minute per day for forecast: goal is 8 minutes per day
         DICT['MINpDAY'] = round((DICT['WALLTIMEsec'] / 60.0) / (DICT['TAU'] / 24.0),1) 
-        DICT['MINpDAYgoal'] = 8
+        DICT['MINpDAYgoalGFS'] = 8
+        DICT['MINpDAYgoalGEFS'] = 10
         MODEL_SUMMARY.append(DICT)
     
     ARGS.MED_VAR = [*set(MED_VARS)]

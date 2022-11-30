@@ -1,0 +1,16 @@
+#!/bin/sh -l
+#SBATCH -J NPBnetcdf
+#SBATCH --partition=service
+#SBATCH --time=08:00:00
+#SBATCH -o %x.o%j
+#SBATCH --ntasks=1
+#SBATCH --exclusive #may mean use all memory
+#SBATCH -A marine-cpu
+
+#~/STUDIES/wgrib2_TO_netcdf.sh
+#cd /scratch2/NCEPDEV/stmp3/Neil.Barton/UFS_OUTPUT/P8T
+#ncwa -a time -t 2 TEST.nc M_TEST.nc
+#~/STUDIES/ufs_output_compare.py
+~/STUDIES/get_from_hpss.sh
+#~/STUDIES/wgrib2_TO_netcdf.sh
+
