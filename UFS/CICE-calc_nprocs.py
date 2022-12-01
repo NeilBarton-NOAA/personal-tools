@@ -3,7 +3,7 @@
 #
 # Calculate CICE compile options for Resolutions 
 #	a re-write of parts in comp_ice of the cice model
-# 	from commp_ice:
+# 	from comp_ice:
 #   	NTASK equals nprocs in ice_in
 #   	use processor_shape = slenderX1 or slenderX2 in ice_in
 # 		If BLCKX (BLCKY) does not divide NXGLOB (NYGLOB) evenly, padding
