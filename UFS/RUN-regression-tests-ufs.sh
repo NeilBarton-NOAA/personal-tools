@@ -66,7 +66,7 @@ export ICE_thrds_cpl_bmrk=1
 export WAV_tasks_cpl_bmrk=80
 export WAV_thrds_cpl_bmrk=1
 # FCST and clock
-export DAYS=1
+export DAYS_SET=1
 export WLCLK_dflt=120
 export RESTART_N_SET=24
 
