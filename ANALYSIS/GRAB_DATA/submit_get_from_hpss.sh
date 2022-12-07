@@ -1,4 +1,4 @@
-#!/bin/bash
+#! /usr/bin/env bash
 set -u
 
 # P8
@@ -12,7 +12,7 @@ model=CICE
 
 for EXP in "${!EXPS[@]}"; do
     work_dir=${NPB_WORKDIR}/UFS_OUTPUT/${EXP}
-    mkdir -p ${work_dir} && cd ${work_dir}
+    mkdir -p ${work_dir} 
     dir=${EXPS[$EXP]}
     files=$(hsi -q ls ${dir}/*/${f2d} 2>&1 | grep :)
     for f in ${files}; do
@@ -20,14 +20,34 @@ for EXP in "${!EXPS[@]}"; do
         dtg=$(dirname ${f_get}) && dtg=${dtg: -10}
         out_file=${work_dir}/${model}_${dtg}.nc
         if [[ ! -f ${out_file} ]]; then
-            # download files
-            htar -xvf ${f_get}
-            # parse files
-            ~/STUDIES/${model}_parse.sh ${work_dir} ${out_file}
-            if (( $? > 0 )); then
-                echo 'parse failed' ${model}
-                exit 1
-            fi
+submit_file=~/STUDIES/${dtg}_submit
+cat<<EOF > ${submit_file}
+#!/bin/sh -l
+#SBATCH -J down${dtg}
+#SBATCH --partition=service
+#SBATCH --time=12:00:00
+#SBATCH -o %x.o%j
+#SBATCH --ntasks=1
+#SBATCH --exclusive #may mean use all memory
+#SBATCH -A marine-cpu
+
+f_get=${f_get}
+model=${model}
+out_file=${out_file}
+work_dir=${work_dir}
+
+cd ${work_dir}
+# download files
+htar -xvf ${f_get}
+# parse files
+~/STUDIES/${model}_parse.sh ${work_dir} ${out_file}
+if (( $? > 0 )); then
+    echo 'parse failed' ${model}
+    exit 1
+fi
+EOF
+
+sbatch ${submit_file}
         fi
     done
 done

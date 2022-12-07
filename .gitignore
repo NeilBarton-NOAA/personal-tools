@@ -6,11 +6,13 @@
 .bash_logout
 .bash_profile
 .cache
+.conda/
 .config
 .dbus
 .emacs
 .fontconfig
 .globus/
+.java/
 .ipython/
 .kshrc
 .lesshst
@@ -22,6 +24,7 @@
 .ssh/id*
 .ssh/known_hosts
 .sh_history
+.urs_cookies
 .vim/
 .viminfo
 .Xauthority

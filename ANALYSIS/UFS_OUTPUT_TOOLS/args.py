@@ -6,12 +6,12 @@ class get:
         "This script parses the stout_espc.list file to display a summary of UFS forecast timings")
     parser.add_argument('-f', '--files', 
         action='store', 
-        default=['/scratch2/NCEPDEV/stmp3/Neil.Barton/UFS_OUTPUT/P8T/ICEC.nc',
-        '/scratch2/NCEPDEV/stmp3/Neil.Barton/UFS_OUTPUT/P8G/ICEC.nc',],
+        default=['/scratch2/NCEPDEV/stmp3/Neil.Barton/UFS_OUTPUT/P8T/CICE_aice_h.nc',
+        '/scratch2/NCEPDEV/stmp3/Neil.Barton/UFS_OUTPUT/P8G/CICE_aice_h.nc'],
         nargs = '+', help='files for analysis')
     parser.add_argument('-v', '--variable', 
         action='store', 
-        default = ['ICEC_surface'], 
+        default = ['aice_h'], 
         nargs = 1, help="variable for analysis")
     parser.add_argument('-r', '--region', 
         action='store', 

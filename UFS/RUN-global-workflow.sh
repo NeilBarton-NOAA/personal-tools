@@ -9,7 +9,7 @@ source $PWD/MACHINE-config.sh
 ####################################
 IDATE=2020040100
 #IDATE=2018010100
-EDATE=$( $PWD/DTG-add-time.sh $IDATE 3 ) 
+EDATE=$( $PWD/DTG-add-time.sh $IDATE 2 ) 
 #branch=S2SW_atmosDA_dev # default is develop
 branch=ATM_3DVAR_IAUT
 ENKF=F

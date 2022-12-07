@@ -9,15 +9,10 @@
 #import numpy as np
 import os
 import sys
-sys.path.append(os.path.dirname(os.path.realpath(__file__)) + '/PYTHON_TOOLS')
-sys.path.append(os.path.dirname(os.path.realpath(__file__)) + '/UFS_OUTPUT_TOOLS')
+sys.path.append('/home/Neil.Barton/TOOLS')
+sys.path.append(os.path.dirname(os.path.realpath(__file__)) )
 import PYTHON_TOOLS as npb
 import UFS_OUTPUT_TOOLS as ufs
-
-# variable names
-VAR_NAME={
-'ICEC_surface' : 'Ice %'
-}
 
 if __name__ == '__main__':
     # grab agruments
@@ -25,12 +20,17 @@ if __name__ == '__main__':
     # grab model output files
     DAT = ufs.dat.get(ARGS.files, ARGS.var)
     ufs.dat.checktimes(DAT)
+    #ufs.plot.difference_plots(DAT)
     # calc ice extent
+    print(ARGS.var)
+    if ARGS.var == 'aice_h':
+        OBS = ufs.ice.extent(DAT)
+        exit(1)
     if ARGS.var == 'ICEC_surface':
         DAT = ufs.ice.extent(DAT)
         OBS = ufs.ice.get_extentobs()
-        ICE = ufs.ice.get_iceobs(os.path.dirname(ARGS.files[0]) + '/../')
-        ufs.plot.ice_extent(DAT,OBS)
+        ICE = ufs.ice.get_iceobs()
+        #ufs.plot.ice_extent(DAT,OBS)
 ## average over time dimension
 #time = dat[0].time
 #mean_file = VAR + '_mean'
