@@ -73,7 +73,7 @@ def print_summary(df, ARGS):
     pd.options.display.colheader_justify = 'center'
     
     # filter through what to print from MODEL_header
-    HEAD_PRINT = ['CONFIG', 'RESOLUTION', 'TAU', 'MINpDAY', 'MINpDAYgoal', 'PETs']
+    HEAD_PRINT = ['CONFIG', 'RESOLUTION', 'TAU', 'MINpDAY', 'MINpDAYgoalGEFS', 'PETs']
     HEAD_COMPS = df['COMPS'][1].copy() 
     HEAD_COMPS.remove('MED')
     REMOVE_HEAD_PRINT = []

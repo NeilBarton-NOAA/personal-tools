@@ -11,7 +11,7 @@ def get(files, var):
         var_file = os.path.dirname(f) + '/' + var + '.nc'
         ds = ds.assign_attrs({'var_file': var_file})
         for v in list(ds.keys()):
-            if v != var:
+            if (v != var) and (v != 'area'):
                 ds = ds.drop(v)
         if 'P8T' in f:
             ds = ds.assign_attrs({'test_name': 'Thompson'})
@@ -20,9 +20,10 @@ def get(files, var):
         ds = ds.assign_attrs({'var_name': var})
         ############
         # add area of cells
-        area_file = os.path.dirname(f) + '/gridarea.nc'
-        ds_area = xr.open_dataset(area_file)
-        ds['area'] = (ds_area['cell_area'].dims, ds_area['cell_area'].astype('float32').values / 1e6)
+        if 'CICE' not in f: 
+            area_file = os.path.dirname(f) + '/gridarea.nc'
+            ds_area = xr.open_dataset(area_file)
+            ds['area'] = (ds_area['cell_area'].dims, ds_area['cell_area'].astype('float32').values / 1e6)
         ############
         # add var file
         if os.path.exists(var_file):
