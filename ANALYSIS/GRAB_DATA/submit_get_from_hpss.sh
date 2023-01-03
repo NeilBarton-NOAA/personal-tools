@@ -11,7 +11,7 @@ model=CICE
 [[ ${model} == CICE ]] && f2d=ice.tar
 
 for EXP in "${!EXPS[@]}"; do
-    work_dir=${NPB_WORKDIR}/UFS_OUTPUT/${EXP}
+    work_dir=${NPB_WORKDIR}/UFS_OUTPUT/${EXP}/WORKING_DIR
     mkdir -p ${work_dir} 
     dir=${EXPS[$EXP]}
     files=$(hsi -q ls ${dir}/*/${f2d} 2>&1 | grep :)

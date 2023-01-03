@@ -44,7 +44,7 @@ class ufs(object):
             FL = str(df['TAU'][0])
         plt.title(cls.comp + ': FL ' + FL + ' hours')
         plt.tight_layout()
-        plt.savefig('FIGURES/' + cls.comp + '_' + cls.x_axis + '_timings.png')
+        plt.savefig(cls.comp + '_' + cls.x_axis + '_timings.png')
     
     @classmethod
     def all_plot(cls):
@@ -57,8 +57,8 @@ class ufs(object):
         for C in cls.all_comps:
             style = '--' if C[0:3] == 'MED' or C[-3::] == 'MED' else '-'
             ax.plot(X, df[C + 'sec_max'], style, label = C + ' RunPhase', alpha = 0.75)
-        TARGET = ( 8. * 60. ) / ( df['TAU'][1] / 24. )
-        ax.plot([np.min(X), np.max(X)],[TARGET, TARGET], ':k', label = 'Target: 8 CPU min / Forecast Day', alpha = 0.50)
+        TARGET = ( df['MINpDAY_GEFS'] * 60. ) * ( df['TAU'] / 24. ) # convert to seconds for all forecast run
+        ax.plot(X, TARGET, ':k', label = 'Target: 8 CPU min / Forecast Day', alpha = 0.50)
         # get components needed to write informatoin
         SAME_PETS = cls.df['COMPS_SAMEPETS'][1]
         COMPS = cls.all_comps
@@ -97,5 +97,5 @@ class ufs(object):
         ax.legend(loc='center left', bbox_to_anchor=(1., 0.5), frameon = False)
         plt.title(cls.app + ': FL ' + str(df['TAU'][1]) + ' hours')
         plt.tight_layout()
-        plt.savefig('FIGURES/TOTAL_WALLTIME.png')
+        plt.savefig('TOTAL_WALLTIME.png')
 

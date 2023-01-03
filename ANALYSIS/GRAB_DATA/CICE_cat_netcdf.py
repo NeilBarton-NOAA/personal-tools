@@ -19,9 +19,10 @@ parser.add_argument('-f', '--files', action='store',  nargs = '+', help='files f
 
 args = parser.parse_args()
 files = args.files
-var='aice_h'
+var='hi_h'
+var='albsni_h'
 # load data
-save_file = os.path.dirname(files[0]) + '/' + os.path.basename(files[0]).split('_')[0] + '_' + var + '.nc'
+save_file = os.path.dirname(files[0]) + '/../' + os.path.basename(files[0]).split('_')[0] + '_' + var + '.nc'
 ds = xr.open_mfdataset(files)
 ds['area'] = ds['tarea'].isel(tau = 0 , time = 0)
 new_ds = ds[var]

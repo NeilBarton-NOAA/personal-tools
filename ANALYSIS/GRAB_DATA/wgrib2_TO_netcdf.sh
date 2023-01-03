@@ -1,6 +1,12 @@
 #!/bin/bash
 set -u
 ####################################
+
+VAR=${1:-'PRES'}
+#VARS="TMP UGRD VGRD DSWRF DLWRF USWRF ULWRF ICEC LCDC MCDC HCDC TCDC'
+#taus=( $(seq 0 6 840) )
+taus=( $(seq 6 6 840) )
+#taus=( $(seq 0 24 48) )
 # P8
 declare -A EXPS
 EXPS=( 
@@ -8,10 +14,6 @@ EXPS=(
 ["P8G"]="/scratch1/NCEPDEV/stmp2/Lydia.B.Stefanova/fromHPSS/ufs_p8_gm"
 )
 
-#VARS="TMP UGRD VGRD DSWRF DLWRF USWRF ULWRF ICEC"
-VAR='ICEC'
-taus=( $(seq 0 6 840) )
-#taus=( $(seq 0 24 48) )
 
 WGRIB2_TO_NETCDF(){
 VAR=$1 && shift
@@ -34,7 +36,10 @@ else
 fi
 }
 
-
+f_search='sfluxgrb'
+if [[ ${VAR} == 'CLMR' ]]; then
+    f_search='pgrb2.1p00'
+fi
 ####################################
 for EXP in "${!EXPS[@]}"; do
     echo $EXP
@@ -45,23 +50,23 @@ for EXP in "${!EXPS[@]}"; do
     last_tau=0 && start_n=0 && n=8
     while [[ $last_tau != ${taus[@]: -1} ]]; do
         ptaus=( ${taus[@]:${start_n}:${n}} )
-        #echo 'parrallel taus:' ${ptaus[@]}
-        #for tau in ${ptaus[@]}; do
-        #    tau=$(printf "%03d" $tau)
-        #    files=$(ls ${EXPS[$EXP]}/*/gfs*/00/atmos/*${tau}.grib2 )
-        #    nc_file=${SAVE_DIR}/${VAR}_${tau}.nc
-        #    temp_nc_file=${SAVE_DIR}/temp_${VAR}_${tau}.nc
-        #    if [[ ! -f ${nc_file} ]]; then
-        #        echo 'creating: ' ${temp_nc_file}
-        #        WGRIB2_TO_NETCDF ${VAR} ${temp_nc_file} ${files} &
-        #    fi
-        #done
-        #wait
+        echo 'parrallel taus:' ${ptaus[@]}
+        for tau in ${ptaus[@]}; do
+            tau=$(printf "%03d" $tau)
+            files=$(ls ${EXPS[$EXP]}/*/gfs*/00/atmos/gfs.*${f_search}*${tau}* )
+            nc_file=${SAVE_DIR}/WORKING_DIR/${VAR}_${tau}.nc
+            temp_nc_file=${SAVE_DIR}/WORKING_DIR/temp_${VAR}_${tau}.nc
+            if [[ ! -f ${nc_file} ]]; then
+                echo 'creating: ' ${temp_nc_file}
+                WGRIB2_TO_NETCDF ${VAR} ${temp_nc_file} ${files} &
+            fi
+        done
+        wait
         # add tau data
         for tau in ${ptaus[@]}; do
             tau=$(printf "%03d" $tau)
-            nc_file=${SAVE_DIR}/${VAR}_${tau}.nc
-            temp_nc_file=${SAVE_DIR}/temp_${VAR}_${tau}.nc
+            nc_file=${SAVE_DIR}/WORKING_DIR/${VAR}_${tau}.nc
+            temp_nc_file=${SAVE_DIR}/WORKING_DIR/temp_${VAR}_${tau}.nc
             if [[ ! -f ${nc_file} ]]; then
                 echo "NCAP2 tau:" ${nc_file}
                 ncap2 -s "tau=$tau" ${temp_nc_file} ${nc_file}
@@ -79,11 +84,12 @@ for EXP in "${!EXPS[@]}"; do
     # cat taus
     #out_file=${SAVE_DIR}/${VAR}_TAU.nc
     out_file=${SAVE_DIR}/${VAR}.nc
-    if [[ ! -f ${out_file} ]]; then 
-        echo '  cat tau files' 
-        ncecat -u tau ${file_tau_list} ${out_file}  
-        (( $? > 0 )) && echo 'error in cat' && exit 1
+    if [[ -f ${out_file} ]]; then 
+        rm ${out_file}
     fi
+    echo '  cat tau files' 
+    ncecat -u tau ${file_tau_list} ${out_file}  
+    (( $? > 0 )) && echo 'error in cat' && exit 1
     # remove unlimited dimension
     #in_file=${out_file}
     #out_file=${SAVE_DIR}/${VAR}_NO_UNLIMITED.nc

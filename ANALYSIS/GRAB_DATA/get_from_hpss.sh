@@ -22,12 +22,12 @@ for EXP in "${!EXPS[@]}"; do
     for f in ${files}; do
         f_get=${f::-1}/${f2d}
         dtg=$(dirname ${f_get}) && dtg=${dtg: -10}
-        out_file=${work_dir}/${model}_${dtg}.nc
+        out_file=${work_dir}/WORKING_DIR/${model}_${dtg}.nc
         if [[ ! -f ${out_file} ]]; then
             # download files
             htar -xvf ${f_get}
             # parse files
-            ~/STUDIES/${model}_parse.sh ${work_dir} ${out_file}
+            ~/STUDIES/${model}_parse.sh ${work_dir}/WORKING_DIR ${out_file}
             if (( $? > 0 )); then
                 echo 'parse failed' ${model}
                 exit 1

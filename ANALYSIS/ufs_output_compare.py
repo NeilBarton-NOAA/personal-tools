@@ -18,19 +18,45 @@ if __name__ == '__main__':
     # grab agruments
     ARGS = ufs.args.get()
     # grab model output files
-    DAT = ufs.dat.get(ARGS.files, ARGS.var)
+    DAT = ufs.dat.get(ARGS.files, ARGS.var) 
     ufs.dat.checktimes(DAT)
-    #ufs.plot.difference_plots(DAT)
+    #DAT = ufs.dat.time_array_with_tau(DAT)
+    #CFS = ufs.cfs.get('icecon')
+    #THK = ufs.ice.get_thickness()
+    #ufs.maps.monthly_seaice_thickness(DAT[0],THK)
+    #CFS = ufs.ice.extent([CFS])
+    #ICE = ufs.ice.get_iceobs() #season = DAT[0]['times_all'].values)
+    #OBS = ufs.ice.get_extentobs_CDR()
+    #CDR = ufs.ice.get_extentobs_CDR()
+    #OBS = ufs.ice.get_extentobs_NASA()
+    #DAT = ufs.dat.seasons(DAT)
+    #DAT.append(CFS[0])
+    # plots
+    ufs.maps.difference_month_weeksave(DAT) #, ICE[0])
+    #ufs.plot.ice_extent_meanmonth([DAT[0], DAT[1]], var = 'NH_extent')
+    #ufs.plot.ice_extent_meanmonth([CFS[0], OBS], var = 'NH_extent')
+    #ufs.plot.ice_extent_meanmonth([DAT[0], OBS], var = 'NH_extent')
+    #ufs.plot.ice_extent_meanmonth([DAT[1], OBS], var = 'NH_extent')
+    #ufs.plot.ice_extent_meanmonth([CFS[0], OBS], var = 'SH_extent')
+    #ufs.plot.ice_extent_meanmonth([DAT[0], OBS], var = 'SH_extent')
+    #ufs.plot.ice_extent_meanmonth([DAT[1], OBS], var = 'SH_extent')
+    #ufs.plot.ice_extent_month([DAT], OBS, var = 'NH_extent')
+    #ufs.plot.ice_extent_month([DAT], OBS, var = 'SH_extent')
+    #ufs.plot.weekly_seasons_maps(DAT[0], ICE[1], pole = 'SH')
+    exit(1)
+    #ufs.plot.difference_maps_seasons_weeks(DAT, ICE[0])
+    #exit(1)
+    # exit
     # calc ice extent
-    print(ARGS.var)
     if ARGS.var == 'aice_h':
-        OBS = ufs.ice.extent(DAT)
+        ufs.plot.ice_extent(DAT[0],OBS)
         exit(1)
+        DAT = ufs.ice.extent(DAT)
     if ARGS.var == 'ICEC_surface':
         DAT = ufs.ice.extent(DAT)
-        OBS = ufs.ice.get_extentobs()
         ICE = ufs.ice.get_iceobs()
-        #ufs.plot.ice_extent(DAT,OBS)
+
+
 ## average over time dimension
 #time = dat[0].time
 #mean_file = VAR + '_mean'

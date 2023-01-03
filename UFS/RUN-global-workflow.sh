@@ -10,12 +10,15 @@ source $PWD/MACHINE-config.sh
 IDATE=2020040100
 #IDATE=2018010100
 EDATE=$( $PWD/DTG-add-time.sh $IDATE 2 ) 
+REPO=NOAA-EMC
+branch=develop
 #branch=S2SW_atmosDA_dev # default is develop
-branch=ATM_3DVAR_IAUT
+#branch=ATM_3DVAR_IAUT
+#branch=S2S_cycle
 ENKF=F
 IAU=T
 APP=ATM
-PSLOT=TEST_${APP}_IAU-${IAU}
+PSLOT=dev_${APP}_IAU-${IAU}
 #PSLOT=${APP}_DEV_HYBRID
 
 ####################################
@@ -112,10 +115,11 @@ sed -i "s:${HOMEDIR}:${COMROT}/GLOBAL:g" ${config_file}
 [[ $HPSSARCH == F ]] && sed -i s:'HPSSARCH="YES":HPSSARCH="NO"':g ${config_file}
 [[ $ENKF == F ]] && sed -i s:'DOHYBVAR="YES":DOHYBVAR="NO"':g ${config_file}
 [[ $IAU == F ]] && sed -i 's:DOIAU="YES":DOIAU="NO":g' ${config_file}
-#if [[ ${APP:0:3} == S2S ]] && [[ $RUN_TYPE == cycled ]]; then
-#sed -i 's:imp_physics=8:imp_physics=11:g' ${config_file}
-#sed -i 's:CCPP_SUITE="FV3_GFS_v17_coupled_p8":CCPP_SUITE="FV3_GFS_v16_coupled":g' ${config_file}
-#fi
+if [[ ${APP:0:3} == S2S ]] && [[ $RUN_TYPE == cycled ]]; then
+sed -i 's:imp_physics=8:imp_physics=11:g' ${config_file}
+sed -i 's:CCPP_SUITE="FV3_GFS_v17_coupled_p8":CCPP_SUITE="FV3_GFS_v16_coupled":g' ${config_file}
+fi
+sed -i 's:imp_physics=8:imp_physics=11:g' ${config_file}
 
 fi
 

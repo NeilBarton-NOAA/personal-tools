@@ -41,9 +41,16 @@ if __name__ == '__main__':
         DICT = tt.nameruns(DICT)
         
         # calc minute per day for forecast: goal is 8 minutes per day
-        DICT['MINpDAY'] = round((DICT['WALLTIMEsec'] / 60.0) / (DICT['TAU'] / 24.0),1) 
-        DICT['MINpDAYgoalGFS'] = 8
-        DICT['MINpDAYgoalGEFS'] = 10
+        if 'WALLTIMEsec' in DICT.keys() and 'TAU' in DICT.keys():
+            #print((DICT['WALLTIMEsec'] / 60.0), (DICT['TAU'] / 24.0)) 
+            #print(round((DICT['WALLTIMEsec'] / 60.0) / (DICT['TAU'] / 24.0),1))
+            #exit(1)
+            DICT['MINpDAY'] = round((DICT['WALLTIMEsec'] / 60.0) / (DICT['TAU'] / 24.0),1) 
+        else:
+            DICT['MINpDAY'] = 'Unknown'
+            SORT_MINpDAY = False
+        DICT['MINpDAY_GFS'] = 8.
+        DICT['MINpDAY_GEFS'] = 10.
         MODEL_SUMMARY.append(DICT)
     
     ARGS.MED_VAR = [*set(MED_VARS)]
@@ -54,20 +61,31 @@ if __name__ == '__main__':
     MODEL_df = pd.DataFrame(MODEL_SUMMARY, np.arange(len(files)) + 1, MODEL_header )
     
     # check to see if the SORTBY option is possible
-    if ARGS.SORTBY not in MODEL_header:
-        print("FATAL: SORTBY not found in header")
-        print("\t SORTBY:\t", ARGS.SORTBY)
-        print("\t HEADER:\t", MODEL_header)
-        exit(1)
-    
+    try:
+        MODEL_df[ARGS.SORTBY].sort()
+    except:
+        print("WARNING: sort variable ", ARGS.SORTBY, " not found in header, will sort by PETs")
+        ARGS.SORTBY = 'PETs'
     #print statistcs to screen and write to file
     tt.print_summary(MODEL_df, ARGS)
     
     # plot data
-    if ARGS.PLOT:
+    if ARGS.PLOT or ARGS.PLOT_COMPONENTS:
         print('\nPLOTTING: may take same time')
         tt.plot.ufs.df = MODEL_df
         tt.plot.ufs.app = MODEL_df['CONFIG'][1]
+    if ARGS.PLOT:
+        print('   TOTAL WALLTIME')
+        COMPS_PLOT = MODEL_df['COMPS'][1].copy() 
+        COMPS_PLOT.remove('MED')
+        if 'ATM' in COMPS_PLOT:
+            COMPS_PLOT.append('ATMIO')
+        for M in ARGS.MED_VAR:
+            COMPS_PLOT.append(M)
+        tt.plot.ufs.all_comps = COMPS_PLOT
+        tt.plot.ufs.all_plot()
+    if ARGS.PLOT_COMPONENTS:
+        print('   COMPONENT WALLTIME')
         tt.plot.ufs.all_comps = MODEL_df['COMPS'][1]
         for C in tt.plot.ufs.all_comps:
             print('\t',C)
@@ -80,15 +98,7 @@ if __name__ == '__main__':
             tt.plot.ufs.x_axis = 'mpi'
             tt.plot.ufs.x_label = 'MPI tasks'
             #tt.plot.ufs.comp_plot()
-        print('\t','TOTAL WALLTIME')
-        COMPS_PLOT = MODEL_df['COMPS'][1].copy() 
-        COMPS_PLOT.remove('MED')
-        if 'ATM' in COMPS_PLOT:
-            COMPS_PLOT.append('ATMIO')
-        for M in ARGS.MED_VAR:
-            COMPS_PLOT.append(M)
-        tt.plot.ufs.all_comps = COMPS_PLOT
-        tt.plot.ufs.all_plot()
+    if ARGS.PLOT or ARGS.PLOT_COMPONENTS:
         import matplotlib.pyplot as plt
         plt.show()
 

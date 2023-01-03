@@ -5,16 +5,10 @@ TOPDIR=$NPB_WORKDIR/CODE
 mkdir -p $TOPDIR
 cd $TOPDIR
 
-REPO=NeilBarton-NOAA 
-#REPO=NOAA-EMC
-#REPO=XianwuXue-NOAA
-
-#branch=develop 
-#branch=pre_p8b
-#branch=S2SW_atmosDA
-#branch=S2SW_atmosDA_dev
-#branch=feature/gefs_v13_coupled_post
-branch=ATM_3DVAR_IAUT
+#REPO=NeilBarton-NOAA 
+#branch=S2S_cycle
+REPO=NOAA-EMC
+branch=develop 
 
 code=global-workflow_${branch////\_}_${REPO}
 ########################

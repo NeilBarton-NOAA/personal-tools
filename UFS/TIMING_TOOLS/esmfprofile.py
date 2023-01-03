@@ -32,6 +32,7 @@ def getfiles(TOPDIR):
 ####################################
 def panda_addto_dict(df, DICT, MED_VAR):
     DICT['PETs'] = int(df['PETs'].max()) 
+    DICT['UFSsec_max'] = int(df['Max (s)'].max()) 
     LOOP_ALL = []
     for C in DICT['COMPS']:
         if C == 'ATM':
