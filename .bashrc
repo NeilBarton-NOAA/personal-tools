@@ -52,11 +52,6 @@ fi
 
 # modules
 source ~/.profile
-machine=$(uname -n)
-START_IT=${START_INT:-F}
-if [[ ${START_INT} == F ]]; then 
-    echo "starting interactive node"
-    source ~/interactive_node.sh
-fi
+# making UFS
 export CMAKE_FLAGS="-DAPP=S2SWA -DCCPP_SUITES=FV3_GFS_v16_coupled_nsstNoahmpUGWPv1,FV3_GFS_v17_coupled_p8"
 
