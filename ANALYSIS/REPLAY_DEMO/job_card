@@ -1,8 +1,12 @@
-!#/bin/bash -l
-#PBS -l select=1:ncpus=1,mpiprocs=1
-#PBS -l walltime=001:00:00
-#PBS -A ens
-#PBS -N REPLAY_CICE
-##PBS -q 
+#!/bin/sh
 
-~/STUDIES/REPLAY_DEMO/CICE_data.sh
+#PBS -j oe
+#PBS -N REPLAY_CICE
+#PBS -A GEFS-DEV
+#PBS -q dev_transfer
+#PBS -l select=1:ncpus=1:mem=5GB
+#PBS -l walltime=01:00:00
+
+
+~/ANALYSIS/REPLAY_DEMO/CICE_data.sh
+#~/ANALYSIS/REPLAY_DEMO/CICE_data_ctl.sh

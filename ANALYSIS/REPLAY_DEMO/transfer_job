@@ -1,0 +1,18 @@
+#!/bin/sh
+#PBS -j oe
+#PBS -N TRANSFER
+#PBS -A GEFS-DEV
+#PBS -q dev_transfer
+#PBS -l select=1:ncpus=1:mem=5GB
+#PBS -l walltime=01:00:00
+
+set -xu
+source ~/.bashrc 1&2>/dev/null
+
+WORKDIR=${NPB_WORKDIR}/REPLAY_DEMO/
+
+#transfer to HPSS
+# htar maybe
+cd /lfs/h2/emc/ptmp/neil.barton/REPLAY_DEMO/
+htar -cvf ${HTAR_HOME}/REPLAY/RPL_aice.tar RPL/*aice*nc
+
