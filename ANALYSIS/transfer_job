@@ -1,0 +1,13 @@
+#!/bin/sh -l
+#SBATCH -J NPB_transfer
+#SBATCH --time=04:00:00
+#SBATCH -o %x.o%j
+#SBATCH --ntasks=1
+#SBATCH --exclusive #may mean use all memory
+#SBATCH -A marine-cpu
+#SBATCH --partition=service #for HPSS
+
+cd /scratch2/NCEPDEV/stmp3/Neil.Barton/REPLAY_DEMO
+htar -xvf /NCEPDEV/emc-marine/5year/Neil.Barton/REPLAY/CTL_aice.tar
+
+
