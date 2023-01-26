@@ -7,19 +7,17 @@ set -u
 source $PWD/MACHINE-config.sh
 
 ####################################
+#IDATE=2021032312
+#RESDET=48
+#START=warm
+
 IDATE=2020040100
-#IDATE=2018010100
 EDATE=$( $PWD/DTG-add-time.sh $IDATE 2 ) 
-REPO=NOAA-EMC
-branch=develop
-#branch=S2SW_atmosDA_dev # default is develop
-#branch=ATM_3DVAR_IAUT
-#branch=S2S_cycle
+#REPO=NOAA-EMC
+REPO=NeilBarton-NOAA
 ENKF=F
-IAU=T
-APP=ATM
-PSLOT=dev_${APP}_IAU-${IAU}
-#PSLOT=${APP}_DEV_HYBRID
+IAU=F
+APP=S2S
 
 ####################################
 # Sub-Components of script
@@ -45,9 +43,11 @@ CODE_DIR=${CODE_DIR:-${NPB_WORKDIR}/CODE/global-workflow_${branch////\_}_${REPO}
 SCRIPT_DIR=${CODE_DIR}/workflow
 CDUMP=${CDUMP:-gdas} 
 RUN_TYPE=${RUN_TYPE:-cycled}
+START=${START:-warm}
+[[ ${ENKF} == F ]] && NENS=0
 # options depending on configuration
 if [[ ${RUN_TYPE} == cycled ]]; then
-    PSLOT=${PSLOT:-${APP}_${IDATE}-${EDATE}}
+    PSLOT=${PSLOT:-${APP}_${RESDET}_${IDATE}-${EDATE}}
 else
     PSLOT=${PSLOT:-${APP}_${IDATE}}
 fi
@@ -84,10 +84,13 @@ OPTIONS="${OPTIONS} --cdump ${CDUMP} "
 OPTIONS="${OPTIONS} --gfs_cyc ${GFS_CYC} "
 OPTIONS="${OPTIONS} --comrot ${COMROT} "
 OPTIONS="${OPTIONS} --expdir ${EXPDIR} "
+if [[ $RUN_TYPE == forecast-only ]]; then
 OPTIONS="${OPTIONS} --icsdir ${ICSDIR} "
+fi
 if [[ $RUN_TYPE != forecast-only ]]; then
 OPTIONS="${OPTIONS} --resens ${RESENS} "
 OPTIONS="${OPTIONS} --nens ${NENS} "
+OPTIONS="${OPTIONS} --start ${START} "
 fi
 ${SCRIPT_DIR}/setup_expt.py ${RUN_TYPE} ${OPTIONS}
 if [[ $? != 0 ]]; then
@@ -100,8 +103,11 @@ fi
 # link restart files to COMROT
 if [[ $RUN_LINK_ICs == T ]]; then
   ${PWD}/LINK-ICs.sh ${IDATE} ${COMROT}/${PSLOT} ${APP} ${RESDET} ${RESENS} ${NENS} 
+  if (( $? > 0 )); then
+    echo 'LINK-ICs.sh failed'
+    exit 1
+  fi
 fi
-
 ####################################
 # edit options for run
 if [[ $RUN_EDIT_CONFIG == T ]]; then 
