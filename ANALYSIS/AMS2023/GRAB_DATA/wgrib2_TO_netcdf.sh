@@ -4,8 +4,8 @@ set -u
 
 VAR=${1:-'PRES'}
 #VARS="TMP UGRD VGRD DSWRF DLWRF USWRF ULWRF ICEC LCDC MCDC HCDC TCDC'
-#taus=( $(seq 0 6 840) )
-taus=( $(seq 6 6 840) )
+taus=( $(seq 0 6 840) )
+#taus=( $(seq 6 6 840) )
 #taus=( $(seq 0 24 48) )
 # P8
 declare -A EXPS
@@ -21,7 +21,7 @@ temp_nc_file=$1 && shift
 files=$@
 for f in ${files}; do
     #echo '    from: ' ${f}
-    wgrib2 ${f} -match ":${VAR}:" -append -netcdf ${temp_nc_file} 1>/dev/null 
+    wgrib2 ${f} -match ":${VAR}" -append -netcdf ${temp_nc_file} 1>/dev/null 
     (( $? > 0 )) && echo 'wgrib2 failed' && exit 1
 done
 }
@@ -54,8 +54,8 @@ for EXP in "${!EXPS[@]}"; do
         for tau in ${ptaus[@]}; do
             tau=$(printf "%03d" $tau)
             files=$(ls ${EXPS[$EXP]}/*/gfs*/00/atmos/gfs.*${f_search}*${tau}* )
-            nc_file=${SAVE_DIR}/WORKING_DIR/${VAR}_${tau}.nc
-            temp_nc_file=${SAVE_DIR}/WORKING_DIR/temp_${VAR}_${tau}.nc
+            nc_file=${SAVE_DIR}/WORKING_DIR/$(echo ${VAR} | tr : _)_${tau}.nc
+            temp_nc_file=${SAVE_DIR}/WORKING_DIR/temp_$(echo ${VAR} | tr : _)_${tau}.nc
             if [[ ! -f ${nc_file} ]]; then
                 echo 'creating: ' ${temp_nc_file}
                 WGRIB2_TO_NETCDF ${VAR} ${temp_nc_file} ${files} &
@@ -65,8 +65,8 @@ for EXP in "${!EXPS[@]}"; do
         # add tau data
         for tau in ${ptaus[@]}; do
             tau=$(printf "%03d" $tau)
-            nc_file=${SAVE_DIR}/WORKING_DIR/${VAR}_${tau}.nc
-            temp_nc_file=${SAVE_DIR}/WORKING_DIR/temp_${VAR}_${tau}.nc
+            nc_file=${SAVE_DIR}/WORKING_DIR/$(echo ${VAR} | tr : _)_${tau}.nc
+            temp_nc_file=${SAVE_DIR}/WORKING_DIR/temp_$(echo ${VAR} | tr : _)_${tau}.nc
             if [[ ! -f ${nc_file} ]]; then
                 echo "NCAP2 tau:" ${nc_file}
                 ncap2 -s "tau=$tau" ${temp_nc_file} ${nc_file}
@@ -83,11 +83,13 @@ for EXP in "${!EXPS[@]}"; do
     fi
     # cat taus
     #out_file=${SAVE_DIR}/${VAR}_TAU.nc
-    out_file=${SAVE_DIR}/${VAR}.nc
+    out_file=${SAVE_DIR}/$(echo ${VAR} | tr : _).nc
     if [[ -f ${out_file} ]]; then 
         rm ${out_file}
     fi
     echo '  cat tau files' 
+    echo $file_tau_list
+    echo $out_file
     ncecat -u tau ${file_tau_list} ${out_file}  
     (( $? > 0 )) && echo 'error in cat' && exit 1
     # remove unlimited dimension

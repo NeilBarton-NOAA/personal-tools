@@ -1,14 +1,13 @@
 #!/bin/sh
 set -u
-DTG=2020040100
-#DTG=2018030100
-#DTG=2021032200
-CRES_HIRES=C384 #192
-#CRES_HIRES=C96 #192
-#CRES_ENKF=C192
-CRES_ENKF=C96
+DTG=2021032312
+#DTG=2021032312
+CRES_HIRES=C48 #192
+CRES_ENKF=C48
+#CRES_ENKF=C48
 LEVS=128
 USE_V16RETRO=T
+CDUMP=gfs
 source ${PWD}/MACHINE-config.sh
 TOPDIR=${NPB_WORKDIR}/CODE/UFS_UTILS_NeilBarton-NOAA/util/gdas_init
 EXTRACT_DIR=${NPB_WORKDIR}/ICs/${DTG}/ORIG_RES
@@ -36,7 +35,8 @@ sed -i "s:${ORIG_EXTRACT_DIR}:${EXTRACT_DIR}:g" ${config_file}
 sed -i "s:${ORIG_OUTDIR}:${OUTDIR}:g" ${config_file}
 sed -i "s:CRES_HIRES=C192:CRES_HIRES=${CRES_HIRES}:g" ${config_file}
 sed -i "s:CRES_ENKF=C96:CRES_ENKF=${CRES_ENKF}:g" ${config_file}
-sed -i "s:LEVS=128:LEVS=${LEVS}:g" ${config_file}
+sed -i "s:LEVS=65:LEVS=${LEVS}:g" ${config_file}
+sed -i "s:CDUMP=gdas:CDUMP=${CDUMP}:g" ${config_file}
 if [[ $USE_V16RETRO == F ]]; then
     sed -i "s:use_v16retro=yes:use_v16retro=no:g" ${config_file}
 fi

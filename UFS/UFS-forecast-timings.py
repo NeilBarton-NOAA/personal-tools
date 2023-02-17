@@ -30,6 +30,7 @@ if __name__ == '__main__':
         DICT.update(tt.namelists.read_stdout(dir_name))
         DICT.update(tt.namelists.read_MOM_input(dir_name))
         DICT.update(tt.namelists.read_ice_in(dir_name))
+        DICT.update(tt.namelists.read_fv_core_netcdf(dir_name))
         
         # ESMF.Profile.summary read depenedent on tt.nameruns()
         ESMF_df, MED_VAR = tt.esmfprofile.to_panda(f)
@@ -61,9 +62,7 @@ if __name__ == '__main__':
     MODEL_df = pd.DataFrame(MODEL_SUMMARY, np.arange(len(files)) + 1, MODEL_header )
     
     # check to see if the SORTBY option is possible
-    try:
-        MODEL_df[ARGS.SORTBY].sort()
-    except:
+    if ARGS.SORTBY not in MODEL_df.keys():
         print("WARNING: sort variable ", ARGS.SORTBY, " not found in header, will sort by PETs")
         ARGS.SORTBY = 'PETs'
     #print statistcs to screen and write to file

@@ -1,5 +1,5 @@
 #!/bin/sh -l
-#SBATCH -J NPB_transfer
+#SBATCH -J TRANSFER
 #SBATCH --time=04:00:00
 #SBATCH -o %x.o%j
 #SBATCH --ntasks=1
@@ -7,7 +7,12 @@
 #SBATCH -A marine-cpu
 #SBATCH --partition=service #for HPSS
 
-cd /scratch2/NCEPDEV/stmp3/Neil.Barton/REPLAY_DEMO
-htar -xvf /NCEPDEV/emc-marine/5year/Neil.Barton/REPLAY/CTL_aice.tar
+# HPSS to Hera
+#cd /scratch2/NCEPDEV/stmp3/Neil.Barton/REPLAY_DEMO
+#htar -xvf /NCEPDEV/emc-marine/5year/Neil.Barton/REPLAY/CTL_aice.tar
 
+# Hera to HPSS
+cd /scratch2/NCEPDEV/stmp3/Neil.Barton/DIAG/OBS
+hsi mkdir -p /NCEPDEV/emc-marine/5year/Neil.Barton/DIAG/OBS/
+htar -cvf /NCEPDEV/emc-marine/5year/Neil.Barton/DIAG/OBS/ice_concentration.tar ice_concentration/*
 

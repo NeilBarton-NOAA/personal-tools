@@ -28,17 +28,17 @@ def get(files, var, grab_seasons = True):
             ds['area'] = (ds_area['cell_area'].dims, ds_area['cell_area'].astype('float32').values / 1e6)
         ############
         # add var file
-        if 'CRF' not in var_file:
-            if os.path.exists(var_file):
-                print('     adding',  var_file)
-                vs = xr.open_dataset(var_file)
-                for v in list(vs.keys()):
-                    ds[v] = (vs[v].dims, vs[v].astype('float32').values)
-            ############
-            # tau
-            ds['tau'] = ds['tau'].astype('float32') / 24.0
-        else:
-            ds['tau'] = np.arange(0,141*6,6)
+        #if 'CRF' not in var_file:
+        #    if os.path.exists(var_file):
+        #        print('     adding',  var_file)
+        #        vs = xr.open_dataset(var_file)
+        #        for v in list(vs.keys()):
+        #            ds[v] = (vs[v].dims, vs[v].astype('float32').values)
+        #    ############
+        #    # tau
+        #    ds['tau'] = ds['tau'].astype('float32') / 24.0
+        #else:
+        #    ds['tau'] = np.arange(0,140*6,6)
         dat.append(ds)
     return dat
 

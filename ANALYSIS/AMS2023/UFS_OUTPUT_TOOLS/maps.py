@@ -169,7 +169,7 @@ def weekly_seasons_maps(ds, ICE_OBS = False, pole = 'SH'):
                 ax = npb.maps.Antarctic(ax)
             elif pole == 'NH':
                 ax = fig.add_subplot(1,4,i+1, projection=ccrs.NorthPolarStereo())
-                ax = npb.maps.Arctic(ax)
+                ax = npb.base_maps.Arctic(ax)
             cmap = plt.get_cmap('terrain_r')
             pcm = ax.contourf(lon, lat, dat, 
                     levels = m_levels, 
@@ -204,7 +204,7 @@ def difference_month_weeksave(DAT, ICE_OBS = False, pole = 'NH'):
             y = np.arange(+4350000, -3950000, -dy)
             kw = dict(central_latitude=-90, central_longitude=0, true_scale_latitude=-70)
     months = np.arange(12) + 1
-    months = [1,12]
+    months = [9]
     print(DAT[0].var_name)
     for s, m in enumerate(months):
         for i, taus in enumerate([[0,7], [8,14], [15,21], [22,28], [29, 35]]):
@@ -248,10 +248,10 @@ def difference_month_weeksave(DAT, ICE_OBS = False, pole = 'NH'):
                 # plot
                 if pole == 'NH':
                     ax = fig.add_subplot(1,3,j+1, projection=ccrs.NorthPolarStereo())
-                    ax = npb.maps.Arctic(ax)
+                    ax = npb.base_maps.Arctic(ax)
                 elif pole == 'SH':
                     ax = fig.add_subplot(1,3,j+1, projection=ccrs.SouthPolarStereo())
-                    ax = npb.maps.Antarctic(ax)
+                    ax = npb.base_maps.Antarctic(ax)
                 axs.append(ax)
                 lon, lat, dat = npb.maptools.index_lon_lat_dat(lon, lat, d.values)
                 diff.append(np.copy(dat))
@@ -264,9 +264,9 @@ def difference_month_weeksave(DAT, ICE_OBS = False, pole = 'NH'):
                 # add ice obs
                 if ICE_OBS:
                     ax.contour(x, y, obs, [0.15], colors = ['k'], transform = ccrs.Stereographic(**kw))
-                ax = npb.maps.add_features(ax)
+                ax = npb.base_maps.add_features(ax)
                 ax.set_title(ds.test_name)
-            dat = diff[1] - diff[0]
+            dat = diff[0] - diff[1]
             if (ds.var_name == 'aice_h'):
                 dat[(diff[1] < 0.15) & (diff[0] < 0.15)] = np.nan
                 dat[dat == 0] = np.nan
@@ -283,27 +283,38 @@ def difference_month_weeksave(DAT, ICE_OBS = False, pole = 'NH'):
                     d_levels = np.arange(mi, ma + n, n)
             if pole == 'NH':
                 ax = fig.add_subplot(1,3,3, projection=ccrs.NorthPolarStereo())
-                ax = npb.maps.Arctic(ax)
+                ax = npb.base_maps.Arctic(ax)
             elif pole == 'SH':
                 ax = fig.add_subplot(1,3,3, projection=ccrs.SouthPolarStereo())
-                ax = npb.maps.Antarctic(ax)
+                ax = npb.base_maps.Antarctic(ax)
             cmap = plt.get_cmap('seismic')
             #dcm = ax.contourf(lon, lat, dat, 
             #    transform=ccrs.PlateCarree(), cmap = cmap)
-            dcm = ax.contourf(lon, lat, dat, 
-                levels = d_levels, 
-                extend = 'both',
-                transform=ccrs.PlateCarree(), cmap = cmap)
+            #dcm = ax.contourf(lon, lat, dat, 
+            #    levels = d_levels, 
+            #    extend = 'both',
+            #    transform=ccrs.PlateCarree(), cmap = cmap)
+            if ds.var_name == 'aice_h':
+                ax.contour(lon, lat, diff[0], 
+                    levels = [0.15],
+                    colors = ['b'],
+                    label = DAT[0].test_name,
+                    transform=ccrs.PlateCarree())
+                ax.contour(lon, lat, diff[1], 
+                    levels = [0.15], 
+                    colors = ['k'],
+                    label = DAT[1].test_name,
+                    transform=ccrs.PlateCarree())
             if ICE_OBS:
                 ax.contour(x, y, obs, [0.15], colors = ['k'], transform = ccrs.Stereographic(**kw))
-            ax = npb.maps.add_features(ax)
+            ax = npb.base_maps.add_features(ax)
             ax.set_title('Difference')
             axs.append(ax)
             axs = np.array(axs)
             cbar_ax = fig.add_axes([0.16, 0.15, 0.44, 0.05])
             fig.colorbar(pcm, ax = axs[1], cax = cbar_ax, orientation='horizontal' )
             cbar_ax = fig.add_axes([0.70, 0.15, 0.17, 0.05])
-            fig.colorbar(dcm, ax = axs[1], cax = cbar_ax, orientation='horizontal' )
+            #fig.colorbar(dcm, ax = axs[1], cax = cbar_ax, orientation='horizontal' )
             #title = str(pd.to_datetime(ds.time[0].values))[0:10] + ' forecast day: ' + str(ds.tau[25].values)  
             try:
                 title = long_name[ds.var_name] + ': ' + calendar.month_abbr[m] + ' Week ' + str(i+1)
@@ -316,6 +327,7 @@ def difference_month_weeksave(DAT, ICE_OBS = False, pole = 'NH'):
                 axs[1].text(0.0, -37., title, fontsize=16, ha = 'center', transform = ccrs.PlateCarree())
             # show
             fig_name = save_dir + '/' +  ds.var_name + '_' + calendar.month_abbr[m] + 'Week' + str(i+1)
+            plt.legend(frameon = False)
             plt.savefig(fig_name, bbox_inches = 'tight')
             #plt.show()
             #plt.close()

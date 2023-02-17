@@ -6,11 +6,11 @@ def nameruns(DICT):
     COMPS = DICT['COMPS']
     if 'ATM' and 'OCN' and 'ICE' and 'WAV' and 'CHM' in COMPS:
         DICT['CONFIG'] = 'S2SWA'
-    elif 'ATM' and 'OCN' and 'ICE' and 'WAV' and not 'CHM' in COMPS:
+    elif ('ATM' in COMPS) and ('OCN' in COMPS) and ('ICE' in COMPS) and ('WAV' in COMPS) and ('CHM' not in COMPS):
         DICT['CONFIG'] = 'S2SW'
-    elif 'ATM' and 'OCN' and 'ICE' and not 'WAV' and not 'CHM' in COMPS:
+    elif ('ATM' in COMPS) and ('OCN' in COMPS) and ('ICE' in COMPS) and ('WAV' not in COMPS) and ('CHM' not in COMPS):
         DICT['CONFIG'] = 'S2S'
-    elif 'ATM' and not 'OCN' and not 'ICE' and not 'WAV' and not 'CHM' in COMPS:
+    elif ('ATM' in COMPS) and ('OCN' and 'ICE' and 'WAV' and 'CHM' not in COMPS):
         DICT['CONFIG'] = 'ATM'
     else:
         print('FATAL: configuration unkown from', COMPS)
@@ -73,16 +73,15 @@ def print_summary(df, ARGS):
     pd.options.display.colheader_justify = 'center'
     
     # filter through what to print from MODEL_header
-    HEAD_PRINT = ['CONFIG', 'RESOLUTION', 'TAU', 'MINpDAY_GFS', 'MINpDAY_GEFS', 'MINpDAY', 'PETs']
+    HEAD_PRINT = ['CONFIG', 'RESOLUTION', 'TAU', 'MINpDAY_GFS', 'MINpDAY_GEFS', 'MINpDAY', 'PETs', 'MIXED_MODE']
     for H in HEAD_PRINT:
         if H not in df.columns:
             HEAD_PRINT.remove(H)
     HEAD_COMPS = df['COMPS'][1].copy() 
     HEAD_COMPS.remove('MED')
     REMOVE_HEAD_PRINT = []
-    for C in df['COMPS_SAMEPETS'][1]:
-        HEAD_PRINT.append(C+'mpi-t')
     for C in HEAD_COMPS: 
+        HEAD_PRINT.append(C+'mpi-t')
         for SM in df['COMPS_SAMEPETS'][1]:
             if C not in SM:
                 HEAD_PRINT.append(C+'mpi-t')
@@ -157,6 +156,9 @@ def print_summary(df, ARGS):
     if ARGS.SORTBY not in HEAD_PRINT:
         HEAD_PRINT.append(ARGS.SORTBY)
 
+    df = df.sort_values('CONFIG')
+    df = df.sort_values('RESOLUTION')
+    df = df.sort_values('TAU')
     df = df.sort_values(ARGS.SORTBY)
     fw = 'esmf_summary.txt'
     print('\n\n\n')

@@ -151,23 +151,23 @@ def get_iceobs(season = False):
             # save to netcdf
             obs.to_netcdf(obs_file)
             print('wrote:', obs_file)
-        if 'mean_ice_con' not in list(obs.keys()):
-            print(' calculating mean of sea ice obs')
-            print(obs)
-            ds = obs.sel(time = list(set(obs['time'].values) & set(season)))
-            DIM = ['DJF', 'MAM', 'JJA', 'SON']
-            DIM_DAT = []
-            for i, months in enumerate([[12,1,2], [3,4,5], [6,7,8], [9,10,11]]):
-                d = ds['ice_con'].isel(time = ds['time'].dt.month.isin(months)).mean('time') 
-                DIM_DAT.append(d)
-            DIM_DAT = np.array(DIM_DAT).astype('float32')
-            list_dims = list(d.dims)
-            list_dims.insert(0, 'season')
-            obs['mean_ice_con'] = (list_dims, DIM_DAT)
-            obs['season'] = (('season'), DIM)
-            # save to netcdf
-            os.remove(obs_file)
-            obs.to_netcdf(obs_file)
-            print('wrote:', obs_file)
+        #if 'mean_ice_con' not in list(obs.keys()):
+        #    print(' calculating mean of sea ice obs')
+        #    print(obs)
+        #    ds = obs.sel(time = list(set(obs['time'].values) & set(season)))
+        #    DIM = ['DJF', 'MAM', 'JJA', 'SON']
+        #    DIM_DAT = []
+        #    for i, months in enumerate([[12,1,2], [3,4,5], [6,7,8], [9,10,11]]):
+        #        d = ds['ice_con'].isel(time = ds['time'].dt.month.isin(months)).mean('time') 
+        #        DIM_DAT.append(d)
+        #    DIM_DAT = np.array(DIM_DAT).astype('float32')
+        #    list_dims = list(d.dims)
+        #    list_dims.insert(0, 'season')
+        #    obs['mean_ice_con'] = (list_dims, DIM_DAT)
+        #    obs['season'] = (('season'), DIM)
+        #    # save to netcdf
+        #    os.remove(obs_file)
+        #    obs.to_netcdf(obs_file)
+        #    print('wrote:', obs_file)
         ob.append(obs)
     return ob

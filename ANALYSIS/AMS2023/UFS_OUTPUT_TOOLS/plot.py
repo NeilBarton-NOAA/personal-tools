@@ -160,7 +160,7 @@ def weekly_seasons_maps(ds, ICE_OBS = False, pole = 'SH'):
                 for t in t_time:
                     t_array.extend((t + pd.to_timedelta(t_taus, unit = 'D')).to_numpy())
                 t_array = np.array(t_array) 
-                t_array = list(set(ICE_OBS['time'].values) & set(t_array))
+                ct_array = list(set(ICE_OBS['time'].values) & set(t_array))
                 obs = ICE_OBS['ice_con'].sel(time = t_array).mean('time').values
                 obs[obs > 1] = np.nan
                 #obs = obs.where(obs < 1.0)

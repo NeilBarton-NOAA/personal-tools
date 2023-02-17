@@ -32,7 +32,7 @@ if __name__ == '__main__':
     #DAT = ufs.dat.seasons(DAT)
     #DAT.append(CFS[0])
     # plots
-    ufs.maps.difference_month_weeksave(DAT, pole = 'SH')
+    ufs.maps.difference_month_weeksave(DAT, pole = 'NH')
     #ufs.plot.ice_extent_meanmonth([DAT[0], DAT[1]], var = 'NH_extent')
     #ufs.plot.ice_extent_meanmonth([CFS[0], OBS], var = 'NH_extent')
     #ufs.plot.ice_extent_meanmonth([DAT[0], OBS], var = 'NH_extent')

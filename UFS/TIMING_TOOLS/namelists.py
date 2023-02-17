@@ -87,6 +87,21 @@ def read_stdout(dir_name):
     return DICT
 
 ####################################
+def read_fv_core_netcdf(dir_name):
+    import xarray as xr
+    import numpy as np
+    DICT = {}
+    config_file = dir_name + '/RESTART/fv_core.res.nc' 
+    dtype = xr.open_dataset(config_file)['ak'].values.dtype
+    if dtype == np.dtype('float32'):
+        DICT['MIXED_MODE'] = 'T'
+    elif dtype == np.dtype('float64'):
+        DICT['MIXED_MODE'] = 'F'
+    else:
+        DICT['MIXED_MODE'] = 'unknown'
+    return DICT
+
+####################################
 def read_MOM_input(dir_name):
     DICT = {}
     config_file = dir_name + '/INPUT/MOM_input'
@@ -104,6 +119,8 @@ def read_MOM_input(dir_name):
                 DICT['OCNdttherm'] = int(line.strip('DT_THERM =').split('!')[0])
         if I == 1440 and J == 1080:
             RES = '0.25'
+        elif I == 360 and J == 320:
+            RES = '1.00'
         else:
             print('FATAL: OCNres unknown from I and J: I =', I, ' J =', J)
         DICT['OCNres'] = RES + L
