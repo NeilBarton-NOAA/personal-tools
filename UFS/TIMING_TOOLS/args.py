@@ -17,7 +17,7 @@ class get:
     def __new__(self, args = parser.parse_args()):
         TOPDIR = args.directory
         if TOPDIR == 'RTs':
-            self.TOPDIR = os.environ['NPB_WORKDIR'] + '/RUNs/RTs'
+            self.TOPDIR = os.environ['NPB_WORKDIR'] + '/RUNs/UFS'
         else:
             self.TOPDIR = TOPDIR[0]
         self.SHOW_MED =  args.med

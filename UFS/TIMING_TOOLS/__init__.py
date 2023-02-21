@@ -1,6 +1,5 @@
 import args, esmfprofile, namelists, plot
 
-
 ####################################
 def nameruns(DICT):
     COMPS = DICT['COMPS']
@@ -73,7 +72,7 @@ def print_summary(df, ARGS):
     pd.options.display.colheader_justify = 'center'
     
     # filter through what to print from MODEL_header
-    HEAD_PRINT = ['CONFIG', 'RESOLUTION', 'TAU', 'MINpDAY_GFS', 'MINpDAY_GEFS', 'MINpDAY', 'PETs', 'MIXED_MODE']
+    HEAD_PRINT = ['CONFIG', 'RESOLUTION', 'TAU', 'MINpDAY_GFS', 'MINpDAY_GEFS', 'MINpDAY', 'NODES', 'MIXED_MODE']
     for H in HEAD_PRINT:
         if H not in df.columns:
             HEAD_PRINT.remove(H)

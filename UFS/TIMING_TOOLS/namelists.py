@@ -63,7 +63,7 @@ def read_model_configure(dir_name):
         if 'npx' in line and line[0] != '+':
             DICT['ATMres'] = 'C' + str(int(line.split('npx =')[-1].strip()) - 1)
         if 'levp =' in line and line[0] != '+':
-            ATMlev = line.split('levp = ')[-1].strip()
+            ATMlev = str(int(line.split('levp = ')[-1].strip()) - 1)
         if ' layout =' in line and line[0] != '+':
             DICT['ATMlayout'] = line.split(' layout = ')[-1].strip()
         if 'io_layout' in line and line[0] != '+':
@@ -140,3 +140,14 @@ def read_ice_in(dir_name):
             if '  dt  ' in line:
                 DICT['ICEdt'] = int(line.split('=')[-1])
     return DICT
+
+####################################
+def read_job_card(dir_name):
+    DICT = {}
+    config_file = dir_name + '/job_card'
+    if os.path.exists(config_file):
+        for line in open(config_file):
+            if '--nodes=' in line:
+                DICT['NODES'] = int(line.split('--nodes=')[-1])
+    return DICT
+
