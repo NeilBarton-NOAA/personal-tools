@@ -3,8 +3,8 @@ set -u
 source $PWD/MACHINE-config.sh
 TOPDIR=$NPB_WORKDIR/CODE
 mkdir -p $TOPDIR
-REPO=NeilBarton-NOAA 
-branch=esmf_timings_run
+REPO=NeilBarton-NOAA #ufs-community
+branch=run #develop
 CODE=ufs-weather-model_${branch}_${REPO}
 
 ########################
@@ -25,6 +25,7 @@ fi
 ####################################
 # build model
 module purge
+[[ ${module_file} == *wcoss* ]] && module reset
 module use modulefiles
 module load ${module_file}
 
