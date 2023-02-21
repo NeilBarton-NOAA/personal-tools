@@ -4,7 +4,8 @@ source $PWD/MACHINE-config.sh
 TOPDIR=$NPB_WORKDIR/CODE
 mkdir -p $TOPDIR
 REPO=NeilBarton-NOAA 
-CODE=ufs-weather-model_${REPO}
+branch=esmf_timings_run
+CODE=ufs-weather-model_${branch}_${REPO}
 echo $PWD
 ########################
 # check out code
@@ -12,6 +13,7 @@ cd $TOPDIR
 if [[ ! -d ${CODE} ]]; then
     git clone https://github.com/${REPO}/ufs-weather-model.git ${CODE}
     cd ${CODE}
+    git checkout ${branch}
     git submodule update --init --recursive
 else
     cd ${CODE}
