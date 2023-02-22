@@ -1,0 +1,13 @@
+#!/bin/sh
+set -u
+FILE=${1:-$PWD}
+YEAR=${2:-1}
+HTAR=${3:-F}
+
+HSI_DIR=/NCEPDEV/emc-marine/${YEAR}year/Neil.Barton
+if [[ ${HTAR} == T ]]; then
+    hsi mkdir -p ${HSI_DIR}
+    htar -cvf ${HSI_DIR}/test.tar ${FILE}/*
+else
+    hsi get ${HSI_DIR}/${FILE} : ${FILE}
+fi

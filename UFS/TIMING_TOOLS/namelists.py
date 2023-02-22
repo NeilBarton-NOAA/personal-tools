@@ -92,13 +92,14 @@ def read_fv_core_netcdf(dir_name):
     import numpy as np
     DICT = {}
     config_file = dir_name + '/RESTART/fv_core.res.nc' 
-    dtype = xr.open_dataset(config_file)['ak'].values.dtype
-    if dtype == np.dtype('float32'):
-        DICT['MIXED_MODE'] = 'T'
-    elif dtype == np.dtype('float64'):
-        DICT['MIXED_MODE'] = 'F'
+    if os.path.exists(config_file):
+        dtype = xr.open_dataset(config_file)['ak'].values.dtype
+        if dtype == np.dtype('float32'):
+            DICT['FV3_32BIT'] = 'T'
+        elif dtype == np.dtype('float64'):
+            DICT['FV3_32BIT'] = 'F'
     else:
-        DICT['MIXED_MODE'] = 'unknown'
+        DICT['FV3_32BIT'] = 'unknown'
     return DICT
 
 ####################################

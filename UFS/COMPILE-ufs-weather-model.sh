@@ -3,8 +3,10 @@ set -u
 source $PWD/MACHINE-config.sh
 TOPDIR=$NPB_WORKDIR/CODE
 mkdir -p $TOPDIR
-REPO=NeilBarton-NOAA #ufs-community
-branch=run #develop
+REPO=NeilBarton-NOAA 
+branch=run 
+#REPO=ufs-community
+#branch=develop
 CODE=ufs-weather-model_${branch}_${REPO}
 
 ########################

@@ -10,16 +10,14 @@ set -u
 export TEST_NAME=S2S
 export ATM_RES="C384"
 export OCN_RES="025"
-export FORECAST_LENGTH=0.25 #in days
-export WALLCLOCK=0.25 # in hours
+export FORECAST_LENGTH=16 #in days
+export WALLCLOCK=5 # in hours
 export UFS_EXEC=ufs_S2SWA_mixed_mode
 REPO=NeilBarton-NOAA
 branch=run
 export DEBUG=F
 ####################################
-# Set MPI options
-#   if tasks = 0, model will not run
-# ATM
+# Set MPI options,  if NMPI=0, model will not run
 export ATM_INPES=16
 export ATM_JNPES=12
 export ATM_THRD=1
@@ -35,10 +33,18 @@ export MED_THRD=${ATM_THRD}
 # IO options
 export ATM_WPG=60
 #export MOM6_IO_LAYOUT='4,2'
-export RESTART_N=24
+export RESTART_FREQ=$(( FORECAST_LENGTH * 24 ))
 
 ############
 # Submit Forecast
 export UFS_HOME=${NPB_WORKDIR}/CODE/ufs-weather-model_${branch}_${REPO}
-${UFS_HOME}/RUN/UFS-submit.sh ${NPB_WORKDIR}/RUNs/UFS/${TEST_NAME}_${ATM_INPES}${ATM_JNPES}-${ATM_THRD}_${ATM_WPG}_${OCN_NMPI}_${ICE_NMPI} #${APP} #_$( date +%s )
+# run script
+${UFS_HOME}/RUN/UFS-submit.sh ${NPB_WORKDIR}/RUNs/UFS/\
+${TEST_NAME}_\
+ATM_${ATM_INPES}${ATM_JNPES}-${ATM_THRD}_\
+ATMIO_${ATM_WPG}_\
+OCN_${OCN_NMPI}_\
+ICE_${ICE_NMPI}_\
+RESTART_N_${RESTART_FREQ} #_\
+#$( date +%s )
 
