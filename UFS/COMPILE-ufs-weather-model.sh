@@ -43,5 +43,8 @@ for COMP in "${!COMPILES[@]}"; do
     mkdir -p bin
     cp build/ufs_model bin/ufs_model
     cp build/ufs_model bin/ufs_${COMP}
+    echo ${PWD}
+    ls bin/*
+
 done
 
