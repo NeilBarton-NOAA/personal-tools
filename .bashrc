@@ -30,6 +30,7 @@ alias dirs='dirs -v'
 alias psu="ps U $USER"
 alias gitgeturl="git config --get remote.origin.url"
 alias qme="squeue -u $USER --format='%.18i %.50j %.2t %.8M %.10l %.6D'"
+ARCHIVE_HOME=/NCEPDEV/emc-marine/3year/Neil.Barton
 
 if [[ $machine == h* ]]; then
     #export NPB_WORKDIR=/scratch1/NCEPDEV/stmp2/Neil.Barton
