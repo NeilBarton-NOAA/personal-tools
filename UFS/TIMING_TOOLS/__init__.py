@@ -76,7 +76,7 @@ def print_summary(df, ARGS):
         FP = 'NODES'
     else:
         FP = 'PETs'
-    HEAD_PRINT = ['CONFIG', 'RESOLUTION', 'TAU', 'MINpDAY_GFS', 'MINpDAY_GEFS', 'MINpDAY', FP, 'MIXED_MODE']
+    HEAD_PRINT = ['CONFIG', 'RESOLUTION', 'TAU', 'MINpDAY_GFS', 'MINpDAY_GEFS', 'MINpDAY', FP, 'MIXED_MODE', 'WALLTIMEsec', 'UFSsec_max']
     for H in HEAD_PRINT:
         if H not in df.columns:
             HEAD_PRINT.remove(H)
@@ -92,12 +92,12 @@ def print_summary(df, ARGS):
             HEAD_PRINT.append('ATMIOmpi')
 
     for C in HEAD_COMPS: 
-        HEAD_PRINT.append(C+'sec_max')
+        HEAD_PRINT.append(C+'%')
 
     # remove items that share PEs
     for C in REMOVE_HEAD_PRINT:
         HEAD_PRINT.remove(C+'mpi-t')
-        HEAD_PRINT.remove(C+'sec_max')
+        HEAD_PRINT.remove(C+'%')
     
     if (df['ATMmpi-t'] != df['MEDmpi-t']).any():
         HEAD_PRINT.append('MEDmpi-t')
@@ -105,14 +105,14 @@ def print_summary(df, ARGS):
     # if showing ATMIO stats
     PRINT_ATMIO = False
     if ARGS.SHOW_IO:
-        HEAD_PRINT.insert(HEAD_PRINT.index('ATMsec_max') + 1,'ATMIOsec_max')
+        HEAD_PRINT.insert(HEAD_PRINT.index('ATM%') + 1,'ATMIO%')
         HEAD_PRINT.append('ATMiolayout')
         if 'OCNiolayout' in df.columns:
             HEAD_PRINT.append('OCNiolayout')
     elif 'ATMiosec_max' in df.columns:
         if  (( (df['ATMsec_max'] - df['ATMIOsec_max']) / df['ATMsec_max'] * 100.0 ) < 10.).any():
             PRINT_ATMIO = True
-            HEAD_PRINT.insert(HEAD_PRINT.index('ATMsec_max') + 1,'ATMIOsec_max')
+            HEAD_PRINT.insert(HEAD_PRINT.index('ATM%') + 1,'ATMIO%')
             HEAD_PRINT.append('ATMiolayout')
 
     # if showing loop
@@ -131,7 +131,7 @@ def print_summary(df, ARGS):
     # if showing MEDIATOR variables
     if ARGS.SHOW_MED:
         for M in ARGS.MED_VAR:
-            HEAD_PRINT.append(M+'sec_max')
+            HEAD_PRINT.append(M+'%')
     
     # if shoing xy FV3 layout
     if ARGS.SHOW_XYLAYOUT:

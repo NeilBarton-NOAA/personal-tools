@@ -49,6 +49,7 @@ def panda_addto_dict(df, DICT, MED_VAR):
                 DICT['ATMIOpe'] = int(df['PEs'].where(df['Region'] == 'wrtComp_01').max())
                 DICT['ATMIOsec_mean'] = round(df['Mean (s)'].where(df['Region'] == 'wrtComp_01').sum(),1)
                 DICT['ATMIOsec_max'] = round(df['Max (s)'].where(df['Region'] == 'wrtComp_01').sum(),1)
+                DICT['ATMIO%'] = round(df['Max (s)'].where(df['Region'] == 'wrtComp_01').sum()/DICT['UFSsec_max']*100.,1)
             elif (df['Region'] == 'datm').any():
                 DICT[C+'mpi'] = int(df['PETs'].where(df['Region'] == C).max())
                 DICT[C+'pe'] = int(df['PEs'].where(df['Region'] == C).max()) 
@@ -64,15 +65,21 @@ def panda_addto_dict(df, DICT, MED_VAR):
         if C == 'MED':
             DICT[C+'sec_mean'] = round(df[df['Region'] == C].sum()['Mean (s)'], 1)
             DICT[C+'sec_max'] = round(df[df['Region'] == C].sum()['Max (s)'], 1)
+            DICT[C+'%'] = round(df[df['Region'] == C].sum()['Max (s)']\
+                /DICT['UFSsec_max']*100., 1)
         else:
             LOOP_ALL.append(LOOP) 
             DICT[C+'loop'] = LOOP
             if C == 'ATM':
                 DICT[C+'sec_mean'] = round(df[df['Region'] == 'fv3_fcst'].loc[df['Count'] == LOOP].sum()['Mean (s)'],1)
                 DICT[C+'sec_max'] = round(df[df['Region'] == 'fv3_fcst'].loc[df['Count'] == LOOP].sum()['Max (s)'],1)
+                DICT[C+'%'] = round(df[df['Region'] == 'fv3_fcst'].loc[df['Count'] == LOOP].sum()['Max (s)']\
+                    /DICT['UFSsec_max']*100.,1)
             else:
                 DICT[C+'sec_mean'] = round(df[df['Region'] == C].loc[df['Count'] == LOOP].sum()['Mean (s)'],1)
                 DICT[C+'sec_max'] = round(df[df['Region'] == C].loc[df['Count'] == LOOP].sum()['Max (s)'],1)
+                DICT[C+'%'] = round(df[df['Region'] == C].loc[df['Count'] == LOOP].sum()['Max (s)']\
+                    /DICT['UFSsec_max']*100.,1)
         # loop through TO mediator items
         MED_NAMES = [C + '-TO-MED', 'MED-TO-' + C]
         for MED_NAME in MED_NAMES:
@@ -80,12 +87,15 @@ def panda_addto_dict(df, DICT, MED_VAR):
                 .loc[df['Count'] > 1].sum()['Mean (s)'],1)
             DICT[MED_NAME +'sec_max'] = round(df[df['Region'] == MED_NAME].loc[df['Phase'] == 'RunPhase1']\
                 .loc[df['Count'] > 1].sum()['Max (s)'],1)
+            DICT[MED_NAME +'%'] = round(df[df['Region'] == MED_NAME].loc[df['Phase'] == 'RunPhase1']\
+                .loc[df['Count'] > 1].sum()['Max (s)']/DICT['UFSsec_max']*100.,1)
     
     # calc Z score of mediator items (may not be needed) 
     me, ma = [], []
     for M in MED_VAR: 
         me.append(DICT[M+'sec_mean'])
         ma.append(DICT[M+'sec_max'])
+        ma.append(DICT[M+'%'])
     me = np.array(me)
     ma = np.array(ma)
     for M in MED_VAR: 
