@@ -83,13 +83,15 @@ def read_stdout(dir_name):
         config_file = dir_name + '/logfile.000000.out' # global-workflow testing
     if os.path.exists(config_file):
         for line in open(config_file,'r'):
-            if 'The total amount of wall time ' in line:
-                DICT['WALLTIMEsec'] = float(line.split('=')[-1]) 
-                DICT['WALLTIME'] = round(float(line.split('=')[-1]) / 3600.,2)
-            if 'Total runtime ' in line:
-                DICT['WALLTIMEsec'] = float(line.split('runtime ')[-1].strip())
-                DICT['WALLTIME'] = round(float(line.split('runtime ')[-1].strip()) / 3600.,2)
-                break
+            if (os.path.basename(config_file) == 'out'):
+                if 'The total amount of wall time ' in line:
+                    DICT['WALLTIMEsec'] = float(line.split('=')[-1]) 
+                    DICT['WALLTIME'] = round(float(line.split('=')[-1]) / 3600.,2)
+            else:
+                if 'Total runtime ' in line:
+                    DICT['WALLTIMEsec'] = float(line.split('runtime ')[-1].strip())
+                    DICT['WALLTIME'] = round(float(line.split('runtime ')[-1].strip()) / 3600.,2)
+                    break
     return DICT
 
 ####################################
