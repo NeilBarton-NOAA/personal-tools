@@ -79,11 +79,17 @@ def read_stdout(dir_name):
     config_file = dir_name + '/out' #RT testing
     if not os.path.exists(config_file):
         config_file = dir_name + '/gfsfcst.log' # global-workflow testing
+    if not os.path.exists(config_file):
+        config_file = dir_name + '/logfile.000000.out' # global-workflow testing
     if os.path.exists(config_file):
-        for line in open(config_file):
+        for line in open(config_file,'r'):
             if 'The total amount of wall time ' in line:
                 DICT['WALLTIMEsec'] = float(line.split('=')[-1]) 
                 DICT['WALLTIME'] = round(float(line.split('=')[-1]) / 3600.,2)
+            if 'Total runtime ' in line:
+                DICT['WALLTIMEsec'] = float(line.split('runtime ')[-1].strip())
+                DICT['WALLTIME'] = round(float(line.split('runtime ')[-1].strip()) / 3600.,2)
+                break
     return DICT
 
 ####################################
@@ -148,7 +154,9 @@ def read_job_card(dir_name):
     config_file = dir_name + '/job_card'
     if os.path.exists(config_file):
         for line in open(config_file):
-            if '--nodes=' in line:
+            if '--nodes=' in line: #slurm
                 DICT['NODES'] = int(line.split('--nodes=')[-1])
+            elif 'select=' in line: #pbs
+                DICT['NODES'] = int(line.split('select=')[-1].split(':')[0])
     return DICT
 

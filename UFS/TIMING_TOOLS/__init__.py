@@ -72,7 +72,11 @@ def print_summary(df, ARGS):
     pd.options.display.colheader_justify = 'center'
     
     # filter through what to print from MODEL_header
-    HEAD_PRINT = ['CONFIG', 'RESOLUTION', 'TAU', 'MINpDAY_GFS', 'MINpDAY_GEFS', 'MINpDAY', 'NODES', 'MIXED_MODE']
+    if 'NODES' in df.columns:
+        FP = 'NODES'
+    else:
+        FP = 'PETs'
+    HEAD_PRINT = ['CONFIG', 'RESOLUTION', 'TAU', 'MINpDAY_GFS', 'MINpDAY_GEFS', 'MINpDAY', FP, 'MIXED_MODE']
     for H in HEAD_PRINT:
         if H not in df.columns:
             HEAD_PRINT.remove(H)
