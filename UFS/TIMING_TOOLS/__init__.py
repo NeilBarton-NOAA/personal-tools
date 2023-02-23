@@ -72,11 +72,12 @@ def print_summary(df, ARGS):
     pd.options.display.colheader_justify = 'center'
     
     # filter through what to print from MODEL_header
-    if 'NODES' in df.columns:
-        FP = 'NODES'
-    else:
-        FP = 'PETs'
-    HEAD_PRINT = ['CONFIG', 'RESOLUTION', 'TAU', 'MINpDAY_GFS', 'MINpDAY_GEFS', 'MINpDAY', FP, 'MIXED_MODE', 'WALLTIMEsec', 'UFSsec_max']
+    FP = 'NODES' if 'NODES' in df.columns else 'PETs'
+    
+    HEAD_PRINT = ['CONFIG', 'RESOLUTION', 'TAU', 'MINpDAY_GFS', 'MINpDAY_GEFS', 'MINpDAY', FP, 'FV3_32BIT']
+    if ARGS.SHOW_SEC:
+        HEAD_PRINT.insert(HEAD_PRINT.index('MINpDAY')+1,'UFSsec_max')
+    
     for H in HEAD_PRINT:
         if H not in df.columns:
             HEAD_PRINT.remove(H)
@@ -90,29 +91,31 @@ def print_summary(df, ARGS):
                 HEAD_PRINT.append(C+'mpi-t')
         if C == 'ATM' and 'ATMIOmpi' in df.columns:
             HEAD_PRINT.append('ATMIOmpi')
-
+    
+    TS = 'sec_max' if ARGS.SHOW_SEC else '%'
+    
     for C in HEAD_COMPS: 
-        HEAD_PRINT.append(C+'%')
+        HEAD_PRINT.append(C+TS)
 
     # remove items that share PEs
     for C in REMOVE_HEAD_PRINT:
         HEAD_PRINT.remove(C+'mpi-t')
-        HEAD_PRINT.remove(C+'%')
-    
+        HEAD_PRINT.remove(C+TS)
+        
     if (df['ATMmpi-t'] != df['MEDmpi-t']).any():
         HEAD_PRINT.append('MEDmpi-t')
 
     # if showing ATMIO stats
     PRINT_ATMIO = False
     if ARGS.SHOW_IO:
-        HEAD_PRINT.insert(HEAD_PRINT.index('ATM%') + 1,'ATMIO%')
+        HEAD_PRINT.insert(HEAD_PRINT.index('ATM'+TS) + 1,'ATMIO'+TS)
         HEAD_PRINT.append('ATMiolayout')
         if 'OCNiolayout' in df.columns:
             HEAD_PRINT.append('OCNiolayout')
     elif 'ATMiosec_max' in df.columns:
         if  (( (df['ATMsec_max'] - df['ATMIOsec_max']) / df['ATMsec_max'] * 100.0 ) < 10.).any():
             PRINT_ATMIO = True
-            HEAD_PRINT.insert(HEAD_PRINT.index('ATM%') + 1,'ATMIO%')
+            HEAD_PRINT.insert(HEAD_PRINT.index('ATM'+TS) + 1,'ATMIO'+TS)
             HEAD_PRINT.append('ATMiolayout')
 
     # if showing loop
@@ -141,7 +144,8 @@ def print_summary(df, ARGS):
             HEAD_PRINT.insert(HEAD_PRINT.index('ATM+CHMmpi-t')+1,'ATMlayout')
     
     if 'RESTART_N' in df.columns:
-        HEAD_PRINT.append('RESTART_N')
+        if (df['RESTART_N'] != df['TAU']).all():
+            HEAD_PRINT.append('RESTART_N')
     
     # remove items that are the same 
     SUM = ''
