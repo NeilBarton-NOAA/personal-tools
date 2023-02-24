@@ -137,8 +137,10 @@ def print_summary(df, ARGS):
 
     # if showing MEDIATOR variables
     if ARGS.SHOW_MED:
+        HEAD_PRINT.append('INIT'+TS)
+        HEAD_PRINT.append('FINAL'+TS)
         for M in ARGS.MED_VAR:
-            HEAD_PRINT.append(M+'%')
+            HEAD_PRINT.append(M+TS)
     
     # if shoing xy FV3 layout
     if ARGS.SHOW_XYLAYOUT:

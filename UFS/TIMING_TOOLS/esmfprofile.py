@@ -33,6 +33,14 @@ def getfiles(TOPDIR):
 def panda_addto_dict(df, DICT, MED_VAR):
     DICT['PETs'] = int(df['PETs'].max()) 
     DICT['UFSsec_max'] = int(df['Max (s)'].max()) 
+    DICT['INITsec_max'] = round(df['Max (s)'].loc[(df['Region'] == 'UFS Driver Grid Comp') & (df['Phase'] == 'Init 1')].values[0],1)
+    DICT['INIT%'] = round(df['Max (s)'].loc[(df['Region'] == 'UFS Driver Grid Comp') & (df['Phase'] == 'Init 1')].values[0] / DICT['UFSsec_max']*100.,1)
+    DICT['INIT_MpD'] = round((df['Max (s)'].loc[(df['Region'] == 'UFS Driver Grid Comp') & (df['Phase'] == 'Init 1')].values[0]\
+        / DICT['UFSsec_max']) / (DICT['TAU'] / 24.0),2)
+    DICT['FINALsec_max'] = round(df['Max (s)'].loc[(df['Region'] == 'UFS Driver Grid Comp') & (df['Phase'] == 'FinalizePhase1')].values[0],1)
+    DICT['FINAL%'] = round(df['Max (s)'].loc[(df['Region'] == 'UFS Driver Grid Comp') & (df['Phase'] == 'FinalizePhase1')].values[0] / DICT['UFSsec_max']*100.,1)
+    DICT['FINAL_MpD'] = round((df['Max (s)'].loc[(df['Region'] == 'UFS Driver Grid Comp') & (df['Phase'] == 'FinalizePhase1')].values[0]\
+        / DICT['UFSsec_max']) / (DICT['TAU'] / 24.0),2)
     LOOP_ALL = []
     for C in DICT['COMPS']:
         if C == 'ATM':
