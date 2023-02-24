@@ -7,7 +7,8 @@ class get:
     parser.add_argument('-d', '--directory', action='store', default='RTs', nargs = 1, help="top directory to search for stout_espc.list files")
     parser.add_argument('-sb', '--sortby', action='store', default=['MINpDAY'], nargs = 1, help='header to sort results, default is MINpDAY')
     parser.add_argument('-m', '--med', action='store_true', help='show mediator MPI, PE and Timings')
-    parser.add_argument('-s', '--sec', action='store_true', help='show seconds for timings instead of percentage')
+    parser.add_argument('-s', '--sec', action='store_true', help='show seconds for timings instead of Minutes Per Day')
+    parser.add_argument('-per', '--percent', action='store_true', help='show percentage for timings instead of Minutes Per Day')
     parser.add_argument('-io', '--io', action='store_true', help='show ATM IO timings, ATM io layout, and OCN io layout')
     parser.add_argument('-xy', '--xylayout', action='store_true', help='show X,Y mpi layout for FV3')
     parser.add_argument('-l', '--loop', action='store_true', help='show what coupling loop component is on')
@@ -23,6 +24,10 @@ class get:
             self.TOPDIR = TOPDIR[0]
         self.SHOW_MED =  args.med
         self.SHOW_SEC =  args.sec
+        self.SHOW_PERCENT =  args.percent
+        if args.sec and args.percent:
+            print('cannot show seconds per componenet and percentage of component at same time')
+            exit(1)
         self.SHOW_IO = args.io
         self.SHOW_XYLAYOUT = args.xylayout
         self.SHOW_LOOP = args.loop

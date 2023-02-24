@@ -92,7 +92,8 @@ def print_summary(df, ARGS):
         if C == 'ATM' and 'ATMIOmpi' in df.columns:
             HEAD_PRINT.append('ATMIOmpi')
     
-    TS = 'sec_max' if ARGS.SHOW_SEC else '%'
+    TS = 'sec_max' if ARGS.SHOW_SEC else '_MpD'
+    TS = '%' if ARGS.SHOW_PERCENT else '_MpD'
     
     for C in HEAD_COMPS: 
         HEAD_PRINT.append(C+TS)
