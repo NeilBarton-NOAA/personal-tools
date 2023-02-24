@@ -6,9 +6,13 @@ source ~/.bashrc 1&2>/dev/null
 
 TOPDIR=/lfs/h2/emc/gefstemp/rplout
 WORKDIR=${NPB_WORKDIR}/REPLAY_DEMO
-var=hi_d
+# vars are Tsfc_d, hs_d, hi_d, snow_d, albsni_d, aice_d
+var=${1}
 EXPDIR=${TOPDIR}/ctl/c00
-EXP=CTL
+EXPS="CTL RPL"
+ARCHIVE_HOME=/NCEPDEV/emc-marine/2year/Neil.Barton
+
+for EXP in ${EXPS}; do
 
 for DTGDIR in $(ls -d ${EXPDIR}/*/); do
     dtg=$(basename ${DTGDIR})00
@@ -37,7 +41,9 @@ done
 
 # add transfer to HPSS
 cd ${WORKDIR}
-htar -cvf ${HTAR_HOME}/REPLAY/${EXP}_${var}.tar ${EXP}/*${var}*nc
+hsi mkdir -p ${ARCHIVE_HOME}/REPLAY
+htar -cvf ${ARCHIVE_HOME}/REPLAY/${EXP}_${var}.tar ${EXP}/*${var}*nc
 
+done
 
 

@@ -30,7 +30,7 @@ alias dirs='dirs -v'
 alias psu="ps U $USER"
 alias gitgeturl="git config --get remote.origin.url"
 alias qme="squeue -u $USER --format='%.18i %.50j %.2t %.8M %.10l %.6D'"
-ARCHIVE_HOME=/NCEPDEV/emc-marine/3year/Neil.Barton
+ARCHIVE_HOME=/NCEPDEV/emc-marine/2year/Neil.Barton
 
 if [[ $machine == h* ]]; then
     #export NPB_WORKDIR=/scratch1/NCEPDEV/stmp2/Neil.Barton
@@ -42,7 +42,7 @@ elif [[ ${machine} == *Orion* ]]; then
     alias sd2="cd /work/noaa/stmp/nbarton"
     export NPB_WORKDIR=/work/noaa/marine/nbarton
 elif [[ ${machine} == *[cd]login* ]]; then
-    export NPB_WORKDIR=/lfs/h2/emc/ptmp/neil.barton/
+    export NPB_WORKDIR=/lfs/h2/emc/ptmp/neil.barton
     export NPB_CODEDIR=/lfs/h2/emc/couple/noscrub/neil.barton
     alias ccd="cd $NPB_CODEDIR"
     alias qme="qstat -u $USER"
