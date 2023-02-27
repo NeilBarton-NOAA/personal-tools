@@ -1,6 +1,18 @@
 #!/bin/sh
 set -u
-LOCAL_FILE=${1:-$PWD}
-REMOTE_FOLDER=${2:-/scratch2/NCEPDEV/stmp1/Neil.Barton}
+ARGS=${@}
+LAST_ARG=${@: -1}
+if (( ${#} == 0 )); then
+    echo 'ERROR: files/arguments most be supplied'
+    exit 1
+fi
 
-scp ${LOCAL_FILE} Neil.Barton@dtn-hera.fairmont.rdhpcs.noaa.gov:${REMOTE_FOLDER}
+if [[ -f ${LAST_ARG} ]]; then
+    REMOTE_FOLDER=/scratch2/NCEPDEV/stmp1/Neil.Barton
+    FILES=${@}
+else
+    REMOTE_FOLDER=${LAST_ARG}
+    FILES=${@:1:$(($#-1))}
+fi
+
+scp ${FILES} Neil.Barton@dtn-hera.fairmont.rdhpcs.noaa.gov:${REMOTE_FOLDER}

@@ -1,13 +1,11 @@
 #!/bin/sh
 set -u
+# gets a file quickly to HPSS to use htar, command is
+#   htar -xvf ${ARCHIVE_HOME}/test.tar ${FILES}
 FILE=${1:-$PWD}
 YEAR=${2:-1}
-HTAR=${3:-F}
 
 HSI_DIR=/NCEPDEV/emc-marine/${YEAR}year/Neil.Barton
-if [[ ${HTAR} == T ]]; then
-    hsi mkdir -p ${HSI_DIR}
-    htar -cvf ${HSI_DIR}/test.tar ${FILE}/*
-else
-    hsi get ${HSI_DIR}/${FILE} : ${FILE}
-fi
+echo "GETTING: ${HSI_DIR}/${FILE}"
+hsi -q get ${FILE} : ${HSI_DIR}/${FILE} 2>/dev/null
+(( $? != 0 )) && echo "TRANSFER FAILED: ${HSI_DIR}/${FILE}"

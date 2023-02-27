@@ -1,13 +1,13 @@
 #!/bin/sh
+# sends a file quickly to HPSS to use htar, command is
+#   htar -cvf ${ARCHIVE_HOME}/test.tar ${FILES}
 set -u
 LOCAL_FILE=${1:-$PWD}
 YEAR=${2:-1}
-HTAR=${3:-F}
-
 HSI_DIR=/NCEPDEV/emc-marine/${YEAR}year/Neil.Barton
-if [[ ${HTAR} == T ]]; then
-    hsi mkdir -p ${HSI_DIR}
-    htar -cvf ${HSI_DIR}/test.tar ${LOCAL_FILE}/*
-else
-    hsi put ${LOCAL_FILE} : ${HSI_DIR}/${LOCAL_FILE}
-fi
+
+echo "PUTTING FILE AT: ${HSI_DIR}/${FILE}"
+hsi -q put ${LOCAL_FILE} : ${HSI_DIR}/${LOCAL_FILE} 2>/dev/null
+(( $? != 0 )) && echo "TRANSFER FAILED: ${HSI_DIR}/${FILE}"
+    
+
