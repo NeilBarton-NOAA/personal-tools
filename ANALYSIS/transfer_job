@@ -8,11 +8,18 @@
 #SBATCH --partition=service #for HPSS
 
 # HPSS to Hera
-#cd /scratch2/NCEPDEV/stmp3/Neil.Barton/REPLAY_DEMO
-#htar -xvf /NCEPDEV/emc-marine/5year/Neil.Barton/REPLAY/CTL_aice.tar
+cd /scratch2/NCEPDEV/stmp3/Neil.Barton/DIAG/REPLAY_DEMO
+HPS_DIR=/NCEPDEV/emc-marine/2year/Neil.Barton/REPLAY
+files=$(hsi -q ls ${HPS_DIR}/*tar 2>&1 | grep tar)
+for f in ${files}; do
+    htar -xvf ${HPS_DIR}/${f}
+done
+
+
+#htar -xvf /NCEPDEV/emc-marine/2year/Neil.Barton/REPLAY/*.tar
 
 # Hera to HPSS
-cd /scratch2/NCEPDEV/stmp3/Neil.Barton/DIAG/OBS
-hsi mkdir -p /NCEPDEV/emc-marine/5year/Neil.Barton/DIAG/OBS/
-htar -cvf /NCEPDEV/emc-marine/5year/Neil.Barton/DIAG/OBS/ice_concentration.tar ice_concentration/*
+#cd /scratch2/NCEPDEV/stmp3/Neil.Barton/DIAG/OBS
+#hsi mkdir -p /NCEPDEV/emc-marine/5year/Neil.Barton/DIAG/OBS/
+#htar -cvf /NCEPDEV/emc-marine/5year/Neil.Barton/DIAG/OBS/ice_concentration.tar ice_concentration/*
 
