@@ -41,8 +41,8 @@ for tau in [0,1,5,20]:
     OBS = []
     OBS.append(NH_ICE['ice_con'].sel(time = t_array).mean(dim = 'time'))
     OBS.append(SH_ICE['ice_con'].sel(time = t_array).mean(dim = 'time'))
-    C = CTL['aice_d'].sel(tau = tau*24).mean(dim = 'time')
-    R = RPL['aice_d'].sel(tau = tau*24).mean(dim = 'time')
+    C = CTL[var].sel(tau = tau*24).mean(dim = 'time')
+    R = RPL[var].sel(tau = tau*24).mean(dim = 'time')
     C = C.assign_attrs(attrs)
     C = C.assign_attrs({'test_name' : 'Control'})
     C = C.assign_attrs({'title' : 'Sea Ice Concentrations: Forecast Day ' + str(tau)})

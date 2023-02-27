@@ -19,8 +19,8 @@ sys.path.append(os.path.dirname(os.path.realpath(__file__)) )
 import PYTHON_TOOLS as npb
 
 dirs = [
-'/scratch2/NCEPDEV/stmp3/Neil.Barton/REPLAY_DEMO/CTL',
-'/scratch2/NCEPDEV/stmp3/Neil.Barton/REPLAY_DEMO/RPL'
+'/scratch2/NCEPDEV/stmp3/Neil.Barton/DIAG/REPLAY_DEMO/CTL',
+'/scratch2/NCEPDEV/stmp3/Neil.Barton/DIAG/REPLAY_DEMO/RPL'
 ]
 var = 'aice_d'
    
@@ -38,7 +38,7 @@ if (CTL['time'] == RPL['time']).any() == False:
 CTL = CTL.assign_attrs({'extent_file' : dirs[0] + '/ice_extent.nc'})
 CTL = npb.iceobs.calc_extent(CTL)
 RPL = RPL.assign_attrs({'extent_file' : dirs[1] + '/ice_extent.nc'})
-CTL = CTL.assign_attrs({'test_name' : 'Control / Coupled GDAS'})
+CTL = CTL.assign_attrs({'test_name' : 'Control / Marine GDAS'})
 CTL = CTL.assign_attrs({'save_dir' : '/scratch2/NCEPDEV/stmp3/Neil.Barton/FIGURES'})
 RPL = npb.iceobs.calc_extent(RPL)
 RPL = RPL.assign_attrs({'test_name' : 'Replay'})
