@@ -1,3 +1,4 @@
 [submodule "UFS/TIMINGS"]
 	path = UFS/TIMINGS
 	url = https://github.com/NeilBarton-NOAA/ufs-timings
+
