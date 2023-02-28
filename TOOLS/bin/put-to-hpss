@@ -6,8 +6,8 @@ LOCAL_FILE=${1:-$PWD}
 YEAR=${2:-1}
 HSI_DIR=/NCEPDEV/emc-marine/${YEAR}year/Neil.Barton
 
-echo "PUTTING FILE AT: ${HSI_DIR}/${FILE}"
+echo "PUTTING FILE AT: ${HSI_DIR}/${LOCAL_FILE}"
 hsi -q put ${LOCAL_FILE} : ${HSI_DIR}/${LOCAL_FILE} 2>/dev/null
-(( $? != 0 )) && echo "TRANSFER FAILED: ${HSI_DIR}/${FILE}"
+(( $? != 0 )) && echo "TRANSFER FAILED: ${HSI_DIR}/${LOCAL_FILE}"
     
 
