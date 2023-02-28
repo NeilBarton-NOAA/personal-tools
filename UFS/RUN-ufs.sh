@@ -11,21 +11,22 @@ export TEST_NAME=S2S
 export ATM_RES="C384"
 export OCN_RES="025"
 export FORECAST_LENGTH=16 #in days
-export WALLCLOCK=6 # in hours
+export WALLCLOCK=5 # in hours
 export UFS_EXEC=ufs_S2SWA_mixed_mode
-REPO=NeilBarton-NOAA
-branch=run
+REPO=ufs-community && HASH=c22aaad
+#REPO=NeilBarton-NOAA && HASH=run
+PATH_RUN=${NPB_WORKDIR}/CODE/ufs-weather-model_run_NeilBarton-NOAA/RUN
 export DEBUG=F
 ####################################
 # Set MPI options,  if NMPI=0, model will not run
-export ATM_INPES=16
+export EXTRA_NODE=F
+export ATM_INPES=8
 export ATM_JNPES=16
-export ATM_THRD=1
+export ATM_THRD=2
 export CHM_NMPI=0
-export OCN_NMPI=220
-export ICE_NMPI=320
+export OCN_NMPI=120
+export ICE_NMPI=60
 export WAV_NMPI=0
-#MED (defaults to ATM)
 export MED_NMPI=300
 export MED_THRD=${ATM_THRD}
 
@@ -40,13 +41,14 @@ export MED_THRD=${ATM_THRD}
 
 ############
 # Submit Forecast
-export UFS_HOME=${NPB_WORKDIR}/CODE/ufs-weather-model_${branch}_${REPO}
-# run script
-${UFS_HOME}/RUN/UFS-submit.sh ${NPB_WORKDIR}/RUNs/UFS/\
+export UFS_HOME=${NPB_WORKDIR}/CODE/ufs-weather-model_${HASH}_${REPO}
+export PATH_RUN=${PATH_RUN:-${UFS_HOME}/RUN}
+${PATH_RUN}/UFS-submit.sh ${NPB_WORKDIR}/RUNs/UFS/\
 ${TEST_NAME}_\
-ATM_${ATM_INPES}${ATM_JNPES}-${ATM_THRD}_\
+ATM_${ATM_INPES}x${ATM_JNPES}-${ATM_THRD}_\
 OCN_${OCN_NMPI}_\
-ICE_${ICE_NMPI}
+ICE_${ICE_NMPI}_\
+MED_${MED_NMPI}
 #ATMIO_${ATM_WPG}_\
 #RESTART_N_${RESTART_FREQ} #_\
 #$( date +%s )

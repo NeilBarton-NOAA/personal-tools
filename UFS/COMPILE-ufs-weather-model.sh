@@ -3,15 +3,13 @@ set -u
 source $PWD/MACHINE-config.sh
 TOPDIR=$NPB_WORKDIR/CODE
 mkdir -p $TOPDIR
-REPO=NeilBarton-NOAA 
-branch=run 
-#REPO=ufs-community
-#branch=develop
-CODE=ufs-weather-model_${branch}_${REPO}
+#REPO=NeilBarton-NOAA && HASH=run 
+REPO=ufs-community && HASH=c22aaad #develop
 
 ########################
 # check out code
 cd $TOPDIR
+CODE=ufs-weather-model_${HASH}_${REPO}
 if [[ ! -d ${CODE} ]]; then
     git clone https://github.com/${REPO}/ufs-weather-model.git ${CODE}
     cd ${CODE}
