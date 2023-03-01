@@ -11,6 +11,8 @@ if 'hfe' in platform.uname()[1]:
     print(platform.uname()[1])
     exit(1)
 ########################
+import calendar
+import numpy as np
 import os
 import sys
 import xarray as xr
@@ -19,11 +21,19 @@ sys.path.append(os.path.dirname(os.path.realpath(__file__)) )
 import PYTHON_TOOLS as npb
 
 dirs = [
-'/scratch2/NCEPDEV/stmp3/Neil.Barton/REPLAY_DEMO/CTL',
-'/scratch2/NCEPDEV/stmp3/Neil.Barton/REPLAY_DEMO/RPL'
+'/scratch2/NCEPDEV/stmp3/Neil.Barton/DIAG/REPLAY_DEMO/CTL',
+'/scratch2/NCEPDEV/stmp3/Neil.Barton/DIAG/REPLAY_DEMO/RPL'
 ]
-var = 'aice_d'
-   
+var = 'Tsfc_d'
+
+long_name = {
+'aice_d'    : 'Sea Ice Concentrations',
+'Tsfc_d'    : 'Snow/Ice Surface Temp',
+'hi_d'      : 'Ice Thickness',
+'hs_d'      : 'Snow Depth',
+'snow_d'    : 'Snowfall Rate'
+}
+
 CTL = xr.open_mfdataset( dirs[0] + '/' + var + '*.nc')
 RPL = xr.open_mfdataset( dirs[1] + '/' + var + '*.nc')
 
@@ -35,7 +45,28 @@ if (CTL['time'] == RPL['time']).any() == False:
     exit(1)
 
 # plot season average of day 0, 1, 5, 20 forecast hours
-attrs = { 'MIN': 0.0, 'MAX': 1.0, 'DMIN': -1.0, 'DMAX': 1.0}
+#attrs = { 'MIN': 0.0, 'MAX': 1.0, 'DMIN': -1.0, 'DMAX': 1.0}
+
+#per month
+for month in np.arange(1,13):
+    CC = CTL.isel(time = CTL['time'].dt.month.isin([month]))
+    RR = RPL.isel(time = RPL['time'].dt.month.isin([month]))
+    for tau in [0,1,5,20]: 
+        t_array = npb.timetools.time_plus_tau(CC['time'].values, tau*24)
+        OBS = []
+        OBS.append(NH_ICE['ice_con'].sel(time = t_array).mean(dim = 'time'))
+        OBS.append(SH_ICE['ice_con'].sel(time = t_array).mean(dim = 'time'))
+        C = CC[var].sel(tau = tau*24).mean(dim = 'time')
+        R = RR[var].sel(tau = tau*24).mean(dim = 'time')
+        C = C.assign_attrs(attrs)
+        C = C.assign_attrs({'test_name' : 'Control'})
+        C = C.assign_attrs({'title' : long_name[var] + ', ' + calendar.month_abbr[month] + ' : Forecast Day ' + str(tau)})
+        C = C.assign_attrs({'save_dir' : '/scratch2/NCEPDEV/stmp3/Neil.Barton/FIGURES'})
+        R = R.assign_attrs(attrs)
+        R = R.assign_attrs({'test_name' : 'Replay'})
+        for i, d in enumerate(['Arctic', 'Antarctic']):
+            npb.maps.difference(C, R, OBS[i], domain = d)
+
 for tau in [0,1,5,20]: 
     t_array = npb.timetools.time_plus_tau(CTL['time'].values, tau*24)
     OBS = []

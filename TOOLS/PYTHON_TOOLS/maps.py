@@ -80,7 +80,7 @@ def difference(DAT1, DAT2, ICEOBS = None, domain = 'Arctic'):
     fig.colorbar(pcs[-1], ax = axs[1], cax = cbar_ax, orientation='horizontal' )
     axs[1].text(t_lon, t_lat, plot_title, fontweight = 'bold', fontsize = 16, ha = 'center', transform = ccrs.PlateCarree())
     fig_name = save_dir + '/' +  domain.upper() + '_' +\
-        plot_title.replace(':','').replace(' ','') + '_' +\
+        plot_title.replace(':','').replace(' ','').replace(',','') + '_' +\
         titles[0].replace(' ','') + '_' +\
         titles[1].replace(' ','') + '.png'
     print('SAVED:', fig_name)

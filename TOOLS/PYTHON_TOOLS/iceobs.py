@@ -56,7 +56,7 @@ def calc_extent(DAT, force_calc = False):
     return DAT
 
 def get_extentobs_NASA():
-    ice_dir = '/scratch2/NCEPDEV/stmp3/Neil.Barton/OBS/NASA'
+    ice_dir = '/scratch2/NCEPDEV/stmp3/Neil.Barton/DIAG/OBS/ice_extent/NASA'
     files = ['gsfc.nasateam.daily.extent.1978-2021.n', 'gsfc.nasateam.daily.extent.1978-2021.s']
     ob = []
     for ii, f in enumerate(files):
@@ -88,7 +88,7 @@ def get_extentobs_NASA():
     return obs
 
 def get_extentobs_CDR():
-    ice_dir = '/scratch2/NCEPDEV/stmp3/Neil.Barton/OBS/IceData'
+    ice_dir = '/scratch2/NCEPDEV/stmp3/Neil.Barton/DIAG/OBS/IceData'
     files = ['N_seaice_extent_daily_v3.0.csv', 'S_seaice_extent_daily_v3.0.csv']
     ob = []
     for ii, f in enumerate(files):
@@ -115,12 +115,12 @@ def get_extentobs_CDR():
     return obs
 
 def get_thickness():
-    ice_dir = '/scratch2/NCEPDEV/stmp3/Neil.Barton/OBS/ICE_THICKNESS'
+    ice_dir = '/scratch2/NCEPDEV/stmp3/Neil.Barton/DIAG/OBS/ICE_THICKNESS'
     obs = xr.open_mfdataset(ice_dir + '/ice*.nc')
     return obs
 
 def get_iceobs(season = False):
-    ice_dir = '/scratch2/NCEPDEV/stmp3/Neil.Barton/OBS/'
+    ice_dir = '/scratch2/NCEPDEV/stmp3/Neil.Barton/DIAG/OBS/ice_concentration/NOAA_CDR'
     poles = ['north', 'south']
     ob = []
     for ii, pole in enumerate(poles):
@@ -129,15 +129,13 @@ def get_iceobs(season = False):
         if os.path.exists(obs_file):
             obs = xr.open_dataset(obs_file)
         else:
-            #obs = xr.open_mfdataset(ice_dir + '/' + pole + '/*/*daily*.nc', combine = 'nested', concat_dim = 'tdim')
-            obs = xr.open_mfdataset(ice_dir + '/' + pole + '/*daily*.nc', combine = 'nested', concat_dim = 'tdim')
+            obs = xr.open_mfdataset(ice_dir + '/*daily_' + pole[0] + '*.nc', combine = 'nested', concat_dim = 'tdim')
             obs = obs.rename({'tdim' : 'time'})
             obs['ice_con'] = (obs['cdr_seaice_conc'].dims, obs['cdr_seaice_conc'].values)
             for key in list(obs.keys()):
                 if key != 'ice_con':
                     obs = obs.drop(key)
-            #grid = xr.open_dataset(ice_dir + '/G02202-cdr-ancillary-' + pole[0] + 'h.nc')
-            grid = xr.open_dataset(ice_dir + '/' + pole + '/G02202-cdr-ancillary-' + pole[0] + 'h.nc')
+            grid = xr.open_dataset(ice_dir + '/G02202-cdr-ancillary-' + pole[0] + 'h.nc')
             obs['lat'] = (grid['latitude'].dims, grid['latitude'].values)
             obs['lon'] = (grid['longitude'].dims, grid['longitude'].values)
             # save to netcdf

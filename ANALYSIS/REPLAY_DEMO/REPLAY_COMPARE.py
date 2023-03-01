@@ -45,8 +45,8 @@ RPL = RPL.assign_attrs({'test_name' : 'Replay'})
 RPL = RPL.assign_attrs({'save_dir' : '/scratch2/NCEPDEV/stmp3/Neil.Barton/FIGURES'})
 CTL['tau'] = CTL['tau'] / 24.0
 RPL['tau'] = RPL['tau'] / 24.0
-#npb.plot.ice_extent_per_month([CTL, RPL], EXT,  var = 'NH_extent')
-#npb.plot.ice_extent_per_month([CTL, RPL], EXT,  var = 'SH_extent')
+npb.plot.ice_extent_per_month([CTL, RPL], EXT,  var = 'NH_extent')
+npb.plot.ice_extent_per_month([CTL, RPL], EXT,  var = 'SH_extent')
 
 ############
 # comparison between runs
