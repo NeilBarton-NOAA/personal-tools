@@ -5,19 +5,19 @@ TOPDIR=$NPB_WORKDIR/CODE
 mkdir -p $TOPDIR
 cd $TOPDIR
 
-#REPO=NeilBarton-NOAA 
-#branch=S2S_cycle
-REPO=NOAA-EMC
-branch=develop 
+#REPO=NeilBarton-NOAA && HASH=S2S_cycle
+#REPO=NOAA-EMC && HASH=develop 
+REPO=JessicaMeixner-NOAA && HASH=hr1waves
+COMPILE=F
 
-code=global-workflow_${branch////\_}_${REPO}
+code=global-workflow_${HASH////\_}_${REPO}
 ########################
 # check out code
 cd ${TOPDIR}
 if [[ ! -d ${code} ]]; then
     git clone https://github.com/${REPO}/global-workflow.git ${code}
     cd ${code}
-    git checkout $branch
+    git checkout ${HASH}
 else
     cd ${code}
     git pull
@@ -25,6 +25,7 @@ fi
 
 ########################
 # build model
+if [[ ${COMPILE} == T ]]; then
 cd ${TOPDIR}/${code}/sorc
 cat <<EOF > setup_all_ufs.sh
 #!/bin/sh
@@ -35,4 +36,4 @@ EOF
 chmod 755 setup_all_ufs.sh
 echo "compiling in ${TOPDIR}/${code}/sorc"
 nohup ./setup_all_ufs.sh &
-
+fi

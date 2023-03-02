@@ -5,16 +5,19 @@ set -u
 ################################################################################################
 
 source ${PWD}/MACHINE-config.sh
-REPO=NeilBarton-NOAA
-branch=develop
-CODE_DIR=${NPB_WORKDIR}/CODE/ufs-weather-model_${branch}_${REPO}
+REPO=ufs-community && HASH=develop
+CODE_DIR=${NPB_WORKDIR}/CODE/ufs-weather-model_${HASH}_${REPO}
 export RUNDIR_ROOT=${NPB_WORKDIR}/RUNs/RTs
 export ACCNR=marine-cpu
 source ${PWD}/MACHINE-config.sh
 # Coupled Case
+#case="
+#COMPILE | -DAPP=S2SWA -D32BIT=ON -DCCPP_SUITES=FV3_GFS_v17_coupled_p8,FV3_GFS_cpld_rasmgshocnsstnoahmp_ugwp  | - $m   | fv3 | 
+#RUN     | cpld_bmark_p8             |  | fv3 | 
+#"
 case="
-COMPILE | -DAPP=S2SWA -D32BIT=ON -DCCPP_SUITES=FV3_GFS_v17_coupled_p8,FV3_GFS_cpld_rasmgshocnsstnoahmp_ugwp  | - $m   | fv3 | 
-RUN     | cpld_bmark_p8             |  | fv3 | 
+COMPILE | -DAPP=S2SW -DCCPP_SUITES=FV3_GFS_v17_coupled_p8  | - $m   | fv3 | 
+RUN     | cpld_control_noaero_p8       |  | fv3 | 
 "
 ############
 # run tests
@@ -40,5 +43,5 @@ echo ${CODE_DIR}/tests/rt.sh
 ####################################
 SUFFIX=${case}_$( date +%s )
 export RT_SUFFIX=_${SUFFIX}
-${CODE_DIR}/tests/rt.sh -kl ${config_file} >rt_output_${SUFFIX}.txt 2>&1 &
+nohup ${CODE_DIR}/tests/rt.sh -kl ${config_file} >rt_output_${SUFFIX}.txt 2>&1 &
 tail -f rt_output_${SUFFIX}.txt
