@@ -7,7 +7,7 @@ set -u
 source ${PWD}/MACHINE-config.sh
 REPO=ufs-community && HASH=develop
 CODE_DIR=${NPB_WORKDIR}/CODE/ufs-weather-model_${HASH}_${REPO}
-export RUNDIR_ROOT=${NPB_WORKDIR}/RUNs/RTs
+export RUNDIR_ROOT=${NPB_WORKDIR}/RUNS/RTs
 export ACCNR=marine-cpu
 source ${PWD}/MACHINE-config.sh
 # Coupled Case
@@ -17,7 +17,7 @@ source ${PWD}/MACHINE-config.sh
 #"
 case="
 COMPILE | -DAPP=S2SW -DCCPP_SUITES=FV3_GFS_v17_coupled_p8  | - $m   | fv3 | 
-RUN     | cpld_control_noaero_p8       |  | fv3 | 
+RUN     | cpld_warmstart_c48       |  | fv3 | 
 "
 ############
 # run tests
@@ -44,4 +44,4 @@ echo ${CODE_DIR}/tests/rt.sh
 SUFFIX=${case}_$( date +%s )
 export RT_SUFFIX=_${SUFFIX}
 nohup ${CODE_DIR}/tests/rt.sh -kl ${config_file} >rt_output_${SUFFIX}.txt 2>&1 &
-tail -f rt_output_${SUFFIX}.txt
+#tail -f rt_output_${SUFFIX}.txt

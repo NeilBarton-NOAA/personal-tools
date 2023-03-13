@@ -4,7 +4,7 @@ set -eu
 # remove Regression Testings
 ########################
 
-TOPDIR=${NPB_WORKDIR}/RUNs/RTs
+TOPDIR=${NPB_WORKDIR}/RUNS/UFS
 delete=F
 clean=F
 
