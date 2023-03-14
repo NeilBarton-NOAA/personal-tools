@@ -14,8 +14,8 @@ elif [[ ${machine} == *Orion* ]]; then
     export STMPDIR=/work/noaa/stmp/'${USER}'
 elif [[ ${machine} == *[cd]login* ]]; then
     module_file=ufs_wcoss2.intel
+    export HOMEDIR=/lfs/h2/emc/global/noscrub/'${USER}'
     m=wcoss2.intel
-    export NPB_WORKDIR=/lfs/h2/emc/ptmp/neil.barton/
 else
     echo "machine unkown: " $machine
     exit 1

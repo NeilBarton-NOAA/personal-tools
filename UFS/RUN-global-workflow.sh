@@ -1,36 +1,28 @@
 #!/bin/sh
 ####################################
 # Run Script for seeting up global-worflow
-#   defaults to NeilBarton-NOAA branch for specific options
+#   https://global-workflow.readthedocs.io/en/latest/index.html
+#
 ####################################
 set -u
 source $PWD/MACHINE-config.sh
 
 ####################################
-#IDATE=2021032312
-#RESDET=48
+IDATE=2019120300
+RESDET=384
 #ICSDIR=/scratch1/NCEPDEV/stmp2/Rahul.Mahajan/ICSDIR/C48O500
-
-IDATE=2020040100
-START=cold
-#IDATE=2020040106
-
-#RUN_TYPE=forecast-only
-#ICSDIR=/scratch2/NCEPDEV/climate/climpara/S2S/IC
-
+ICSDIR=${NPB_WORKDIR}/ICs/${IDATE}
+RUN_TYPE=forecast-only
 EDATE=$( $PWD/DTG-add-time.sh $IDATE 1 ) 
-#REPO=NOAA-EMC
-#branch=prototype_8b
-#branch=C384_025_cycle 
-#ENKF=F
-#IAU=T
-APP=S2S #ATM #ATM, S2S, S2SW
+REPO=NOAA-EMC && HASH=develop
+APP=S2SW #ATM #ATM, S2S, S2SW
 #PSLOT=ENKF
 #NENS=20
+
 ####################################
 # Sub-Components of script
 RUN_SETUP_EXPT=T
-RUN_LINK_ICs=T
+RUN_LINK_ICs=F
 RUN_EDIT_CONFIG=T
 RUN_SETUP_XML=T
 RUN_CRONTAB=T
@@ -42,12 +34,12 @@ RESDET=${RESDET:-384}
 RESENS=${RESENS:-192} 
 REPO=${REPO:-NeilBarton-NOAA}
 NENS=${NENS:-0} 
-GFS_CYC=${GFS_CYC:-0}
+GFS_CYC=${GFS_CYC:-1}
 ENKF=${ENKF:-T}
 IAU=${IAU:-T}
 HPSSARCH=${HPSSARCH:-T}
-branch=${branch:-develop}
-CODE_DIR=${CODE_DIR:-${NPB_WORKDIR}/CODE/global-workflow_${branch////\_}_${REPO}}
+HASH=${HASH:-develop}
+CODE_DIR=${CODE_DIR:-${NPB_WORKDIR}/CODE/global-workflow_${HASH////\_}_${REPO}}
 SCRIPT_DIR=${CODE_DIR}/workflow
 
 CDUMP=${CDUMP:-gdas} 
@@ -93,9 +85,10 @@ OPTIONS="${OPTIONS} --cdump ${CDUMP} "
 OPTIONS="${OPTIONS} --gfs_cyc ${GFS_CYC} "
 OPTIONS="${OPTIONS} --expdir ${EXPDIR} "
 OPTIONS="${OPTIONS} --comrot ${COMROT} "
-if [[ $RUN_LINK_ICs == F ]]; then
-OPTIONS="${OPTIONS} --icsdir ${ICSDIR} "
-fi
+OPTIONS="${OPTIONS} --start cold "
+#if [[ $RUN_LINK_ICs == F ]]; then
+#OPTIONS="${OPTIONS} --icsdir ${ICSDIR} "
+#fi
 if [[ $RUN_TYPE != forecast-only ]]; then
 OPTIONS="${OPTIONS} --resens ${RESENS} "
 OPTIONS="${OPTIONS} --nens ${NENS} "

@@ -27,7 +27,7 @@ for DTGDIR in $(ls -d ${EXPDIR}/*/); do
             f_dtg=${f: -13 :4}${f: -8:2}${f: -5:2}00 
             tau=$(CALC-TAU.sh ${dtg} ${f_dtg})
             tau=$(printf "%03d" $tau)
-            out_tau_file=${work_dir}/WORKING/${dtg}/${var}_${dtg}_${tau}.nc
+            out_tau_file=${work_dir}/WORKING_${var}/${dtg}/${var}_${dtg}_${tau}.nc
             mkdir -p $(dirname ${out_tau_file})
             CICE_PARSE ${full_f} ${out_tau_file} ${var}
         done

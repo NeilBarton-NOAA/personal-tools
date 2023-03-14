@@ -8,7 +8,7 @@ cd $TOPDIR
 #REPO=NeilBarton-NOAA && HASH=S2S_cycle
 #REPO=NOAA-EMC && HASH=develop 
 REPO=JessicaMeixner-NOAA && HASH=hr1waves
-COMPILE=F
+COMPILE=T
 
 code=global-workflow_${HASH////\_}_${REPO}
 ########################

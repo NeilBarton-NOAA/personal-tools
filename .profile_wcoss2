@@ -9,5 +9,11 @@ module load gsl
 module load python/3.8.6
 module load netcdf
 module load cdo/1.9.8
-module load nco/4.7.9-fixed
+module load nco/4.7.9
 
+# nco core items
+module use /apps/ops/test/nco/modulefiles/core
+module load rocoto/1.3.5
+
+#no scrub space
+# /lfs/h2/emc/ens/noscrub
