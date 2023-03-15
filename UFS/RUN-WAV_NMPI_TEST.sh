@@ -15,7 +15,7 @@ export ICE_ICDIR=${TOP_ICDIR}
 export WAV_ICDIR=${TOP_ICDIR}
 export MED_ICDIR=${TOP_ICDIR}
 export FORECAST_LENGTH=16 #0.125 #14 #16 #0.25 #in days
-export WALLCLOCK=5 #8 #1 #6 # in hours
+export WALLCLOCK=6 #8 #1 #6 # in hours
 export UFS_EXEC=ufs_S2SWA_mixed_mode
 export DEBUG=F
 #export JOB_QUEUE=debug # batch or debug
@@ -27,7 +27,7 @@ PATH_RUN=${NPB_WORKDIR}/CODE/ufs-weather-model_run_NeilBarton-NOAA/RUN
 ####################################
 # Set MPI options,  if NMPI=0, model will not run
 export ATM_INPES=16
-export ATM_JNPES=12
+export ATM_JNPES=16
 export ATM_THRD=1
 export CHM_NMPI=0
 export OCN_NMPI=200
