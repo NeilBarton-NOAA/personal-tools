@@ -30,7 +30,7 @@ while getopts "d:rch" flag; do
     esac
 done
 
-ds=$(ls -d $TOPDIR/cpld*/)
+ds=$(ls -d $TOPDIR/*/)
 print=T
 for d in $ds; do
   if [[ $clean == T ]]; then
