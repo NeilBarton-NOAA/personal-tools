@@ -8,21 +8,20 @@ set -u
 source $PWD/MACHINE-config.sh
 
 ####################################
+#REPO=NOAA-EMC && HASH=prototype/hr1 && PSLOT=HR1 
+REPO=NOAA-EMC && HASH=develop && PSLOT=DEV
 IDATE=2019120300
-RESDET=384
-#ICSDIR=/scratch1/NCEPDEV/stmp2/Rahul.Mahajan/ICSDIR/C48O500
-ICSDIR=${NPB_WORKDIR}/ICs/${IDATE}
-RUN_TYPE=forecast-only
 EDATE=$( $PWD/DTG-add-time.sh $IDATE 1 ) 
-REPO=NOAA-EMC && HASH=develop
+RUN_TYPE=forecast-only
+CDUMP=gfs
 APP=S2SW #ATM #ATM, S2S, S2SW
-#PSLOT=ENKF
 #NENS=20
+ICSDIR=${NPB_WORKDIR}/ICs/${IDATE}
 
 ####################################
 # Sub-Components of script
 RUN_SETUP_EXPT=T
-RUN_LINK_ICs=F
+RUN_LINK_ICs=T
 RUN_EDIT_CONFIG=T
 RUN_SETUP_XML=T
 RUN_CRONTAB=T
@@ -44,7 +43,6 @@ SCRIPT_DIR=${CODE_DIR}/workflow
 
 CDUMP=${CDUMP:-gdas} 
 RUN_TYPE=${RUN_TYPE:-cycled}
-START=${START:-warm}
 [[ ${ENKF} == F ]] && NENS=0
 # options depending on configuration
 if [[ ${RUN_TYPE} == cycled ]]; then
@@ -70,6 +68,16 @@ if [[ ! -d $CODE_DIR ]]; then
 fi
 
 ####################################
+# link restart files to COMROT
+if [[ $RUN_LINK_ICs == T ]]; then
+  source ${PWD}/LINK-ICs.sh ${IDATE} ${COMROT} ${APP} ${CDUMP} 
+  if (( $? > 0 )); then
+    echo 'LINK-ICs.sh failed'
+    exit 1
+  fi
+fi
+
+####################################
 # setup_expt.py script
 if [[ $RUN_SETUP_EXPT == T ]]; then
 
@@ -85,7 +93,7 @@ OPTIONS="${OPTIONS} --cdump ${CDUMP} "
 OPTIONS="${OPTIONS} --gfs_cyc ${GFS_CYC} "
 OPTIONS="${OPTIONS} --expdir ${EXPDIR} "
 OPTIONS="${OPTIONS} --comrot ${COMROT} "
-OPTIONS="${OPTIONS} --start cold "
+OPTIONS="${OPTIONS} --start ${START} "
 #if [[ $RUN_LINK_ICs == F ]]; then
 #OPTIONS="${OPTIONS} --icsdir ${ICSDIR} "
 #fi
@@ -101,10 +109,11 @@ if [[ $? != 0 ]]; then
 fi
 
 fi
+
 ####################################
-# link restart files to COMROT
+# link ICs again in case removed
 if [[ $RUN_LINK_ICs == T ]]; then
-  ${PWD}/LINK-ICs.sh ${IDATE} ${COMROT}/${PSLOT} ${APP} ${RESDET} ${RESENS} ${NENS} ${START} 
+  ${PWD}/LINK-ICs.sh ${IDATE} ${COMROT} ${APP} ${CDUMP} 
   if (( $? > 0 )); then
     echo 'LINK-ICs.sh failed'
     exit 1
@@ -120,6 +129,8 @@ echo "EDITING: $config_file"
 sed -i 's/fv3-cpu/marine-cpu/g' ${config_file}
 sed -i 's:HPSS_PROJECT=emc-global:HPSS_PROJECT=emc-marine:g' ${config_file}
 sed -i "s:${HOMEDIR}:${COMROT}/GLOBAL:g" ${config_file}
+sed -i "s:${COMROT}/"'${PSLOT}'":${COMROT}:g" ${config_file}
+sed -i 's:KEEPDATA="NO":KEEPDATA="YES":g' ${config_file}
 [[ $HPSSARCH == F ]] && sed -i s:'HPSSARCH="YES":HPSSARCH="NO"':g ${config_file}
 [[ $ENKF == F ]] && sed -i s:'DOHYBVAR="YES":DOHYBVAR="NO"':g ${config_file}
 [[ $IAU == F ]] && sed -i 's:DOIAU="YES":DOIAU="NO":g' ${config_file}
@@ -154,7 +165,6 @@ set +u
 source ${config_file}
 cd ${EXPDIR}
 ln -s ${RUNDIR} RUNDIR
-ln -s ${COMROT}/${PSLOT}/logs logs_COMROT
 set -u
 xml_file=$(ls $CONFIGS_DIR/*.xml)
 db_file=${xml_file:0:-3}db 

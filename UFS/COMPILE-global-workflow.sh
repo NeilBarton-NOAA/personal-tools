@@ -5,9 +5,9 @@ TOPDIR=$NPB_WORKDIR/CODE
 mkdir -p $TOPDIR
 cd $TOPDIR
 
-#REPO=NeilBarton-NOAA && HASH=S2S_cycle
 #REPO=NOAA-EMC && HASH=develop 
-REPO=JessicaMeixner-NOAA && HASH=hr1waves
+REPO=NOAA-EMC && HASH=prototype/hr1 
+#REPO=JessicaMeixner-NOAA && HASH=hr1waves
 COMPILE=T
 
 code=global-workflow_${HASH////\_}_${REPO}
