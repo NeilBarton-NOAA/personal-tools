@@ -4,8 +4,8 @@ source $PWD/MACHINE-config.sh
 TOPDIR=$NPB_WORKDIR/CODE
 mkdir -p $TOPDIR
 #REPO=NeilBarton-NOAA && HASH=run 
-REPO=ufs-community && HASH=GFSv17.HR1  #c22aaad #develop
-
+REPO=ufs-community && HASH=GFSv17.HR1  #develop
+COMPILE=T
 ########################
 # check out code
 cd $TOPDIR
@@ -24,6 +24,8 @@ fi
 # But if wanted to compile, use the below
 ####################################
 # build model
+if [[ ${COMPILE} == T ]]; then
+
 module purge
 [[ ${module_file} == *wcoss* ]] && module reset
 module use modulefiles
@@ -31,10 +33,10 @@ module load ${module_file}
 
 declare -A COMPILES
 COMPILES=( 
-["S2SWA_mixed_mode"]="-DAPP=S2SWA -D32BIT=ON -DCCPP_SUITES=FV3_GFS_v16_coupled_nsstNoahmpUGWPv1,FV3_GFS_v17_coupled_p8"
-)
-#["S2SWA"]="-DAPP=S2SWA -DCCPP_SUITES=FV3_GFS_v16_coupled_nsstNoahmpUGWPv1,FV3_GFS_v17_coupled_p8"
+#["S2SWA_mixed_mode"]="-DAPP=S2SWA -D32BIT=ON -DCCPP_SUITES=FV3_GFS_v16_coupled_nsstNoahmpUGWPv1,FV3_GFS_v17_coupled_p8"
+["S2SWA"]="-DAPP=S2SWA -DCCPP_SUITES=FV3_GFS_v16_coupled_nsstNoahmpUGWPv1,FV3_GFS_v17_coupled_p8"
 #["ATM"]="-DAPP=ATM -DCCPP_SUITES=FV3_GFS_v16"
+)
 
 for COMP in "${!COMPILES[@]}"; do
     export CMAKE_FLAGS=${COMPILES[$COMP]}
@@ -48,3 +50,4 @@ for COMP in "${!COMPILES[@]}"; do
 
 done
 
+fi
