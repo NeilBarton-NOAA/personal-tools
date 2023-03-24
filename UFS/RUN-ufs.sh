@@ -5,8 +5,8 @@ set -u
 
 ####################################
 # Set Top options
-TOP_RUNDIR=RTs
-export TEST_NAME=S2S_FIELD_TABLE_PROG
+TOP_RUNDIR=UFS
+export TEST_NAME=TEST
 #export DTG=2019120300 # if no DTG, defaults to RT
 #export DTG=2013041500
 #export ICDIR=/scratch2/NCEPDEV/stmp3/Neil.Barton/ICs/${DTG}
@@ -14,8 +14,8 @@ export FORECAST_LENGTH=1
 export WALLCLOCK=0.5
 export UFS_EXEC=ufs_S2SWA_mixed_mode
 export DEBUG=F
-export JOB_QUEUE=debug # batch or debug
-REPO=ufs-community && HASH=GFSv17.HR1  #c22aaad #develop
+#export JOB_QUEUE=debug # batch or debug on hera
+REPO=ufs-community && HASH=GFSv17.HR1  #develop
 #REPO=NeilBarton-NOAA && HASH=run
 PATH_RUN=${NPB_WORKDIR}/CODE/ufs-weather-model_run_NeilBarton-NOAA/RUN 
 
@@ -35,7 +35,7 @@ export MED_NMPI=300
 
 ############
 # IO options                        # DEFAULTS
-export ATM_WPG=48                  # 48
+#export ATM_WPG=48                  # 48
 #export MOM6_IO_LAYOUT='4,2'        # 1,1
 #export RESTART_FREQ=24              # restart writeout (hours, all components)
 #export OUTPUT_FREQ=3               # forecast length (FV3 and MOM6)
