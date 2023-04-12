@@ -4,7 +4,8 @@ source $PWD/MACHINE-config.sh
 TOPDIR=$NPB_WORKDIR/CODE
 mkdir -p $TOPDIR
 #REPO=NeilBarton-NOAA && HASH=run 
-REPO=ufs-community && HASH=GFSv17.HR1  #develop
+REPO=NeilBarton-NOAA && HASH=HR1_GOCART
+#REPO=ufs-community && HASH=GFSv17.HR1  #develop
 COMPILE=T
 ########################
 # check out code
@@ -33,8 +34,8 @@ module load ${module_file}
 
 declare -A COMPILES
 COMPILES=( 
-#["S2SWA_mixed_mode"]="-DAPP=S2SWA -D32BIT=ON -DCCPP_SUITES=FV3_GFS_v16_coupled_nsstNoahmpUGWPv1,FV3_GFS_v17_coupled_p8"
-["S2SWA"]="-DAPP=S2SWA -DCCPP_SUITES=FV3_GFS_v16_coupled_nsstNoahmpUGWPv1,FV3_GFS_v17_coupled_p8"
+["S2SWA_mixed_mode"]="-DAPP=S2SWA -D32BIT=ON -DCCPP_SUITES=FV3_GFS_v16_coupled_nsstNoahmpUGWPv1,FV3_GFS_v17_coupled_p8"
+#["S2SWA"]="-DAPP=S2SWA -DCCPP_SUITES=FV3_GFS_v16_coupled_nsstNoahmpUGWPv1,FV3_GFS_v17_coupled_p8"
 #["ATM"]="-DAPP=ATM -DCCPP_SUITES=FV3_GFS_v16"
 )
 

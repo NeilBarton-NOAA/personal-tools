@@ -5,20 +5,21 @@ set -u
 ################################################################################################
 
 source ${PWD}/MACHINE-config.sh
-REPO=ufs-community && HASH=develop
+REPO=ufs-community && HASH=GFSv17.HR1  #c22aaad #develop
 CODE_DIR=${NPB_WORKDIR}/CODE/ufs-weather-model_${HASH}_${REPO}
 export RUNDIR_ROOT=${NPB_WORKDIR}/RUNS/RTs
 export ACCNR=marine-cpu
 source ${PWD}/MACHINE-config.sh
 # Coupled Case
-#case="
-#COMPILE | -DAPP=S2SWA -D32BIT=ON -DCCPP_SUITES=FV3_GFS_v17_coupled_p8,FV3_GFS_cpld_rasmgshocnsstnoahmp_ugwp  | - $m   | fv3 | 
-#RUN     | cpld_bmark_p8             |  | fv3 | 
-#"
 case="
-COMPILE | -DAPP=S2SW -DCCPP_SUITES=FV3_GFS_v17_coupled_p8  | - $m   | fv3 | 
-RUN     | cpld_warmstart_c48       |  | fv3 | 
+COMPILE | -DAPP=S2SWA -D32BIT=ON -DCCPP_SUITES=FV3_GFS_v17_coupled_p8,FV3_GFS_cpld_rasmgshocnsstnoahmp_ugwp  | - $m   | fv3 | 
+RUN     | cpld_S2S                  |  | fv3 | 
 "
+#RUN     | cpld_bmark_p8             |  | fv3 | 
+#case="
+#COMPILE | -DAPP=S2SW -DCCPP_SUITES=FV3_GFS_v17_coupled_p8  | - $m   | fv3 | 
+#RUN     | cpld_warmstart_c48       |  | fv3 | 
+#"
 ############
 # run tests
 config_file=${PWD}/CONF/RUN_CASE

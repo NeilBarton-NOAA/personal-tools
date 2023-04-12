@@ -5,9 +5,8 @@ TOPDIR=$NPB_WORKDIR/CODE
 mkdir -p $TOPDIR
 cd $TOPDIR
 
-#REPO=NOAA-EMC && HASH=develop 
-REPO=NOAA-EMC && HASH=prototype/hr1 
-#REPO=JessicaMeixner-NOAA && HASH=hr1waves
+#REPO=NOAA-EMC && HASH=prototype/hr1 
+REPO=NeilBarton-NOAA && HASH=GEFS_WAV_GRID
 COMPILE=T
 
 code=global-workflow_${HASH////\_}_${REPO}
@@ -35,5 +34,6 @@ sh link_workflow.sh
 EOF
 chmod 755 setup_all_ufs.sh
 echo "compiling in ${TOPDIR}/${code}/sorc"
-nohup ./setup_all_ufs.sh &
+code=global-workflow_${HASH////\_}_${REPO}
+nohup ./setup_all_ufs.sh ${PWD}/gw_${HASH////\_}_compile.log &
 fi
