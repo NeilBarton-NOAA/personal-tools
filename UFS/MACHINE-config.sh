@@ -2,6 +2,7 @@
 machine=$(uname -n)
 if [[ ${machine:0:1} == h ]]; then
     export module_file=ufs_hera.intel 
+    export ACCNR=marine-cpu
     m=hera
     #defaults in scripts
     export HOMEDIR=/scratch1/NCEPDEV/global/'${USER}'
@@ -14,6 +15,7 @@ elif [[ ${machine} == *Orion* ]]; then
     export STMPDIR=/work/noaa/stmp/'${USER}'
 elif [[ ${machine} == *[cd]login* ]]; then
     module_file=ufs_wcoss2.intel
+    #export ACCNR=marine-cpu
     export HOMEDIR=/lfs/h2/emc/global/noscrub/'${USER}'
     m=wcoss2.intel
 else
