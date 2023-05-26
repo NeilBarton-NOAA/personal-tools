@@ -40,8 +40,9 @@
 #
 from __future__ import print_function
 
+import argparse
 import base64
-import getopt
+from datetime import date
 import itertools
 import json
 import math
@@ -60,11 +61,6 @@ except ImportError:
     from urlparse import urlparse
     from urllib2 import urlopen, Request, HTTPError, URLError, build_opener, HTTPCookieProcessor
 
-short_name = 'NSIDC-0051'
-version = '2'
-time_start = '2011-04-01T00:00:00Z'
-time_end = '2018-05-01T23:59:59Z'
-save_dir = '/work/noaa/marine/nbarton/OBS/NASA_ICE'
 bounding_box = ''
 polygon = ''
 filename_filter = ''
@@ -254,7 +250,7 @@ def get_login_response(url, credentials, token):
     return response
 
 
-def cmr_download(urls, force=False, quiet=False):
+def cmr_download(urls, save_dir, force=False, quiet=False):
     """Download files from list of urls."""
     if not urls:
         return
@@ -271,16 +267,28 @@ def cmr_download(urls, force=False, quiet=False):
             if p.scheme == 'https':
                 credentials, token = get_login_credentials()
 
-        filename =  url.split('/')[-1]
+        filename = url.split('/')[-1]
+        if 'N25km' in filename:
+            suffix = '/north/' 
+        elif 'S25km' in filename:
+            suffix = '/south/'
+        else:
+            suffix = '/'
+        if not os.path.exists(save_dir + suffix):
+            os.mkdir(save_dir + suffix)
+        os.chdir(save_dir + suffix)
         if not quiet:
             print('{0}/{1}: {2}'.format(str(index).zfill(len(str(url_count))),
                                         url_count, filename))
-
         try:
             response = get_login_response(url, credentials, token)
             length = int(response.headers['content-length'])
+            if os.path.isfile(save_dir + suffix + filename):
+                d_length = os.path.getsize(save_dir + suffix + filename)
+            else:
+                d_length = 0
             try:
-                if not force and length == os.path.getsize(filename):
+                if not force and length == d_length:
                     if not quiet:
                         print('  File exists, skipping')
                     continue
@@ -292,9 +300,9 @@ def cmr_download(urls, force=False, quiet=False):
             time_initial = time.time()
             with open(filename, 'wb') as out_file:
                 for data in cmr_read_in_chunks(response, chunk_size=chunk_size):
-                    if not os.path.exists(save_dir):
-                        os.mkdir(save_dir)
-                    os.chdir(save_dir)
+                    if not os.path.exists(save_dir + suffix):
+                        os.mkdir(save_dir + suffix)
+                    os.chdir(save_dir + suffix)
                     out_file.write(data)
                     if not quiet:
                         count = count + 1
@@ -360,7 +368,7 @@ def cmr_search(short_name, version, time_start, time_end,
                                         bounding_box=bounding_box,
                                         polygon=polygon, filename_filter=filename_filter)
     if not quiet:
-        print('Querying for data:\n\t{0}\n'.format(cmr_query_url))
+        print('Querying for data')
 
     cmr_scroll_id = None
     ctx = ssl.create_default_context()
@@ -385,7 +393,7 @@ def cmr_search(short_name, version, time_start, time_end,
             hits = int(headers['cmr-hits'])
             if not quiet:
                 if hits > 0:
-                    print('Found {0} matches.'.format(hits))
+                    print('Found {0} matches.'.format(int(hits/2)))
                 else:
                     print('Found no matches.')
         search_page = response.read()
@@ -398,56 +406,62 @@ def cmr_search(short_name, version, time_start, time_end,
             sys.stdout.flush()
         urls += url_scroll_results
 
+    us = []
+    for u in urls:
+        if u[-2::] == 'nc':
+            us.append(u)
     if not quiet and hits > CMR_PAGE_SIZE:
         print()
-    return urls
+    return us
 
 
 def main(argv=None):
     global short_name, version, time_start, time_end, bounding_box, \
         polygon, filename_filter, url_list
 
-    if argv is None:
-        argv = sys.argv[1:]
+    #if argv is None:
+    #    argv = sys.argv[1:]
 
-    force = False
-    quiet = False
-    usage = 'usage: nsidc-download_***.py [--help, -h] [--force, -f] [--quiet, -q]'
-
-    try:
-        opts, args = getopt.getopt(argv, 'hfq', ['help', 'force', 'quiet'])
-        for opt, _arg in opts:
-            if opt in ('-f', '--force'):
-                force = True
-            elif opt in ('-q', '--quiet'):
-                quiet = True
-            elif opt in ('-h', '--help'):
-                print(usage)
-                sys.exit(0)
-    except getopt.GetoptError as e:
-        print(e.args[0])
-        print(usage)
-        sys.exit(1)
-
-    # Supply some default search parameters, just for testing purposes.
-    # These are only used if the parameters aren't filled in up above.
-    if 'short_name' in short_name:
-        short_name = 'ATL06'
-        version = '003'
-        time_start = '2018-10-14T00:00:00Z'
-        time_end = '2021-01-08T21:48:13Z'
-        bounding_box = ''
-        polygon = ''
-        filename_filter = '*ATL06_2020111121*'
-        url_list = []
-
+    parser = argparse.ArgumentParser( description = "Compares Sea Ice Extent Between Runs and Observations")
+    parser.add_argument('-d', '--save_dir', action = 'store', nargs = 1, help="directory to download data")
+    parser.add_argument('-f', '--force', action = 'store_true', default = False, help="to force download")
+    parser.add_argument('-q', '--quiet', action = 'store_true', default = False, help="quit download")
+    parser.add_argument('-n', '--name', action = 'store', default = 'NSIDC-0051', help="dataset to download")
+    parser.add_argument('-v', '--version', action = 'store', default = '2', help="version of dataset")
+    parser.add_argument('-s', '--start', action = 'store', default = '20000101', help="date to start download")
+    parser.add_argument('-e', '--end', action = 'store', default = 'Present', help="date to end download")
+    
+    args = parser.parse_args()
+    
+    save_dir = args.save_dir[0]
+    if not os.path.exists(save_dir):
+        os.makedirs(save_dir)
+    force = args.force
+    quiet = args.quiet
+    short_name = args.name
+    version = args.version
+    time_start = args.start
+    time_end = args.end
+    time_start = time_start[0:4] + '-' + time_start[4:6] + '-' + time_start[6:8] + 'T00:00:00Z'
+    if time_end == 'Present':
+       t = date.today() 
+       time_end = t.strftime("%Y-%m-%dT00:00:00Z")
+    print('---------------------------------------------------------------------------------------------')
+    print('save_dir:\t', save_dir)
+    print('force:\t\t', force)
+    print('quiet:\t\t', quiet)
+    print('short_name:\t', short_name)
+    print('version:\t', version)
+    print('time_start:\t', time_start)
+    print('time_end:\t', time_end)
+    print('---------------------------------------------------------------------------------------------')
     try:
         if not url_list:
             url_list = cmr_search(short_name, version, time_start, time_end,
                                   bounding_box=bounding_box, polygon=polygon,
                                   filename_filter=filename_filter, quiet=quiet)
 
-        cmr_download(url_list, force=force, quiet=quiet)
+        cmr_download(url_list, save_dir, force=force, quiet=quiet)
     except KeyboardInterrupt:
         quit()
 

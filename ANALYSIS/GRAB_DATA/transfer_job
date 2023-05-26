@@ -1,0 +1,11 @@
+#!/bin/sh -l
+#SBATCH -J TRANSFER
+#SBATCH --time=08:00:00
+#SBATCH -o %x.o%j
+#SBATCH --ntasks=1
+#SBATCH --exclusive #may mean use all memory
+#SBATCH -A marine-cpu
+#SBATCH --partition=service 
+
+# download sea ice ssmi/ssmr data
+${PWD}/DOWNLOAD_icecon_daily_ssmi_ssmr.sh
