@@ -1,4 +1,6 @@
+import glob
 import pandas as pd
+import pyproj
 import numpy as np
 import xarray as xr
 import os
@@ -6,57 +8,28 @@ import sys
 sys.path.append(os.path.dirname(os.path.realpath(__file__)) + '/../PYTHON_TOOLS')
 import PYTHON_TOOLS as npb
 
-def calc_extent(DAT, force_calc = False):
-    # grab data if already calculated
-    try:
-        f = DAT.extent_file
-    except:
-        f = None
-    if os.path.exists(f):
-       dd = xr.open_dataset(f)
-       DAT['NH_extent'] = (dd['NH_extent'].dims, dd['NH_extent'].values)
-       DAT['SH_extent'] = (dd['SH_extent'].dims, dd['SH_extent'].values)
-    # assume data are from CICE model
-    dims = ('nj', 'ni')
-    DIV = 1e12
-    var = 'aice_d'
-    # see if data are already there
-    if ('NH_extent' not in list(DAT.keys()) and 'SH_extent' not in list(DAT.keys())) or force_calc:
-        print('CALCULATING ICE EXTENT:')
-        # too much memory for below, must loop
-        #NH = d['area'].where(d['ICEC_surface'] > 0.15).sum(dim=('latitude', 'longitude'))
-        NH, SH = [], []
-        ds = DAT.isel(time = 0)  
-        _, area = xr.broadcast(ds[var], DAT['tarea'].isel(time = 1, tau = 1))
-        DAT['tau_area'] = (area.dims, area.values) 
-        print('     looping through time')
-        for t in DAT['time']:
-            print('     ', t.values)
-            # NH
-            ds = DAT.sel(time = t.values)
-            ds = ds.where(ds.TLAT > 20)
-            NH.append(DAT['tau_area'].where(ds[var] >= 0.15).sum(dim = dims) / DIV)
-            # SH
-            ds = DAT.sel(time = t.values)
-            ds = ds.where(ds.TLAT < -20)
-            SH.append(ds['tau_area'].where(ds[var] >= 0.15).sum(dim = dims) / DIV)
-        DAT = DAT.assign(NH_extent=(['time', 'tau'], np.array(NH)))
-        DAT = DAT.assign(SH_extent=(['time', 'tau'], np.array(SH)))
-        DAT = DAT.drop('tau_area')
-        if f:
-            SAVE_DAT = DAT.copy()
-            for key in SAVE_DAT.keys():
-                if key not in ['NH_extent', 'SH_extent', 'time', 'tau']:
-                    SAVE_DAT = SAVE_DAT.drop(key)
-            print('writing:', f)
-            if os.path.exists(f):
-                SAVE_DAT.to_netcdf(f, mode = 'a')
-            else:
-                SAVE_DAT.to_netcdf(f)
-    return DAT
+def parse_noaacdr(files, var, file_name):
+    def drop_vars(ds):
+        ds = ds.drop('latitude')
+        ds = ds.drop('longitude')
+        return ds
+    print('not found, parsing data:', file_name)
+    files.sort()
+    obs = xr.open_mfdataset(files, preprocess = drop_vars, combine = 'nested', concat_dim = 'tdim')
+    obs = obs.rename({'tdim' : 'time'})
+    geo = xr.open_dataset(files[0])
+    obs['lat'] = (geo['latitude'].dims, geo['latitude'].values)
+    obs['lon'] = (geo['longitude'].dims, geo['longitude'].values)
+    obs['ice_con'] = (obs[var].dims, obs[var].values)
+    for key in list(obs.keys()):
+        if key not in ['ice_con', 'lat', 'lon']:
+            obs = obs.drop(key)
+    obs.to_netcdf(file_name)
+    print('wrote:', file_name)
+    return obs
 
 def get_extentobs_NASA():
-    ice_dir = '/scratch2/NCEPDEV/stmp3/Neil.Barton/DIAG/OBS/ice_extent/NASA'
+    ice_dir = '/scratch2/NCEPDEV/stmp3/Neil.Barton/DIAG/OBS/ice_extent/nasateam'
     files = ['gsfc.nasateam.daily.extent.1978-2021.n', 'gsfc.nasateam.daily.extent.1978-2021.s']
     ob = []
     for ii, f in enumerate(files):
@@ -87,13 +60,13 @@ def get_extentobs_NASA():
     obs = obs.assign_attrs({'test_name': 'OBS-NASA'})
     return obs
 
-def get_extentobs_CDR():
-    ice_dir = '/scratch2/NCEPDEV/stmp3/Neil.Barton/DIAG/OBS/IceData'
-    files = ['N_seaice_extent_daily_v3.0.csv', 'S_seaice_extent_daily_v3.0.csv']
+def get_extentobs_bootstrap():
+    ice_dir = '/scratch2/NCEPDEV/stmp3/Neil.Barton/DIAG/OBS/ice_extent/bootstrap'
+    files = ['gsfc.bootstrap.daily.extent.1978-2021.n', 'gsfc.bootstrap.daily.extent.1978-2021.s']
     ob = []
     for ii, f in enumerate(files):
-        obs = pd.read_csv(ice_dir + '/' + f, header = [0,1])
-        obs.columns = obs.columns.droplevel(1)
+        print(ice_dir + '/' + f)
+        obs = pd.read_csv(ice_dir + '/' + f, delim_whitespace = True)
         t = []
         for i in range(obs.shape[0]):
             y = str(obs[obs.keys()[0]][i])
@@ -101,17 +74,22 @@ def get_extentobs_CDR():
             d = str(obs[obs.keys()[2]][i]).zfill(2)
             t.append(np.datetime64(y + '-' + m + '-' + d, 'ns'))
         obs['time'] = t
+        if f[-1] == 'n':
+            v_key = 'TotalArc'
+        elif f[1] == 's':
+            v_key = 'TotalAnt'
         for k in obs.keys():
-            if k.strip() not in ['time', 'Extent']:
+            if k.strip() not in ['time', v_key]:
                 obs.drop(k, axis = 1, inplace = True)
             else:
                 obs.rename(columns = {k: k.strip()}, inplace = True)
-        obs.rename(columns = {'Extent': f[0] + 'H_extent'}, inplace = True)
+        obs[v_key] = obs[v_key] / 10e5
+        obs.rename(columns = {v_key: f[-1].capitalize() + 'H_extent'}, inplace = True)
         obs.set_index('time', inplace = True)
         ob.append(obs)
     obs = pd.concat(ob, axis = 1)
     obs = obs.to_xarray()
-    obs = obs.assign_attrs({'test_name': 'OBS-CDR'})
+    obs = obs.assign_attrs({'test_name': 'OBS-bootstrap'})
     return obs
 
 def get_thickness():
@@ -119,27 +97,135 @@ def get_thickness():
     obs = xr.open_mfdataset(ice_dir + '/ice*.nc')
     return obs
 
-def get_iceobs(season = False):
-    ice_dir = '/scratch2/NCEPDEV/stmp3/Neil.Barton/DIAG/OBS/ice_concentration/NOAA_CDR'
+def get_icecon_daily_climatology(years = 10):
+    ice_dir = '/scratch2/NCEPDEV/stmp3/Neil.Barton/DIAG/OBS/ice_concentration/noaa_cdr'
+    variables = ['nsidc_nt_seaice_conc', 'nsidc_bt_seaice_conc', 'cdr_seaice_conc']
     poles = ['north', 'south']
     ob = []
     for ii, pole in enumerate(poles):
-        print('READING ICE CONCENTRATIONS:', pole)
-        obs_file = ice_dir + 'ICECON_OBS_' + pole + '.nc'
+        print('CALCULATING DAILY CLIMATOLOGY SEA ICE CONCENTRATIONS:', pole)
+        save_file = ice_dir + '_climo_years_' + str(years) + '_parsed_' + pole + '.nc'
+        if os.path.exists(save_file):
+            dat = xr.open_dataset(save_file)
+        else:
+            dats = []
+            # grab data
+            for var in variables:
+                obs_file = ice_dir + '_' + var + '_parsed_' + pole + '.nc'
+                if os.path.exists(obs_file):
+                    dats.append(xr.open_dataset(obs_file))
+                else:
+                    files = glob.glob(ice_dir + '/' + pole + '/*daily_' + pole[0] + '*.nc')
+                    dats.append(parse_noaacdr(files, var, obs_file))
+            # slice time
+            obs = np.zeros((366, dats[0]['y'].size, dats[0]['x'].size))
+            for i, d in enumerate(dats):
+                if i == 0:
+                    t_last = d['time'].values[-1]
+                    t_first = np.array(pd.to_datetime(t_last) - pd.DateOffset(years= years))
+                dat = d['ice_con'].sel(time = slice(t_first, t_last))
+                obs = obs + dat.groupby("time.dayofyear").mean().values
+            obs = obs / len(variables)
+            dat = dats[0]
+            dat = dat.drop('ice_con')
+            dat = dat.drop('time')
+            dat['DayOfYear'] = np.arange(366) + 1
+            dat['ice_con'] = (('DayOfYear','y','x'), obs)
+            t_last = np.array(pd.to_datetime(t_last))
+            dat = dat.assign_attrs({'Start Year for Climo': str(t_first)})
+            dat = dat.assign_attrs({'End Year for Climo': str(t_last)})
+            dat = dat.assign_attrs({'Years for Climo': years})
+            dat = dat.assign_attrs({'Datasets for Climo': variables})
+            dat.to_netcdf(save_file)
+            print('wrote:', save_file)
+        ob.append(dat)
+    return ob[0], ob[1]
+
+def get_icecon_nt():
+    ice_dir = '/scratch2/NCEPDEV/stmp3/Neil.Barton/DIAG/OBS/ice_concentration/noaa_cdr'
+    var = 'nsidc_nt_seaice_conc'
+    poles = ['north', 'south']
+    ob = []
+    for ii, pole in enumerate(poles):
+        print('READING NOAA NASA Team ICE CONCENTRATIONS:', pole)
+        obs_file = ice_dir + '_' + var + '_parsed_' + pole + '.nc'
         if os.path.exists(obs_file):
             obs = xr.open_dataset(obs_file)
         else:
-            obs = xr.open_mfdataset(ice_dir + '/*daily_' + pole[0] + '*.nc', combine = 'nested', concat_dim = 'tdim')
-            obs = obs.rename({'tdim' : 'time'})
-            obs['ice_con'] = (obs['cdr_seaice_conc'].dims, obs['cdr_seaice_conc'].values)
-            for key in list(obs.keys()):
-                if key != 'ice_con':
-                    obs = obs.drop(key)
-            grid = xr.open_dataset(ice_dir + '/G02202-cdr-ancillary-' + pole[0] + 'h.nc')
-            obs['lat'] = (grid['latitude'].dims, grid['latitude'].values)
-            obs['lon'] = (grid['longitude'].dims, grid['longitude'].values)
+            files = glob.glob(ice_dir + '/' + pole + '/*daily_' + pole[0] + '*.nc')
+            obs = parse_noaacdr(files, var, obs_file)
+        ob.append(obs)
+    return ob[0], ob[1]
+
+def get_icecon_bs():
+    ice_dir = '/scratch2/NCEPDEV/stmp3/Neil.Barton/DIAG/OBS/ice_concentration/noaa_cdr'
+    var = 'nsidc_bt_seaice_conc'
+    poles = ['north', 'south']
+    ob = []
+    for ii, pole in enumerate(poles):
+        print('READING NOAA Boot Strap ICE CONCENTRATIONS:', pole)
+        obs_file = ice_dir + '_' + var + '_parsed_' + pole + '.nc'
+        if os.path.exists(obs_file):
+            obs = xr.open_dataset(obs_file)
+        else:
+            files = glob.glob(ice_dir + '/' + pole + '/*daily_' + pole[0] + '*.nc')
+            obs = parse_noaacdr(files, var, obs_file)
+        ob.append(obs)
+    return ob[0], ob[1]
+
+def get_icecon_cdr():
+    ice_dir = '/scratch2/NCEPDEV/stmp3/Neil.Barton/DIAG/OBS/ice_concentration/noaa_cdr'
+    var = 'cdr_seaice_conc'
+    poles = ['north', 'south']
+    ob = []
+    for ii, pole in enumerate(poles):
+        print('READING NOAA-CDR ICE CONCENTRATIONS:', pole)
+        obs_file = ice_dir + '_' + var + '_parsed_' + pole + '.nc'
+        if os.path.exists(obs_file):
+            obs = xr.open_dataset(obs_file)
+        else:
+            files = glob.glob(ice_dir + '/' + pole + '/*daily_' + pole[0] + '*.nc')
+            obs = parse_noaacdr(files, var, obs_file)
+        ob.append(obs)
+    return ob[0], ob[1]
+
+def get_icecon_nsidc0051():
+    def rename_variable(ds):
+        for pv in ['F13_ICECON', 'F17_ICECON']:
+            if pv in ds.keys():
+                ds = ds.rename_vars({pv: 'ice_con'})
+        return ds
+    ice_dir = '/scratch2/NCEPDEV/stmp3/Neil.Barton/DIAG/OBS/ice_concentration/nsidc-0051'
+    poles = ['north', 'south']
+    ob = []
+    for ii, pole in enumerate(poles):
+        print('READING NSIDC-0051 ICE CONCENTRATIONS:', pole)
+        obs_file = ice_dir + '_parsed_' + pole + '.nc'
+        if os.path.exists(obs_file):
+            obs = xr.open_dataset(obs_file)
+        else:
+            files = glob.glob(ice_dir + '/' + pole + '/NSIDC*' + pole[0].upper() + '*.nc')
+            for f in files:
+                if len(f.split('/')[-1]) != 42:
+                    files.remove(f)
+            files.sort()
+            obs = xr.open_mfdataset(files, preprocess = rename_variable) 
+            # add/calc lat and lon
+            inputEPSG = int(obs.geospatial_bounds_crs.split(':')[-1])
+            outputEPSG = 4326
+            #dx = dy = int(float(obs.geospatial_x_resolution.split()[0]))
+            #minx = int(obs['crs'].GeoTransform.split()[0])
+            #maxy = int(obs['crs'].GeoTransform.split()[3])
+            #x, y = np.meshgrid(np.arange(minx, minx + (obs.dims['x'] * dx), +dx),\
+            #            np.arange(maxy, maxy - (obs.dims['y'] * dy), -dy))
+            x, y = np.meshgrid(obs['x'].values, obs['y'].values)
+            proj = pyproj.Transformer.from_crs(inputEPSG, outputEPSG, always_xy = True)
+            lat, lon = proj.transform(x, y)
+            obs['lat'] = ({'y', 'x'}, lat)
+            obs['lon'] = ({'y', 'x'}, lon)
             # save to netcdf
             obs.to_netcdf(obs_file)
             print('wrote:', obs_file)
         ob.append(obs)
     return ob[0], ob[1]
+

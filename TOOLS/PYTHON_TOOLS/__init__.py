@@ -1,4 +1,4 @@
-from . import base_maps, iceobs, maps, maptools, plot, timetools
+from . import base_maps, icecalc, iceobs, maps, maptools, plot, util, timetools
 
 ############################################################
 def defaults_from_array(DAT1, DAT2 = None):

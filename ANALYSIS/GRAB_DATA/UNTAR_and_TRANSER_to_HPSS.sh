@@ -1,10 +1,9 @@
 #!/bin/sh
-set -xu
+set -u
 TOPDIR=${NPB_WORKDIR}/DIAG/OBS
 cd ${TOPDIR}
-FILES=$(ls *.tar )
-for f in ${FILES}; do
-    tar -xvf ${f}
-    htar -xvf ${ARCHIVE_HOME}/${f} ${f} 
-    rm ${f}
+DIRS=$(ls -d */)
+for DIR in ${DIRS}; do
+    echo ${DIR::-1}
+    htar -cvf /NCEPDEV/emc-marine/5year/Neil.Barton/DIAG/OBS/${DIR::-1}.tar ${DIR}/ 
 done

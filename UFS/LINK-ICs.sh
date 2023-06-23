@@ -69,12 +69,10 @@ if [[ $APP == ATM || ${APP:0:3} == S2S ]]; then
     # for mbr in $(seq -f '%03g' 1 $NENS); do
     #     LINK_FILES ${ICSDIR}/enkfgdas.${atmos_YMD}/${atmos_HOUR}/atmos/mem${mbr}/${atmos_dir} ${COMROT}/enkfgdas.${atmos_YMD}/${atmos_HOUR}/mem${mbr}/atmos/${atmos_dir}
     # done
-    if [[ ${CDUMP} == 'gdas' ]]; then
-        for f in ${bias_files}; do
-            files=$(find ${ICDIR}/${DTG} ${ICDIR}/gfs.${DTG_HOUR}.${DTG_YMD} -name "${f}" 2>/dev/null)
-            LINK_FILES ${files} ${COMROT}/${CDUMP}.${DTG_YMD}/${DTG_HOUR}/atmos
-        done
-    fi
+    for f in ${bias_files}; do
+        files=$(find ${ICDIR}/${DTG} ${ICDIR}/gfs.${DTG_HOUR}.${DTG_YMD} -name "${f}" 2>/dev/null)
+        LINK_FILES ${files} ${COMROT}/${CDUMP}.${DTG_YMD}/${DTG_HOUR}/atmos
+    done
 fi
 
 if [[ ${START} == 'warm' ]]; then

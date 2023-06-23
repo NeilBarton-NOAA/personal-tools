@@ -1,4 +1,5 @@
 # some plotting graph 
+import calendar
 import cartopy.crs as ccrs
 import matplotlib.pyplot as plt
 import numpy as np
@@ -24,6 +25,64 @@ def getICEdomain(domain):
         y = np.arange(+4350000, -3950000, -dy)
         kw = dict(central_latitude=-90, central_longitude=0, true_scale_latitude=-70)
     return x, y, kw
+
+def monthly(DAT, ICECON = None, domain = 'Arctic'):    
+    print('in maps.monthly')
+    if ICECON.any():
+        x, y, kw = npb.maps.getICEdomain(domain)
+    save_dir = DAT.save_dir
+    test_name = DAT.test_name
+    var_name = DAT.var_name
+    long_name = DAT.long_name
+    olon, olat = DAT['TLON'].values, DAT['TLAT'].values
+    cmap_DAT = plt.get_cmap('terrain_r')
+    fig = plt.figure(figsize=(6,8))
+    taus_len = np.size(DAT['tau'].values)
+    taus = DAT['tau'].values[0::int(taus_len/4)]
+    print(taus)
+    for tau in taus:
+        axs = []
+        for i, month in enumerate(['12', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11']):
+            print('tau', tau, 'month', month)
+            DA = DAT.isel(time = DAT['time'].dt.month.isin([int(month)])) 
+            t_array = npb.timetools.time_plus_tau(DA['time'].values, tau)
+            if ICECON.any():
+                OBS = ICECON['ice_con'].sel(time = t_array).mean(dim = 'time')
+            D = DA[var_name].sel(tau = tau).mean(dim = 'time')
+            lon, lat, D = npb.maptools.index_lon_lat_dat(olon, olat, D.values)
+            if domain == 'Arctic':
+                ax = fig.add_subplot(4,3,i+1, projection = ccrs.NorthPolarStereo())
+                ax = npb.base_maps.Arctic(ax, labels = False)
+                t_lon, t_lat = 180.0, 47.0
+            elif domain == 'Antarctic':
+                ax = fig.add_subplot(4,3,i+1, projection = ccrs.SouthPolarStereo())
+                ax = npb.base_maps.Antarctic(ax, labels = False)
+                t_lon, t_lat = 0.0, -37.
+            im = ax.pcolormesh(lon, lat, D, 
+                transform=ccrs.PlateCarree(), 
+                vmin = 0.15,
+                vmax = 1.0,
+                cmap = cmap_DAT)
+            ax.set_title(calendar.month_abbr[int(month)])
+            ax = npb.base_maps.add_features(ax)
+            if ICECON.any():
+                ax.contour(x, y, OBS, [0.15], colors = ['k'], transform = ccrs.Stereographic(**kw))
+                axs.append(ax)
+        axs = np.array(axs)
+        #xo, yo, width, height
+        cbar_ax = fig.add_axes([0.15, 0.07, 0.72, 0.02])
+        fig.colorbar(im, ax = axs[-1], cax = cbar_ax, orientation='horizontal' )
+        axs[1].text(180, 40, \
+            test_name + '; ' + long_name + '; Forecast Day ' + str(tau), \
+            fontsize = 'large', \
+            fontweight = 'bold', \
+            transform = ccrs.PlateCarree(), \
+            ha = 'center', va = 'center')
+        #plt.show()
+        fig_name = save_dir + '/' + test_name + '_' + var_name + '_FORECASTDAY_' + str(tau) + '_' + domain.upper() + '.png'
+        print('SAVED:', fig_name)
+        plt.savefig(fig_name, bbox_inches = 'tight')
+        plt.close()
 
 def difference(DAT1, DAT2, ICEOBS = None, domain = 'Arctic'):
     print('in maps.difference')
@@ -64,10 +123,10 @@ def difference(DAT1, DAT2, ICEOBS = None, domain = 'Arctic'):
         MIN = DMIN if i == 2 else VMIN
         MAX = DMAX if i == 2 else VMAX
         pcs.append(ax.pcolormesh(lon, lat, DAT[i], 
-            transform=ccrs.PlateCarree(), 
-            vmin = MIN,
-            vmax = MAX,
-            cmap = cmap))
+           transform=ccrs.PlateCarree(), 
+           vmin = MIN,
+           vmax = MAX,
+           cmap = cmap))
         ax.set_title(titles[i])
         ax = npb.base_maps.add_features(ax)
         if ICEOBS.any():

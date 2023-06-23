@@ -1,15 +1,14 @@
 #!/bin/sh
 set -u
-source $PWD/MACHINE-config.sh
-TOPDIR=$NPB_WORKDIR/CODE
-mkdir -p $TOPDIR
-cd $TOPDIR
+source ${PWD}/MACHINE-config.sh
+TOPDIR=${NPB_WORKDIR}/CODE
+mkdir -p ${TOPDIR}
+cd ${TOPDIR}
 
-#REPO=NOAA-EMC && HASH=prototype/hr1 
-REPO=NeilBarton-NOAA && HASH=GEFS_WAV_GRID
+REPO=NeilBarton-NOAA && HASH=develop
 COMPILE=T
-
 code=global-workflow_${HASH////\_}_${REPO}
+
 ########################
 # check out code
 cd ${TOPDIR}

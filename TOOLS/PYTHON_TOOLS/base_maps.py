@@ -21,7 +21,7 @@ def add_features(ax):
     return ax
 
 class Global(object):
-     def __new__(self, ax = None):
+     def __new__(self, ax = None, labels = True):
         if not ax:
             ax = plt.axes(projection=ccrs.Mollweide())
         gl = ax.gridlines(crs=ccrs.PlateCarree(), draw_labels=False,
@@ -33,18 +33,19 @@ class Global(object):
         gl.ylocator = mticker.FixedLocator(yticks)
         gl.xformatter = LONGITUDE_FORMATTER
         gl.yformatter = LATITUDE_FORMATTER
-        for x in xticks[1::]:
-            suffix = 'W' if x < 0 and abs(x) != 180 else 'E'
-            txt = str(abs(x)) + r'$^{\circ}$' + suffix
-            ax.text(x,-60,txt, size = 8, ha = 'center', va = 'center', transform=ccrs.Geodetic())
-        for y in yticks[1:-1]:
-            suffix = 'S' if y < 0  else 'N'
-            txt = str(abs(y)) + r'$^{\circ}$' + suffix + r'   '
-            ax.text(-180,y,txt, size = 8, ha = 'right', va = 'center', transform=ccrs.Geodetic())
+        if labels:
+            for x in xticks[1::]:
+                suffix = 'W' if x < 0 and abs(x) != 180 else 'E'
+                txt = str(abs(x)) + r'$^{\circ}$' + suffix
+                ax.text(x,-60,txt, sze = 8, ha = 'center', va = 'center', transform=ccrs.Geodetic())
+            for y in yticks[1:-1]:
+                suffix = 'S' if y < 0  else 'N'
+                txt = str(abs(y)) + r'$^{\circ}$' + suffix + r'   '
+                ax.text(-180,y,txt, size = 8, ha = 'right', va = 'center', transform=ccrs.Geodetic())
         return ax
         
 class Arctic(object):
-     def __new__(self, ax = None):
+     def __new__(self, ax = None, labels = True):
         if not ax:
             ax = plt.axes(projection=ccrs.NorthPolarStereo())
         ax.set_extent([-180, 180, 55, 90], ccrs.PlateCarree())
@@ -59,14 +60,15 @@ class Arctic(object):
         gl.xformatter = LONGITUDE_FORMATTER
         gl.yformatter = LATITUDE_FORMATTER
         # ticks
-        for x in xticks[1:-1]:
-            suffix = 'W' if x < 0 and abs(x) != 180 else 'E'
-            txt = str(abs(x)) + r'$^{\circ}$' + suffix
-            ax.text(x,60,txt, size = 8, ha = 'center', va = 'center', transform=ccrs.Geodetic())
-        for y in yticks:
-            suffix = 'S' if y < 0  else 'N'
-            txt = str(abs(y)) + r'$^{\circ}$' + suffix + r'   '
-            ax.text(-180,y,txt, size = 8, ha = 'left', va = 'center', transform=ccrs.Geodetic())
+        if labels:
+            for x in xticks[1:-1]:
+                suffix = 'W' if x < 0 and abs(x) != 180 else 'E'
+                txt = str(abs(x)) + r'$^{\circ}$' + suffix
+                ax.text(x,60,txt, size = 8, ha = 'center', va = 'center', transform=ccrs.Geodetic())
+            for y in yticks:
+                suffix = 'S' if y < 0  else 'N'
+                txt = str(abs(y)) + r'$^{\circ}$' + suffix + r'   '
+                ax.text(-180,y,txt, size = 8, ha = 'left', va = 'center', transform=ccrs.Geodetic())
         # circle 
         theta = np.linspace(0, 2*np.pi, 100)
         center, radius = [0.5, 0.5], 0.5
