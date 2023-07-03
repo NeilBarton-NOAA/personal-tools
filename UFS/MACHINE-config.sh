@@ -19,7 +19,7 @@ elif [[ ${machine} == *[cd]login* ]]; then
     export HOMEDIR=/lfs/h2/emc/global/noscrub/'${USER}'
     m=wcoss2.intel
 else
-    echo "machine unkown: " $machine
+    echo "machine unknown: " $machine
     exit 1
 fi
 

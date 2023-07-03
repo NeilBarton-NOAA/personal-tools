@@ -20,7 +20,9 @@
 .lmod.d/
 .local
 .profile
+.python_history
 .rocoto/
+.snapshot/
 .ssh/authorized_keys
 .ssh/id*
 .ssh/known_hosts

@@ -8,7 +8,7 @@ COMPILE=T
 ########################
 # check out code
 cd $TOPDIR
-CODE=ufs-weather-model_${HASH}_${REPO}
+CODE=ufs-weather-model_${HASH////\_}_${REPO}
 if [[ ! -d ${CODE} ]]; then
     git clone https://github.com/${REPO}/ufs-weather-model.git ${CODE}
     cd ${CODE}
