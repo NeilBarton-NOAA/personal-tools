@@ -4,7 +4,6 @@ set tabstop=4
 set statusline+=%F
 set autoindent
 set laststatus=2
-set number
 set hlsearch
 set ruler
 command V visual

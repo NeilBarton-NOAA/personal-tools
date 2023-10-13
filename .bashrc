@@ -46,7 +46,7 @@ elif [[ ${machine} == *Orion* ]]; then
     alias sd2="cd /work/noaa/stmp/nbarton"
     export NPB_WORKDIR=/work/noaa/marine/nbarton
 elif [[ ${machine} == *[cd]login* ]]; then
-    export NPB_WORKDIR=/lfs/h2/emc/ptmp/neil.barton
+    export NPB_WORKDIR=/lfs/h2/emc/stmp/neil.barton
     export NPB_CODEDIR=/lfs/h2/emc/couple/noscrub/neil.barton
     alias ccd="cd $NPB_CODEDIR"
     alias qme="qstat -u $USER"
@@ -54,6 +54,7 @@ elif [[ ${machine} == *[cd]login* ]]; then
 else
     echo "machine unknown in .bashrc: " $machine
 fi
+
 
 # modules
 source ~/.profile

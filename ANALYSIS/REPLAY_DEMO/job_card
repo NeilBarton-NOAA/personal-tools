@@ -1,22 +1,24 @@
 #!/bin/sh
-#SBATCH -J REPLAY
-#SBATCH --time=04:00:00
-#SBATCH -o %x.o%j
-#SBATCH --ntasks=1
-#SBATCH --exclusive #may mean use all memory
-#SBATCH -A marine-cpu
-# for HPSS
+##SBATCH -J REPLAY
+##SBATCH --time=04:00:00
+##SBATCH -o %x.o%j
+##SBATCH --ntasks=1
+##SBATCH --exclusive #may mean use all memory
+##SBATCH -A marine-cpu
+## for HPSS
 ##SBATCH --partition=service
 
+#PBS -j oe
+#PBS -N snow_d
+#PBS -A GEFS-DEV
+#PBS -q dev_transfer
+#PBS -l select=1:ncpus=1:mem=5GB
+#PBS -l walltime=03:00:00
+#PBS -V
 
-##PBS -j oe
-##PBS -N REPLAY_CICE
-##PBS -A GEFS-DEV
-##PBS -q dev_transfer
-##PBS -l select=1:ncpus=1:mem=5GB
-##PBS -l walltime=01:00:00
+#~/ANALYSIS/REPLAY_DEMO/REPLAY_MAPS.py
+##~/ANALYSIS/REPLAY_DEMO/REPLAY_COMPARE.py
+# vars are Tsfc_d, hs_d, hi_d, snow_d, albsni_d, aice_d
+~/ANALYSIS/REPLAY_DEMO/CICE_data.sh snow_d
 
 
-~/ANALYSIS/REPLAY_DEMO/REPLAY_MAPS.py
-#~/ANALYSIS/REPLAY_DEMO/REPLAY_COMPARE.py
-#~/ANALYSIS/REPLAY_DEMO/CICE_data_ctl.sh
