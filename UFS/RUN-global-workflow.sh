@@ -8,23 +8,26 @@ set -u
 source $PWD/MACHINE-config.sh
 
 ####################################
-REPO=NeilBarton-NOAA && HASH=GEFS_WAV_GRID
+REPO=NeilBarton-NOAA && HASH=GEFS && PSLOT=GEFS_TEST
 #REPO=NOAA-EMC && HASH=develop && PSLOT=DEV
 #IDATE=2019120300
 #IDATE=2017091200
-IDATE=2013040100 
+IDATE=2013041500 
 #IDATE=2015110100
 EDATE=$( $PWD/DTG-add-time.sh $IDATE 1 ) 
 RUN_TYPE=forecast-only #cycled
-CDUMP=gfs
-APP=S2SA #ATM #ATM, S2S, S2SW
-#NENS=20
+CDUMP=gefs
+APP=S2SW #ATM #ATM, S2S, S2SW
+RESDET=384
+RESENS=384
+NENS=1
 ICSDIR=${NPB_WORKDIR}/ICs/${IDATE}
 START=warm
+
 ####################################
 # Sub-Components of script
 RUN_SETUP_EXPT=T
-RUN_LINK_ICs=F
+RUN_LINK_ICs=T
 RUN_EDIT_CONFIG=T
 RUN_SETUP_XML=T
 RUN_CRONTAB=T
@@ -93,14 +96,16 @@ OPTIONS="${OPTIONS} --app ${APP} "
 OPTIONS="${OPTIONS} --start ${START} "
 OPTIONS="${OPTIONS} --gfs_cyc ${GFS_CYC} "
 OPTIONS="${OPTIONS} --resdet ${RESDET} "
+OPTIONS="${OPTIONS} --resens ${RESENS} "
 OPTIONS="${OPTIONS} --pslot ${PSLOT} "
 OPTIONS="${OPTIONS} --expdir ${EXPDIR} "
 OPTIONS="${OPTIONS} --comrot ${COMROT} "
-if [[ $RUN_TYPE != forecast-only ]]; then
-OPTIONS="${OPTIONS} --resens ${RESENS} "
 OPTIONS="${OPTIONS} --nens ${NENS} "
+OPTIONS="${OPTIONS} --resens ${RESENS} "
+if [[ $RUN_TYPE != forecast-only ]]; then
 OPTIONS="${OPTIONS} --start ${START} "
 fi
+echo "${SCRIPT_DIR}/setup_expt.py ${CDUMP} ${RUN_TYPE} ${OPTIONS}"
 ${SCRIPT_DIR}/setup_expt.py ${CDUMP} ${RUN_TYPE} ${OPTIONS}
 if [[ $? != 0 ]]; then
    echo 'setup_expt.py failed'

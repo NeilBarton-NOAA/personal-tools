@@ -1,5 +1,5 @@
 #!/bin/sh -l
-#SBATCH -J NPBnetcdf
+#SBATCH -J NPBjob_card
 #SBATCH --time=04:00:00
 #SBATCH -o %x.o%j
 #SBATCH --ntasks=1
@@ -8,18 +8,5 @@
 # for HPSS
 ##SBATCH --partition=service
 
-TOPDIR=/home/Neil.Barton/ANALYSIS/GRAB_DATA
-${TOPDIR}/wgrib2_TO_netcdf.sh USWRF
-#${TOPDIR}/calc_CRF.sh S G
-#TOPDIR=/home/Neil.Barton/ANALYSIS
-#f=DLWRF
-#v=surface
-#files=$( ls /scratch2/NCEPDEV/stmp3/Neil.Barton/UFS_OUTPUT/P8*/${f}.nc)
-#$TOPDIR/ufs_output_compare.py -f $files -v ${f}_${v}
-
-#TOPDIR=/home/Neil.Barton/ANALYSIS/GRAB_DATA
-#files=$( ls /scratch2/NCEPDEV/stmp3/Neil.Barton/UFS_OUTPUT/P8T/WORKING_DIR/CICE_2*nc)
-#${TOPDIR}/CICE_cat_netcdf.py -f ${files}
-
-#cd /scratch2/NCEPDEV/stmp3/Neil.Barton/UFS_OUTPUT/P8T
-#DATA_DIR=/scratch2/NCEPDEV/stmp3/Neil.Barton/UFS_OUTPUT/
+cd /home/Neil.Barton/UFS
+./CREATE-grid_spec_file.sh

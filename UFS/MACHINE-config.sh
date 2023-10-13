@@ -3,7 +3,7 @@ machine=$(uname -n)
 if [[ ${machine:0:1} == h ]]; then
     export module_file=ufs_hera.intel 
     export ACCNR=marine-cpu
-    m=hera
+    m=hera.intel
     #defaults in scripts
     export HOMEDIR=/scratch1/NCEPDEV/global/'${USER}'
     export STMPDIR=/scratch1/NCEPDEV/stmp2/'${USER}'
@@ -19,6 +19,7 @@ elif [[ ${machine} == *[cd]login* ]]; then
     export HOMEDIR=/lfs/h2/emc/global/noscrub/'${USER}'
     m=wcoss2.intel
 else
+    echo "in ~/UFS/MACHINE-config.sh"
     echo "machine unknown: " $machine
     exit 1
 fi

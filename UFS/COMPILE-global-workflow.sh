@@ -5,7 +5,8 @@ TOPDIR=${NPB_WORKDIR}/CODE
 mkdir -p ${TOPDIR}
 cd ${TOPDIR}
 
-REPO=NeilBarton-NOAA && HASH=develop
+#REPO=NeilBarton-NOAA && HASH=GEFS
+REPO=rmontuoro && HASH=gefs/ep4a
 COMPILE=T
 code=global-workflow_${HASH////\_}_${REPO}
 
@@ -24,10 +25,11 @@ fi
 ########################
 # build model
 if [[ ${COMPILE} == T ]]; then
+#sh checkout.sh -g # g gsi u for GDASApp
 cd ${TOPDIR}/${code}/sorc
 cat <<EOF > setup_all_ufs.sh
 #!/bin/sh
-sh checkout.sh -g
+sh checkout.sh 
 sh build_all.sh 
 sh link_workflow.sh  
 EOF

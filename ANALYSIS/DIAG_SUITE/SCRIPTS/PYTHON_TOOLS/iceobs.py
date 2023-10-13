@@ -31,31 +31,37 @@ def parse_noaacdr(files, var, file_name):
 def get_extentobs_NASA():
     ice_dir = '/scratch2/NCEPDEV/stmp3/Neil.Barton/DIAG/OBS/ice_extent/nasateam'
     files = ['gsfc.nasateam.daily.extent.1978-2021.n', 'gsfc.nasateam.daily.extent.1978-2021.s']
-    ob = []
     for ii, f in enumerate(files):
         print(ice_dir + '/' + f)
-        obs = pd.read_csv(ice_dir + '/' + f, delim_whitespace = True)
-        t = []
-        for i in range(obs.shape[0]):
-            y = str(obs[obs.keys()[0]][i])
-            m = str(obs[obs.keys()[1]][i]).zfill(2)
-            d = str(obs[obs.keys()[2]][i]).zfill(2)
-            t.append(np.datetime64(y + '-' + m + '-' + d, 'ns'))
-        obs['time'] = t
+        ob = pd.read_csv(ice_dir + '/' + f, delim_whitespace = True)
+        t, hem = [], []
         if f[-1] == 'n':
             v_key = 'TotalArc'
         elif f[1] == 's':
             v_key = 'TotalAnt'
-        for k in obs.keys():
-            if k.strip() not in ['time', v_key]:
-                obs.drop(k, axis = 1, inplace = True)
+        for i in range(ob.shape[0]):
+            y = str(ob[ob.keys()[0]][i])
+            m = str(ob[ob.keys()[1]][i]).zfill(2)
+            d = str(ob[ob.keys()[2]][i]).zfill(2)
+            t.append(np.datetime64(y + '-' + m + '-' + d, 'ns'))
+            if v_key == 'TotalArc':
+                hem.append('north')
+            elif v_key == 'TotalAnt':
+                hem.append('south')
+        ob['time'] = t
+        ob['hemisphere'] = hem
+        for k in ob.keys():
+            if k.strip() not in ['time', 'hemisphere', v_key]:
+                ob.drop(k, axis = 1, inplace = True)
             else:
-                obs.rename(columns = {k: k.strip()}, inplace = True)
-        obs[v_key] = obs[v_key] / 10e5
-        obs.rename(columns = {v_key: f[-1].capitalize() + 'H_extent'}, inplace = True)
-        obs.set_index('time', inplace = True)
-        ob.append(obs)
-    obs = pd.concat(ob, axis = 1)
+                ob.rename(columns = {k: k.strip()}, inplace = True)
+        ob[v_key] = ob[v_key] / 10e5
+        ob.rename(columns = {v_key: 'extent'}, inplace = True)
+        ob.set_index(['time', 'hemisphere'], inplace = True)
+        if ii == 0:
+            obs = ob
+        else:
+            obs = pd.concat([obs,ob])
     obs = obs.to_xarray()
     obs = obs.assign_attrs({'test_name': 'OBS-NASA'})
     return obs
@@ -63,31 +69,37 @@ def get_extentobs_NASA():
 def get_extentobs_bootstrap():
     ice_dir = '/scratch2/NCEPDEV/stmp3/Neil.Barton/DIAG/OBS/ice_extent/bootstrap'
     files = ['gsfc.bootstrap.daily.extent.1978-2021.n', 'gsfc.bootstrap.daily.extent.1978-2021.s']
-    ob = []
     for ii, f in enumerate(files):
         print(ice_dir + '/' + f)
-        obs = pd.read_csv(ice_dir + '/' + f, delim_whitespace = True)
-        t = []
-        for i in range(obs.shape[0]):
-            y = str(obs[obs.keys()[0]][i])
-            m = str(obs[obs.keys()[1]][i]).zfill(2)
-            d = str(obs[obs.keys()[2]][i]).zfill(2)
-            t.append(np.datetime64(y + '-' + m + '-' + d, 'ns'))
-        obs['time'] = t
+        ob = pd.read_csv(ice_dir + '/' + f, delim_whitespace = True)
         if f[-1] == 'n':
             v_key = 'TotalArc'
         elif f[1] == 's':
             v_key = 'TotalAnt'
-        for k in obs.keys():
-            if k.strip() not in ['time', v_key]:
-                obs.drop(k, axis = 1, inplace = True)
+        t, hem = [], []
+        for i in range(ob.shape[0]):
+            y = str(ob[ob.keys()[0]][i])
+            m = str(ob[ob.keys()[1]][i]).zfill(2)
+            d = str(ob[ob.keys()[2]][i]).zfill(2)
+            t.append(np.datetime64(y + '-' + m + '-' + d, 'ns'))
+            if v_key == 'TotalArc':
+                hem.append('north')
+            elif v_key == 'TotalAnt':
+                hem.append('south')
+        ob['time'] = t
+        ob['hemisphere'] = hem
+        for k in ob.keys():
+            if k.strip() not in ['time', 'hemisphere', v_key]:
+                ob.drop(k, axis = 1, inplace = True)
             else:
-                obs.rename(columns = {k: k.strip()}, inplace = True)
-        obs[v_key] = obs[v_key] / 10e5
-        obs.rename(columns = {v_key: f[-1].capitalize() + 'H_extent'}, inplace = True)
-        obs.set_index('time', inplace = True)
-        ob.append(obs)
-    obs = pd.concat(ob, axis = 1)
+                ob.rename(columns = {k: k.strip()}, inplace = True)
+        ob[v_key] = ob[v_key] / 10e5
+        ob.rename(columns = {v_key: 'extent'}, inplace = True)
+        ob.set_index(['time', 'hemisphere'], inplace = True)
+        if ii == 0:
+            obs = ob
+        else:
+            obs = pd.concat([obs, ob])
     obs = obs.to_xarray()
     obs = obs.assign_attrs({'test_name': 'OBS-bootstrap'})
     return obs
@@ -129,8 +141,8 @@ def get_icecon_daily_climatology(years = 10):
             dat = dats[0]
             dat = dat.drop('ice_con')
             dat = dat.drop('time')
-            dat['DayOfYear'] = np.arange(366) + 1
-            dat['ice_con'] = (('DayOfYear','y','x'), obs)
+            dat['dayofyear'] = np.arange(366) + 1
+            dat['ice_con'] = (('dayofyear','y','x'), obs)
             t_last = np.array(pd.to_datetime(t_last))
             dat = dat.assign_attrs({'Start Year for Climo': str(t_first)})
             dat = dat.assign_attrs({'End Year for Climo': str(t_last)})

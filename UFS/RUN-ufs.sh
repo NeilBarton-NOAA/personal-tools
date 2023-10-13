@@ -6,16 +6,21 @@ set -u
 # C96 (~100 km), C192 (~50 km), C384 (25 km), C768 (~13 km), C1152 (~9km)
 ####################################
 # Set Top options
-export TEST_NAME=GEFS_RMONTUORO
-#export DTG=2019030112
+export TEST_NAME=DEBUG
+export DTG=2013010100
 #export DTG=2019030100
-#export ICDIR=${NPB_WORKDIR}/ICs/${DTG} 
-export FORECAST_LENGTH=0.5 # in days
+export ICDIR=${NPB_WORKDIR}/ICs/${DTG} 
+#export ICDIR=/scratch1/NCEPDEV/climate/role.ufscpara/IC/GEFS-NoahMP-aerosols-p8c/${DTG} 
+export FORECAST_LENGTH=2 # in days
 export WALLCLOCK=0.5
 export UFS_EXEC=ufs_S2SWA 
 export DEBUG=F
-#export JOB_QUEUE=debug # batch or debug on hera
-REPO=NeilBarton-NOAA && HASH=run
+export JOB_QUEUE=debug # batch or debug on hera
+#REPO=NeilBarton-NOAA && HASH=run
+#REPO=rmontuoro && HASH=gefs/ep4
+REPO=ufs-community && HASH=develop
+
+
 PATH_RUN=${NPB_WORKDIR}/CODE/ufs-weather-model_run_NeilBarton-NOAA/RUN 
 RUNDIR_MPI=F
 
@@ -36,8 +41,8 @@ export WAV_RES=glo_025
 # Set MPI options,  if NMPI=0, model will not run
 export ATM_INPES=8
 export ATM_JNPES=8
-export ATM_THRD=1
-export CHM_NMPI=$(( ATM_INPES * ATM_JNPES * 6 ))
+export ATM_THRD=2
+#export CHM_NMPI=$(( ATM_INPES * ATM_JNPES * 6 ))
 export OCN_NMPI=120
 export ICE_NMPI=48
 export WAV_NMPI=120
@@ -46,10 +51,10 @@ export WAV_NMPI=120
 
 ############
 # IO options                        # DEFAULTS
-#export ATM_WPG=6                   # 48
+export ATM_WPG=48                  # 0
 #export MOM6_IO_LAYOUT='3,2'        # 1,1
 #export RESTART_FREQ=12             # restart writeout (hours, all components)
-#export OUTPUT_FREQ=3               # forecast length (FV3 and MOM6)
+export OUTPUT_FREQ=1               # forecast length (FV3 and MOM6)
 #export CICE_OUTPUT=T               # F
 
 ############

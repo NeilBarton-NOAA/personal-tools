@@ -1,4 +1,5 @@
 #!/bin/bash
+set -x
 ########################
 # Link ICs to COMROOT
 ########################
@@ -10,7 +11,7 @@ COMROT=$2
 APP=${3:-S2SW}
 CDUMP=${4:-gfs}
 ICDIR=${5:-$NPB_WORKDIR/ICs}
-#NENS=${5:-20}
+NENS=${5:-20}
 echo "LINKING ICs to $COMROT"
 echo "  APP=${APP}"
 
@@ -35,6 +36,8 @@ PTG=$(./DTG-add-time.sh ${DTG} -6 hours)
 PTG_HOUR=${PTG:8:10}
 PTG_YMD=${PTG:0:8}
 
+#############################################
+# ATMOS
 if [[ $APP == ATM || ${APP:0:3} == S2S ]]; then
     warm_files='*ca_data.*.nc \
                 *coupler.res \
@@ -45,26 +48,29 @@ if [[ $APP == ATM || ${APP:0:3} == S2S ]]; then
                 *sfc_data*.nc'
     cold_files='gfs_ctrl.nc gfs_data*.nc sfc_data*.nc'
     bias_files='*abias* *radstat*'
-    # first look for warm start files
-    n_files=$(find ${ICDIR}/${DTG} ${ICDIR}/gfs.${PTG_HOUR}.${PTG_YMD} -name "*fv_core.res*.nc" 2>/dev/null | wc -l)
-    if (( ${n_files} != 0 )); then
-        START=warm
-        for f in ${warm_files}; do
-            files=$(find ${ICDIR}/${DTG} ${ICDIR}/gfs.${PTG_HOUR}.${PTG_YMD} -name "${f}" 2>/dev/null)
-            LINK_FILES ${files} ${COMROT}/${CDUMP}.${PTG_YMD}/${PTG_HOUR}/atmos/RESTART
-        done
-    else # look for cold start files
-        n_files=$(find ${ICDIR}/${DTG} ${ICDIR}/gfs.${DTG_HOUR}.${DTG_YMD} -name "gfs_ctrl.nc" 2>/dev/null | wc -l)
-        if (( ${n_files} == 0 )); then
-            echo "FTAL: ATM restarts not found"
-            exit 1
+    # loop through members
+    for MBR in $(seq -f '%03g' 0 ${NENS}); do
+        # first look for warm start files
+        n_files=$(find ${ICDIR}/${DTG}/mem${MBR} ${ICDIR}/gfs.${PTG_HOUR}.${PTG_YMD} -name "*fv_core.res*.nc" 2>/dev/null | wc -l)
+        if (( ${n_files} != 0 )); then
+            START=warm
+            for f in ${warm_files}; do
+                files=$(find ${ICDIR}/${DTG}/mem${MBR} ${ICDIR}/gfs.${PTG_HOUR}.${PTG_YMD} -name "${f}" 2>/dev/null)
+                LINK_FILES ${files} ${COMROT}/${CDUMP}.${PTG_YMD}/${PTG_HOUR}/mem${MBR}/model_data/atmos/restart
+            done
+        else # look for cold start files
+            n_files=$(find ${ICDIR}/${DTG}/mem${MBR} ${ICDIR}/gfs.${DTG_HOUR}.${DTG_YMD} -name "gfs_ctrl.nc" 2>/dev/null | wc -l)
+            if (( ${n_files} == 0 )); then
+                echo "FATAL: ATM restarts not found"
+                exit 1
+            fi
+            START=cold
+            for f in ${cold_files}; do
+                files=$(find ${ICDIR}/${DTG}/mem${MBR} ${ICDIR}/gfs.${DTG_HOUR}.${DTG_YMD} -name "${f}" 2>/dev/null)
+                LINK_FILES ${files} ${COMROT}/${CDUMP}.${DTG_YMD}/${DTG_HOUR}/mem${MBR}/atmos/input
+            done
         fi
-        START=cold
-        for f in ${cold_files}; do
-            files=$(find ${ICDIR}/${DTG} ${ICDIR}/gfs.${DTG_HOUR}.${DTG_YMD} -name "${f}" 2>/dev/null)
-            LINK_FILES ${files} ${COMROT}/${CDUMP}.${DTG_YMD}/${DTG_HOUR}/atmos/INPUT
-        done
-    fi
+    done
     # TODO link enkf files if needed 
     # for mbr in $(seq -f '%03g' 1 $NENS); do
     #     LINK_FILES ${ICSDIR}/enkfgdas.${atmos_YMD}/${atmos_HOUR}/atmos/mem${mbr}/${atmos_dir} ${COMROT}/enkfgdas.${atmos_YMD}/${atmos_HOUR}/mem${mbr}/atmos/${atmos_dir}
@@ -75,23 +81,29 @@ if [[ $APP == ATM || ${APP:0:3} == S2S ]]; then
     done
 fi
 
+#############################################
+# COUPLER
 if [[ ${START} == 'warm' ]]; then
     med_file='*ufs.cpld.cpl.r*'
-    file=$(find ${ICDIR}/${DTG} ${ICDIR}/gfs.${DTG_HOUR}.${DTG_YMD} -name "${med_file}" 2>/dev/null)
-    LINK_FILES ${file} ${COMROT}/${CDUMP}.${PTG_YMD}/${PTG_HOUR}/med/RESTART
+    file=$(find ${ICDIR}/${DTG}/mem${MBR} ${ICDIR}/gfs.${DTG_HOUR}.${DTG_YMD} -name "${med_file}" 2>/dev/null)
+    LINK_FILES ${file} ${COMROT}/${CDUMP}.${PTG_YMD}/${PTG_HOUR}/mem${MBR}/model_data/med/restart
 fi
 
+#############################################
+# MOM6 and CICE
 if [[ ${APP:0:3} == S2S ]]; then
     mom6_file='*MOM.res*nc'
-    files=$(find ${ICDIR}/${DTG} ${ICDIR}/gfs.${PTG_HOUR}.${PTG_YMD} -name "${mom6_file}" 2>/dev/null)
-    LINK_FILES ${files} ${COMROT}/${CDUMP}.${PTG_YMD}/${PTG_HOUR}/ocean/RESTART
+    files=$(find ${ICDIR}/${DTG}/mem${MBR} ${ICDIR}/gfs.${PTG_HOUR}.${PTG_YMD} -name "${mom6_file}" 2>/dev/null)
+    LINK_FILES ${files} ${COMROT}/${CDUMP}.${PTG_YMD}/${PTG_HOUR}/mem${MBR}/model_data/ocean/restart
     cice_file='*ice*nc'
-    file=$(find ${ICDIR}/${DTG} ${ICDIR}/gfs.${DTG_HOUR}.${DTG_YMD} -name "${cice_file}" 2>/dev/null)
-    LINK_FILES ${file} ${COMROT}/${CDUMP}.${DTG_YMD}/${DTG_HOUR}/ice/RESTART 
+    file=$(find ${ICDIR}/${DTG}/mem${MBR} ${ICDIR}/gfs.${DTG_HOUR}.${DTG_YMD} -name "${cice_file}" 2>/dev/null)
+    LINK_FILES ${file} ${COMROT}/${CDUMP}.${DTG_YMD}/${DTG_HOUR}/mem${MBR}/model_data/ice/restart
 fi
 
+#############################################
+# WAVE
 if [[ ${APP} == S2SW ]]; then
     wav_file='*ww3*'
-    files=$(find ${ICDIR}/${DTG} ${ICDIR}/gfs.${DTG_HOUR}.${DTG_YMD} -name "${wav_file}" 2>/dev/null)
-    LINK_FILES ${files} ${COMROT}/${CDUMP}.${DTG_YMD}/${DTG_HOUR}/wave
+    files=$(find ${ICDIR}/${DTG}/mem${MBR} ${ICDIR}/gfs.${DTG_HOUR}.${DTG_YMD} -name "${wav_file}" 2>/dev/null)
+    LINK_FILES ${files} ${COMROT}/${CDUMP}.${DTG_YMD}/${DTG_HOUR}/mem${MBR}/model_data/wave/restart
 fi

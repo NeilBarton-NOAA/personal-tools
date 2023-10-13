@@ -5,7 +5,8 @@ set -u
 ################################################################################################
 
 source ${PWD}/MACHINE-config.sh
-REPO=NeilBarton-NOAA && HASH=develop
+#REPO=NeilBarton-NOAA && HASH=develop
+REPO=ufs-community && HASH=develop
 CODE_DIR=${NPB_WORKDIR}/CODE/ufs-weather-model_${HASH}_${REPO}
 export RUNDIR_ROOT=${NPB_WORKDIR}/RUNS/RTs
 source ${PWD}/MACHINE-config.sh
@@ -13,8 +14,8 @@ source ${PWD}/MACHINE-config.sh
 # hera doesn't need the - $machine
 # wcoss2 may need - $machine
 case="
-COMPILE | 1 | intel | -DAPP=S2SWA -D32BIT=ON -DCCPP_SUITES=FV3_GFS_v17_coupled_p8,FV3_GFS_cpld_rasmgshocnsstnoahmp_ugwp  |  | fv3 | 
-RUN     | cpld_control_p8_faster            | |  | 
+COMPILE | s2swa_32bit | intel | -DAPP=S2SWA -D32BIT=ON -DCCPP_SUITES=FV3_GFS_v17_coupled_p8  |  | fv3 | 
+RUN     | cpld_control_c192_p8            | |  | 
 "
 #RUN     | cpld_S2S                  |  | fv3 | 
 #case="
