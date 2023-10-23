@@ -17,7 +17,7 @@ IDATE=2013041500
 EDATE=$( $PWD/DTG-add-time.sh $IDATE 1 ) 
 RUN_TYPE=forecast-only #cycled
 CDUMP=gefs
-APP=S2SW #ATM #ATM, S2S, S2SW
+APP=S2S #W #ATM #ATM, S2S, S2SW
 RESDET=384
 RESENS=384
 NENS=1
@@ -75,13 +75,13 @@ fi
 
 ####################################
 # link restart files to COMROT
-if [[ $RUN_LINK_ICs == T ]]; then
-  source ${PWD}/LINK-ICs.sh ${IDATE} ${COMROT} ${APP} ${CDUMP} 
-  if (( $? > 0 )); then
-    echo 'LINK-ICs.sh failed'
-    exit 1
-  fi
-fi
+#if [[ $RUN_LINK_ICs == T ]]; then
+#  source ${PWD}/LINK-ICs.sh ${IDATE} ${COMROT} ${APP} ${CDUMP} ${NENS} 
+#  if (( $? > 0 )); then
+#    echo 'LINK-ICs.sh failed'
+#    exit 1
+#  fi
+#fi
 
 ####################################
 # setup_expt.py script
@@ -116,9 +116,9 @@ ln -sf ${CODE_DIR}/parm/config/${CDUMP}/* ${CONFIGS_DIR}
 fi
 
 ####################################
-# link ICs again in case removed
+# link ICs 
 if [[ $RUN_LINK_ICs == T ]]; then
-  ${PWD}/LINK-ICs.sh ${IDATE} ${COMROT} ${APP} ${CDUMP} 
+  ${PWD}/LINK-ICs.sh ${IDATE} ${COMROT} ${APP} ${CDUMP} ${NENS} 
   if (( $? > 0 )); then
     echo 'LINK-ICs.sh failed'
     exit 1

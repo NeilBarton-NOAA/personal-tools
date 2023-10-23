@@ -31,9 +31,9 @@ def extent(DAT, area, var = 'aice_d', force_calc = False):
         DAT['tau_area'] = (area.dims, area.values) 
         print('     looping through time')
         if 'member' in DAT.dims:
-            dims_save = ['time', 'hemisphere', 'member', 'tau']
+            dims_save = ['hemisphere', 'time', 'member', 'tau']
         else:
-            dims_save = ['time', 'hemisphere', 'tau']
+            dims_save = ['hemisphere', 'time', 'tau']
         for t in DAT['time']:
             print('     ', t.values)
             # NH
@@ -44,10 +44,12 @@ def extent(DAT, area, var = 'aice_d', force_calc = False):
             ds = DAT.sel(time = t.values)
             ds = ds.where(ds.TLAT < -20)
             SH.append(ds['tau_area'].where(ds[var] >= 0.15).sum(dim = dims) / DIV)
-        shape = np.array(NH).shape
-        data = np.zeros((shape[0], 2, shape[1], shape[2]))
-        data[:,0,:,:] = np.array(NH)
-        data[:,1,:,:] = np.array(SH)
+        shape = (2,) + np.array(NH).shape 
+        data = np.zeros((shape))
+        data[0,:] = np.array(NH)
+        data[1,:] = np.array(SH)
+        print(data.shape)
+        print(dims_save)
         DAT = DAT.assign(extent=(dims_save, data))
         DAT = DAT.assign(hemisphere=('hemisphere', ['north', 'south']))
         if f:
@@ -66,7 +68,7 @@ def extent(DAT, area, var = 'aice_d', force_calc = False):
 def daily_taus(DAT, var):
     if ('_h' in var):
         print('MODEL output in hours and OBS in days: will only examine days')
-        u_taus = np.unique(np.arange(np.min(DAT['tau'].values), np.max(DAT['tau'].values) + 1 ))
+        u_taus = np.arange(np.min(DAT['tau'].values), np.max(DAT['tau'].values) + 24 , 24)
         DAT['new_tau'] = u_taus
         DAT['new_' + var] = (('new_tau', 'time', 'nj', 'ni'), DAT[var].sel(tau = u_taus).values)
         DAT = DAT.drop(var)
@@ -109,6 +111,8 @@ def interp(DAT, OBS, var = 'aice_d', force_calc = False):
         DAT['lat'] = (DAT['TLAT'].dims, DAT['TLAT'].values)
         DAT['lon'] = (DAT['TLON'].dims, DAT['TLON'].values)
         DAT = daily_taus(DAT, var)
+        if 'tarea' in DAT.variables:
+            DAT = DAT.drop('tarea')
         ################################################
         # create regridder/interpolate data/ make new data array
         dir_weights = os.path.dirname(DAT.file_name) + '/interp_weights'
@@ -125,6 +129,7 @@ def interp(DAT, OBS, var = 'aice_d', force_calc = False):
                 print('interpolating to', ob.grid_name)
                 D = DAT.copy()
                 file_weights = dir_weights + '/regridding_weights_CICE025_to_' + ob.grid_name + 'km.nc'
+                print(file_weights)
                 if os.path.exists(file_weights):
                     regridder = xe.Regridder(D, ob, 'nearest_s2d', reuse_weights=True, filename=file_weights)
                 else:
@@ -179,7 +184,7 @@ def iiee(DAT, DAT_area, OBS, var = 'aice_d', persistence = True):
     if 'climatology' in OBS_NAMES:
         doy = pd.to_datetime(DAT['time'].values).day_of_year
         DAT['dayofyear'] = ('time', doy)
-    dims_iiee = DAT[var].dims[0:-2] + ('pole', 'obs_type')
+    dims_iiee = ('obs_type', 'pole') + DAT[var].dims[0:-2] 
     dims_shape = ()
     coords_iiee = {}
     t = DAT['time'].values[0]
@@ -218,19 +223,20 @@ def iiee(DAT, DAT_area, OBS, var = 'aice_d', persistence = True):
             data = ob[v].sel(tau = 0)
         elif ob.name == 'climatology':
             # make a fake tau and add data for each doy
-            tau = int(DAT['tau'][-1].values)
+            tau_size = int(DAT['tau'].size)
             ob = ob.rename_dims({'y': 'y' + ob.grid_name, 'x': 'x' + ob.grid_name})
             dat_dims = ('tau',) + ob['ice_con'].dims[1::]
-            dim_shape = (tau+1,) + ob['ice_con'].shape[1::]
+            dim_shape = (tau_size,) + ob['ice_con'].shape[1::]
             ob['clim'] = (dat_dims, np.empty(dim_shape))
             M_NUMS = np.empty(dims_shape) 
-            for d in range(tau + 1):
-                dd = doy[0] + d
-                dd = dd - 365 if dd > 365 else dd
-                ob['clim'][d,:,:] = ob['ice_con'].sel(dayofyear = dd)
+            for j, d in enumerate(DAT['tau'].values):
+                dd = doy[0] + (d / 24)
+                if dd > 365:
+                    dd = dd - 365 
+                ob['clim'][j,:,:] = ob['ice_con'].sel(dayofyear = dd)
             data = ob['clim']
         else:    
-            t_last = t + np.timedelta64(int(DAT['tau'][-1].values), 'D')
+            t_last = t + np.timedelta64(int(DAT['tau'][-1].values/24), 'D')
             ob = ob.rename_dims({'y': 'y' + ob.grid_name, 'x': 'x' + ob.grid_name, 'time' : 'tau'})
             data = ob['ice_con'].sel(time = slice(t, t_last))
             data['tau'] = DAT['tau'].values
@@ -242,13 +248,13 @@ def iiee(DAT, DAT_area, OBS, var = 'aice_d', persistence = True):
         # take diff for IIEE calculations 
         DAT['diff'] = (model_dims, model.values - data.values) 
         if ob.name == 'persistence':
-            DAT['iiee'][:,:,:,0,k] = (np.multiply(abs(DAT['diff']), area)).where(DAT['TLAT'] > 50).sum(dim = dim_sum).values / 1e12
-            DAT['aee'][:,:,:,0,k]  = abs(np.multiply(DAT['diff'], area).where(DAT['TLAT'] > 50).sum(dim = dim_sum).values / 1e12)
-            DAT['iiee'][:,:,:,1,k] = (np.multiply(abs(DAT['diff']), area)).where(DAT['TLAT'] < 50).sum(dim = dim_sum).values / 1e12
-            DAT['aee'][:,:,:,1,k]  = abs(np.multiply(DAT['diff'], area).where(DAT['TLAT'] < 50).sum(dim = dim_sum).values / 1e12)
+            DAT['iiee'][k,0,:] = (np.multiply(abs(DAT['diff']), area)).where(DAT['TLAT'] > 50).sum(dim = dim_sum).values / 1e12
+            DAT['aee'][k,0,:]  = abs(np.multiply(DAT['diff'], area).where(DAT['TLAT'] > 50).sum(dim = dim_sum).values / 1e12)
+            DAT['iiee'][k,1,:] = (np.multiply(abs(DAT['diff']), area)).where(DAT['TLAT'] < 50).sum(dim = dim_sum).values / 1e12
+            DAT['aee'][k,1,:]  = abs(np.multiply(DAT['diff'], area).where(DAT['TLAT'] < 50).sum(dim = dim_sum).values / 1e12)
         else:
-            DAT['iiee'][:,:,:,p,k] = (np.multiply(abs(DAT['diff']), area)).sum(dim = dim_sum).values / 1e6
-            DAT['aee'][:,:,:,p,k]  = abs(np.multiply(DAT['diff'], area).sum(dim = dim_sum).values / 1e6)
+            DAT['iiee'][k,p,:] = (np.multiply(abs(DAT['diff']), area)).sum(dim = dim_sum).values / 1e6
+            DAT['aee'][k,p,:]  = abs(np.multiply(DAT['diff'], area).sum(dim = dim_sum).values / 1e6)
         DAT.drop('diff')
         if ob.name not in ['climatology', 'persistence']:
             data = ob['ice_con'].sel(time = t)
@@ -257,8 +263,8 @@ def iiee(DAT, DAT_area, OBS, var = 'aice_d', persistence = True):
             _, data = xr.broadcast(model, data)
             k = OBS_NAMES.index(ob.name + '_persistence')
             DAT['diff'] = (model_dims, model.values - data.values) 
-            DAT['iiee'][:,:,:,p,k] = (np.multiply(abs(DAT['diff']), area)).sum(dim = dim_sum).values / 1e6
-            DAT['aee'][:,:,:,p,k]  = abs(np.multiply(DAT['diff'], area).sum(dim = dim_sum).values / 1e6)
+            DAT['iiee'][k,p,:] = (np.multiply(abs(DAT['diff']), area)).sum(dim = dim_sum).values / 1e6
+            DAT['aee'][k,p,:]  = abs(np.multiply(DAT['diff'], area).sum(dim = dim_sum).values / 1e6)
         DAT.drop('diff')
     if persistence:
         # OBS list is acting as a global variable, I don't quit understand why, so just remove

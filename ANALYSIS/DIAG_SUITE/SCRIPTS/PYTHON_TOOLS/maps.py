@@ -40,11 +40,11 @@ def monthly(DAT, ICECON = None, pole = 'north'):
     #olon, olat = DAT['TLON'].values, DAT['TLAT'].values
     olon, olat = DAT['TLON'], DAT['TLAT']
     cmap_DAT = plt.get_cmap('terrain_r')
-    fig = plt.figure(figsize=(6,8))
     taus_len = np.size(DAT['tau'].values)
     taus = DAT['tau'].values[0::int(taus_len/4)]
     print(taus)
     for tau in taus:
+        fig = plt.figure(figsize=(6,8))
         axs = []
         for i, month in enumerate(['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12']):
             print('tau', tau, 'month', month)
@@ -60,7 +60,7 @@ def monthly(DAT, ICECON = None, pole = 'north'):
             elif pole == 'south':
                 ax = fig.add_subplot(4,3,i+1, projection = ccrs.SouthPolarStereo())
                 ax = npb.base_maps.Antarctic(ax, labels = False)
-                t_lon, t_lat = 0.0, -37.
+                t_lon, t_lat = 0.0, -30.
             im = ax.pcolormesh(olon, olat, D, 
                 transform=ccrs.PlateCarree(), 
                 vmin = 0.15,
@@ -75,14 +75,14 @@ def monthly(DAT, ICECON = None, pole = 'north'):
         #xo, yo, width, height
         cbar_ax = fig.add_axes([0.15, 0.07, 0.72, 0.02])
         fig.colorbar(im, ax = axs[-1], cax = cbar_ax, orientation='horizontal' )
-        axs[1].text(180, 40, \
+        axs[1].text(t_lon, t_lat, \
             test_name + '; ' + long_name + '; Forecast Day ' + str(tau), \
             fontsize = 'large', \
             fontweight = 'bold', \
             transform = ccrs.PlateCarree(), \
             ha = 'center', va = 'center')
-        #plt.show()
-        fig_name = save_dir + '/' + test_name + '_' + var_name + '_FORECASTDAY_' + str(tau) + '_' + pole[0].upper() + 'H.png'
+        plt.show()
+        fig_name = save_dir + '/' + pole[0].upper() + 'H_' + test_name + '_' + var_name + '_FORECASTDAY_' + str(tau) + '.png'
         print('SAVED:', fig_name)
         plt.savefig(fig_name, bbox_inches = 'tight')
         plt.close()

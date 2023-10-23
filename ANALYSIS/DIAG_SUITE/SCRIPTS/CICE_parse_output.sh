@@ -6,10 +6,13 @@ topdir=${3}
 member=$(printf "%02d" ${4})
 
 EXP=${topdir##*/}
-if [[ ${EXP} == EP4 ]]; then
+if [[ ${MODEL} == 'GEFS' ]]; then
+#if [[ ${EXP} == EP4 ]] || [[ ${EXP} == EP4a ]]; then
     dir=$( ls -d ${topdir}/${dtg:0:8}/ice/ )
-else
+elif [[ ${EXP} == HR1 ]]; then
     dir=$( ls -d ${topdir}/*.${dtg:0:8}/${dtg:8:2}/ice/ )
+else
+    dir=$( ls -d ${topdir}/*.${dtg:0:8}/${dtg:8:2}/model_data/ice/history )
 fi
 
 if [[ ${MODEL} == 'GEFS' ]]; then
@@ -21,7 +24,7 @@ fi
 area_file=$(dirname ${out_file})/cice_area.nc
 if [[ ! -f ${area_file} ]]; then
     echo "making area file"
-    if [[ ${EXP} == EP4 ]]; then
+    if [[ ${MODEL} == GEFS ]]; then
         f=$(ls ${dir}/iceh*${member}.nc | tail -1)
     else
         f=$(ls ${dir}/ice[1,2]*.nc | tail -1)
@@ -66,11 +69,7 @@ echo "CREATED:" ${out_tau_file}
 #   IC file
 in_file=$(ls ${dir}/iceic*nc)
 tau=000
-if [[ ${MODEL} == 'GEFS' ]]; then
-    out_tau_file=$(dirname ${in_file})/CICE_${dtg}_M${member}_${tau}.nc
-else
-    out_tau_file=$(dirname ${in_file})/CICE_${dtg}_${tau}.nc
-fi
+out_tau_file=$(dirname ${in_file})/CICE_${dtg}_M${member}_${tau}.nc
 CICE_PARSE ${in_file} ${out_tau_file} ${var}
 (( $? != 0 )) && exit 1
 file_tau_list="${out_tau_file}"
@@ -95,8 +94,6 @@ for f in ${files}; do
     (( $? != 0 )) && exit 1
     file_tau_list=${file_tau_list}' '${out_tau_file}
 done
-echo 'check if there are similar files'
-exit 1
 
 ncecat -u tau ${file_tau_list} ${out_file}
 (( $? != 0 )) && exit 1

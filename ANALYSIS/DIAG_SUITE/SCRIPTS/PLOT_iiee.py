@@ -43,38 +43,42 @@ obs_types = ['climatology', 'cdr_seaice_conc', 'persistence']
 for pole in ['north', 'south']:
     print('IIEE Plot: ' , pole)
     for i, e in enumerate(exps):
+        e = e.replace(',','').strip()
         f = tdir + '/' + e + '/iiee.nc'
         dat = xr.open_dataset(f) 
         for month in np.arange(1,13):
             if month < 12:
                 c_time = dat['time'].isel(time = dat['time'].dt.month.isin([month]))
                 title = 'IIEE: ' + calendar.month_abbr[month].upper() + ' ' + e 
-                fig_name = save_dir + '/' + pole + '_' + calendar.month_abbr[month].upper() + '_IIEE.png'
+                fig_name = save_dir + '/' + pole[0].upper() + 'H_' + calendar.month_abbr[month].upper() + '_IIEE.png'
             else:
                 c_time = dat['time']
                 title = 'IIEE: ' + e 
-                fig_name = save_dir + '/' + pole + '_ALL_TIMES_IIEE.png'
+                fig_name = save_dir + '/' + pole[0].upper() + 'H_ALL_TIMES_IIEE.png'
+            print(c_time)
             #obs_types = dat['obs_type'].values
-            for ob in obs_types:
-                print(ob)
-                label = ob.replace('_seaice_conc','')
-                label = label.replace('_','-')
-                data = dat['iiee'].sel(obs_type = ob, pole = pole, time = c_time).mean('time')
-                if 'member' in data.dims:
-                    plt.plot(data['tau'].values, data.mean('member').values, linewidth = 2.0, label = label )
-                    plt.fill_between(data['tau'].values, data.min('member').values, data.max('member').values, alpha = 0.5)
-                else:
-                    data.plot(linewidth = 2.0, label = label)
-            if pole == 'north':
-                t = 'Arctic '
-            elif pole == 'south':
-                t = 'Antarctic '
-            plt.title(t + title)
-            plt.ylabel('IIEE')
-            plt.xlabel('Forecast Day')
-            plt.legend(frameon = False)
-            #plt.show()
-            print(fig_name)
-            plt.savefig(fig_name, bbox_inches = 'tight')
+            if (c_time.size > 0):
+                for ob in obs_types:
+                    print(ob)
+                    label = ob.replace('_seaice_conc','')
+                    label = label.replace('_','-')
+                    data = dat['iiee'].sel(obs_type = ob, pole = pole, time = c_time).mean('time')
+                    if 'member' in data.dims:
+                        plt.plot(data['tau'].values, data.mean('member').values, linewidth = 2.0, label = label )
+                        plt.fill_between(data['tau'].values, data.min('member').values, data.max('member').values, alpha = 0.5)
+                    else:
+                        data.plot(linewidth = 2.0, label = label)
+                if pole == 'north':
+                    t = 'Arctic '
+                elif pole == 'south':
+                    t = 'Antarctic '
+                plt.title(t + title)
+                plt.ylabel('IIEE')
+                plt.xlabel('Forecast Day')
+                plt.legend(frameon = False)
+                #plt.show()
+                print(fig_name)
+                plt.savefig(fig_name, bbox_inches = 'tight')
+                plt.close()
 
 

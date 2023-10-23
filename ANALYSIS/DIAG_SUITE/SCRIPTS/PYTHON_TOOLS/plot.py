@@ -20,51 +20,52 @@ def ice_extent_per_month(DATS, OBS = None):
                     a_time = c_time
                 else:
                     same_times = np.array(list(set(c_time.values) & set(a_time.values)))
-            # plot model data with tau
-            name = calendar.month_abbr[month].upper() + '_' + pole + '_extent_'
-            for i, ds in enumerate(DATS):
-                dat = ds['extent'].sel(time = same_times, hemisphere = pole).mean('time')
+            if len(same_times) > 0:
+                # plot model data with tau
+                name = calendar.month_abbr[month].upper() + '_' + pole + 'extent_'
+                for i, ds in enumerate(DATS):
+                    dat = ds['extent'].sel(time = same_times, hemisphere = pole).mean('time')
+                    try:
+                        text = ds.test_name
+                    except:
+                        text = str(i)
+                    if 'member' in dat.dims:
+                        plt.plot(dat['tau'].values, dat.mean('member').values, linewidth = 2.0, label = text )
+                        plt.fill_between(dat['tau'].values, dat.min('member').values, dat.max('member').values, alpha = 0.5)
+                    else:
+                        dat.plot(linewidth = 2.0, label = text)
+                    name = name + text.replace(':', '').replace(' ','').replace('/','') + '_'
+                # observations
+                #   get times for obs
+                last_tau = int(ds['tau'][-1].values)
+                styles = ['-','--']
+                for j, obs in enumerate(OBS):
+                    ob = []
+                    for t in same_times:
+                        t_last = t + np.timedelta64(last_tau, 'D')
+                        ob.append(obs['extent'].sel(time = slice(t, t_last), hemisphere = pole).values)
+                    ob = np.mean(np.array(ob), axis = 0)
+                    try:
+                        text = obs.test_name
+                    except:
+                        text = 'Obs'
+                    plt.plot(np.arange(0, ob.size, 1), ob, color = 'k', linestyle = styles[j], linewidth = 2.0, label = text)
+                name = name + text.replace(':', '').replace(' ','').replace('/','') 
+                name = name.replace(pole,'')
                 try:
-                    text = ds.test_name
+                    save_dir = DATS[0].save_dir
                 except:
-                    text = str(i)
-                if 'member' in dat.dims:
-                    plt.plot(dat['tau'].values, dat.mean('member').values, linewidth = 2.0, label = text )
-                    plt.fill_between(dat['tau'].values, dat.min('member').values, dat.max('member').values, alpha = 0.5)
-                else:
-                    dat.plot(linewidth = 2.0, label = text)
-                name = name + text.replace(':', '').replace(' ','').replace('/','') + '_'
-            # observations
-            #   get times for obs
-            last_tau = int(ds['tau'][-1].values)
-            styles = ['-','--']
-            for j, obs in enumerate(OBS):
-                ob = []
-                for t in same_times:
-                    t_last = t + np.timedelta64(last_tau, 'D')
-                    ob.append(obs['extent'].sel(time = slice(t, t_last), hemisphere = pole).values)
-                ob = np.mean(np.array(ob), axis = 0)
-                try:
-                    text = obs.test_name
-                except:
-                    text = 'Obs'
-                plt.plot(np.arange(0, ob.size, 1), ob, color = 'k', linestyle = styles[j], linewidth = 2.0, label = text)
-            name = name + text.replace(':', '').replace(' ','').replace('/','') 
-            name = name.replace(pole,'')
-            try:
-                save_dir = DATS[0].save_dir
-            except:
-                save_dir = './'
-            fig_name = save_dir + '/' + pole + '_' + name + '.png'
-            plt.legend(frameon = False)
-            plt.xlabel('Forecast Day')
-            plt.ylabel(pole[0].upper() + 'H Sea Ice Extent')
-            plt.title(pole[0].upper() + 'H Sea Ice Extent: ' + calendar.month_abbr[month])
-            #plt.show()
-            plt.savefig(fig_name, bbox_inches = 'tight')
-            print('SAVED:', fig_name)
-            plt.close()
-            #exit(1)
+                    save_dir = './'
+                fig_name = save_dir + '/' + pole[0].upper() + 'H_' + name + '.png'
+                plt.legend(frameon = False)
+                plt.xlabel('Forecast Day')
+                plt.ylabel(pole[0].upper() + 'H Sea Ice Extent')
+                plt.title(pole[0].upper() + 'H Sea Ice Extent: ' + calendar.month_abbr[month])
+                #plt.show()
+                plt.savefig(fig_name, bbox_inches = 'tight')
+                print('SAVED:', fig_name)
+                plt.close()
+                #exit(1)
 
 def ice_extent_imshowdiff(DAT1, DAT2, pole = 'north'):
     dat_plot = []
@@ -80,26 +81,29 @@ def ice_extent_imshowdiff(DAT1, DAT2, pole = 'north'):
         d1_time = DAT1['time'].isel(time = DAT1['time'].dt.month.isin([m]))
         d2_time = DAT2['time'].isel(time = DAT2['time'].dt.month.isin([m]))
         same_times = np.array(list(set(d1_time.values) & set(d2_time.values)))
-        for ds in [DAT1, DAT2]:
-            if 'tau' not in ds.keys():
-                # Observations
-                last_tau = int(DAT1['tau'][-1].values)
-                ob = []
-                for t in same_times:
-                    t_last = t + np.timedelta64(last_tau, 'D')
-                    obs = ds['extent'].sel(time = slice(t, t_last), hemisphere = pole).values
-                    ob.append(np.interp(taus, np.arange(0, obs.size), obs))
-                d = np.mean(np.array(ob), axis = 0)
-            else:
-                if 'member' in ds.dims:
-                    d = ds['extent'].sel(time = same_times, hemisphere = pole).mean(['time','member'])
+        if len(same_times) > 0:
+            for ds in [DAT1, DAT2]:
+                if 'tau' not in ds.keys():
+                    # Observations
+                    last_tau = int(DAT1['tau'][-1].values)
+                    ob = []
+                    for t in same_times:
+                        t_last = t + np.timedelta64(last_tau, 'D')
+                        obs = ds['extent'].sel(time = slice(t, t_last), hemisphere = pole).values
+                        ob.append(np.interp(taus, np.arange(0, obs.size), obs))
+                    d = np.mean(np.array(ob), axis = 0)
                 else:
-                    d = ds['extent'].sel(time = same_times, hemisphere = pole).mean('time')
-            d = np.ma.masked_where(d == 0, d)
-            dat.append(d)
-        diff = dat[0] - dat[1]
-        if (diff.size > np.max(taus)): # if taus aren't integers of days
-            diff = np.interp(np.arange(np.min(taus), np.max(taus) + 1), taus, diff)
+                    if 'member' in ds.dims:
+                        d = ds['extent'].sel(time = same_times, hemisphere = pole).mean(['time','member'])
+                    else:
+                        d = ds['extent'].sel(time = same_times, hemisphere = pole).mean('time')
+                d = np.ma.masked_where(d == 0, d)
+                dat.append(d)
+            diff = dat[0] - dat[1]
+            if (diff.size > np.max(taus)): # if taus aren't integers of days
+                diff = np.interp(np.arange(np.min(taus), np.max(taus) + 1), taus, diff)
+        else:
+            diff = np.empty(diff.size)
         dat_plot.append(diff)
     dat_plot = np.array(dat_plot)
     try:
@@ -133,7 +137,7 @@ def ice_extent_imshowdiff(DAT1, DAT2, pole = 'north'):
         save_dir = DAT1.save_dir
     except:
         save_dir = './'
-    fig_name = save_dir + '/MONTHvsTAU_' + pole[0].upper() + 'H_extent_' + title[2::].replace(' ','').replace(':','').replace('/','') + '.png'
+    fig_name = save_dir + '/' + pole[0].upper() + 'H_extent_MONTHvsTAU_' + title[2::].replace(' ','').replace(':','').replace('/','') + '.png'
     plt.savefig(fig_name, bbox_inches = 'tight')
     plt.close()
     print('SAVED:', fig_name)

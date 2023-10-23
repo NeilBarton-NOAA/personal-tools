@@ -57,7 +57,6 @@ for exp in exps:
         for f in files:
             print(f)
             DAT = xr.open_dataset(f) #, combine = 'nested', concat_dim = 'time', decode_times = True)
-            DAT['tau'] = DAT['tau'] / 24.0
             DAT = DAT.assign_attrs({'test_name' : exp})
             # calc iiee scores
             temp = npb.icecalc.iiee(DAT, area, ICEOBS, persistence = True, var = var)

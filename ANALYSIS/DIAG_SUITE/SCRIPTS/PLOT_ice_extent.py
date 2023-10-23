@@ -34,8 +34,9 @@ var = args.var[0]
 # grab ice extent from models
 DAT = []
 for exp in exps:
+    exp = exp.replace(',','').strip()
     print(exp)
-    D = xr.open_mfdataset( tdir + '/' + exp + '/ice_extent.nc')
+    D = xr.open_dataset( tdir + '/' + exp + '/ice_extent.nc')
     D = D.assign_attrs({'save_dir' : '/scratch2/NCEPDEV/stmp3/Neil.Barton/FIGURES'})
     DAT.append(D)
 

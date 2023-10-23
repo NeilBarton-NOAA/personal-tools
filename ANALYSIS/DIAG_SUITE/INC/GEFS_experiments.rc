@@ -12,6 +12,8 @@
     graph = """
         GRAB_EXPS:succeed-all           => PARSE_OUTPUT_CICE
         PARSE_OUTPUT_CICE:succeed-all   => ENSEMBLE_COMBINE
+        ENSEMBLE_COMBINE:succeed-all    => POST_PARSE
+        
         """
 
 

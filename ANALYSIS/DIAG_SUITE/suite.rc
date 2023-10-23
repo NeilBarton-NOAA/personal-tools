@@ -1,20 +1,20 @@
 #!jinja2
 ########################
 {% set MODEL        = 'GEFS' %}
-{% set DOWNLOAD_DATA = False %}
+{% set DOWNLOAD_DATA = True %}
 {% set TOP_DIR_OUTPUT   = "/scratch2/NCEPDEV/stmp3/Neil.Barton/DIAG" %}
 {% set TOP_DIR_FIGURES   = "/scratch2/NCEPDEV/stmp3/Neil.Barton/FIGURES" %}
 
 ####################################
 # times in experiments
 {% if MODEL == 'GFS' %}
-    {% set EXPS = 'HR1' %}
+    {% set EXPS = 'HR1, HR2' %}
     {% set MEMBERS = 1 %}
     {% set AICE_VAR     = 'aice_h' %}
     {% set ICP = '20180101T12' %}
     {% set FCP = '20221231T12' %}
 {% elif MODEL == 'GEFS' %}
-    {% set EXPS = 'EP4' %}
+    {% set EXPS = 'EP4, EP4a' %}
     {% set MEMBERS = 11 %}
     {% set AICE_VAR     = 'aice_d' %}
     {% set ICP = '20171004T00' %}
@@ -63,16 +63,15 @@
 # parsing data diagnostics at the last cycle point
         [[[R1/P0Y]]]
             graph = """
-{% if DOWNLOAD_DATA %}
-                 PARSE_OUTPUT_CICE:succeed-all => POST_PARSE
-{% else %}
+{% if not DOWNLOAD_DATA %}
                  POST_PARSE 
 {% endif %}
                  POST_PARSE => MAPS_ICE_CON
                  POST_PARSE => CALC_ICE_EXTENT 
-                 POST_PARSE => CALC_IIEE
+                 POST_PARSE => INTERP_FOR_IIEE
 
                  CALC_ICE_EXTENT:succeed-all => plot_ice_extent
+                 
                  INTERP_FOR_IIEE:succeed-all => CALC_IIEE
                  CALC_IIEE:succeed-all   => plot_iiee
                 """
