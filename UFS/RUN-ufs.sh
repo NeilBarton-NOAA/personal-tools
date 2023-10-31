@@ -6,19 +6,19 @@ set -u
 # C96 (~100 km), C192 (~50 km), C384 (25 km), C768 (~13 km), C1152 (~9km)
 ####################################
 # Set Top options
-export TEST_NAME=WAV_TEST2
-#export DTG=2019030112
-#export DTG=2019030100
-#export ICDIR=${NPB_WORKDIR}/ICs/${DTG} 
+export DTG=2017110200
+#export DTG=2013040200
+export TEST_NAME=REPLAY_TEST_S2SWA_${DTG}
+export ICDIR=${NPB_WORKDIR}/ICs/${DTG} 
 export FORECAST_LENGTH=16 # in days
-export WALLCLOCK=5
+export WALLCLOCK=30
 export UFS_EXEC=ufs_S2SWA 
 export DEBUG=F
-#export JOB_QUEUE=debug # batch or debug on hera
-REPO=NeilBarton-NOAA && HASH=run
+export JOB_QUEUE=debug # batch or debug on hera
+#REPO=NeilBarton-NOAA && HASH=run
 REPO=rmontuoro && HASH=gefs/ep4
 PATH_RUN=${NPB_WORKDIR}/CODE/ufs-weather-model_run_NeilBarton-NOAA/RUN 
-RUNDIR_MPI=T
+RUNDIR_MPI=F
 
 ####################################
 # Resolution Options
@@ -35,14 +35,14 @@ export WAV_RES=glo_025
 
 ####################################
 # Set MPI options,  if NMPI=0, model will not run
-export ATM_INPES=24
-export ATM_JNPES=16
-export ATM_THRD=1
+export ATM_INPES=12
+export ATM_JNPES=12
+export ATM_THRD=2
 export CHM_NMPI=$(( ATM_INPES * ATM_JNPES * 6 ))
 export OCN_NMPI=130
 export ICE_NMPI=72
 export WAV_NMPI=262
-export WAV_THRD=1
+#export WAV_THRD=1
 #export MED_NMPI=300
 
 ############

@@ -25,6 +25,9 @@ LINK_FILES() {
     if [[ ${bn:0:3} == 'MOM' ]]; then
         bn=${DTG_YMD}.${DTG_HOUR}0000.${bn}
     fi
+    if [[ ${bn} == *ice* ]]; then
+        bn=${DTG_YMD}.${DTG_HOUR}0000.cice_model.res.nc
+    fi
     #echo $f $DIR/${bn}
     ln -sf ${f} ${DIR}/${bn}
   done
@@ -104,7 +107,7 @@ for MBR in $(seq -f '%03g' 0 ${NENS}); do
         LINK_FILES ${file} ${DIR_PTG}/ice/restart
     fi
     ###########
-    # OCN and ICE
+    # WAVES
     if [[ ${APP} == S2SW* ]]; then
         files=$(find -L ${FIND_PT} -name "${wav_ic}" 2>/dev/null)
         LINK_FILES ${files} ${DIR_PTG}/wave/restart

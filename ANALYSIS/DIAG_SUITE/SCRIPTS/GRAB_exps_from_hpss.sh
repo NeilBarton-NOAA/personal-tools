@@ -25,7 +25,9 @@ if (( ${nfiles} < 114 )); then
         echo ${indir}
         dir=$(hsi -q ls ${indir}/${dtg:0:4}/${dtg:0:6}/${dtg:0:8}/gefs.${dtg:0:8}_${dtg:8:10}.atmos.${f} 2>&1 | grep :)
         f=gefs.${dtg:0:8}_${dtg:8:10}.atmos.${f} 
-        mkdir -p ${dtg:0:8} && cd ${dtg:0:8}
+        if [[ ${dtg} < 2018010100 ]] || [[ ${dtg} > 2018092500 ]]; then 
+            mkdir -p ${dtg:0:8} && cd ${dtg:0:8}
+        fi
     else
         dir=$(hsi -q ls ${indir}/*/${dtg}/${f} 2>&1 | grep :)
     fi

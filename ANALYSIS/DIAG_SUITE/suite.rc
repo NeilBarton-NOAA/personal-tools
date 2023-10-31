@@ -39,10 +39,10 @@
 [scheduling]
     initial cycle point = {{ ICP }}
     final cycle point = {{ FCP }}
-    max active cycle points = 12
+    max active cycle points = 20
     [[queues]]
         [[[default]]]
-            limit = 12
+            limit = 42
     [[dependencies]]
 
 ################################################

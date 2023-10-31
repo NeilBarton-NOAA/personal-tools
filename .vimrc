@@ -6,6 +6,7 @@ set autoindent
 set laststatus=2
 set hlsearch
 set ruler
+set number
 command V visual
 imap <C-c> ############
 imap <C-f> !!!!!!!!!!!!
@@ -21,4 +22,5 @@ autocmd BufRead,BufNewFile CONFIG* set filetype=sh
 autocmd BufRead,BufNewFile *.def set filetype=sh
 autocmd BufRead,BufNewFile *.h set filetype=fortran
 autocmd BufRead,BufNewFile *.F90* set filetype=fortran
+
 

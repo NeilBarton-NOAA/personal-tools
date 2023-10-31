@@ -67,22 +67,30 @@ echo "CREATED:" ${out_tau_file}
 
 ############
 #   IC file
-in_file=$(ls ${dir}/iceic*nc)
-tau=000
-out_tau_file=$(dirname ${in_file})/CICE_${dtg}_M${member}_${tau}.nc
-CICE_PARSE ${in_file} ${out_tau_file} ${var}
-(( $? != 0 )) && exit 1
-file_tau_list="${out_tau_file}"
-
+file_tau_list=""
+if [[ ${MODEL} != 'GEFS' ]]; then
+    # GEFS IC is also written out
+    in_file=$(ls ${dir}/iceic*nc)
+    if [[ -z ${in_file} ]]; then
+        echo "ic file not found in:" ${dir}
+        exit 1
+    fi
+    tau=000
+    out_tau_file=$(dirname ${in_file})/CICE_${dtg}_M${member}_${tau}.nc
+    CICE_PARSE ${in_file} ${out_tau_file} ${var}
+    (( $? != 0 )) && exit 1
+    file_tau_list=${file_tau_list}' '${out_tau_file}
+fi
 ############
 # tau files
-if [[ ${EXP} == EP4 ]]; then
+if [[ ${MODEL} == 'GEFS' ]]; then
     files=$(ls ${dir}/iceh*${member}.nc)
 else
     files=$(ls ${dir}/ice[1,2]*.nc)
 fi
+
 for f in ${files}; do
-    if [[ ${EXP} == EP4 ]]; then
+    if [[ ${MODEL} == 'GEFS' ]]; then
         f_name=$(basename ${f}) 
         f_dtg=${f_name:5:4}${f_name:10:2}${f_name:13:2}00
     else

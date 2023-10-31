@@ -42,7 +42,6 @@ def monthly(DAT, ICECON = None, pole = 'north'):
     cmap_DAT = plt.get_cmap('terrain_r')
     taus_len = np.size(DAT['tau'].values)
     taus = DAT['tau'].values[0::int(taus_len/4)]
-    print(taus)
     for tau in taus:
         fig = plt.figure(figsize=(6,8))
         axs = []

@@ -34,8 +34,10 @@ for exp in exps:
     print(exp)
     f = tdir + '/' + exp + '/cice_area.nc'
     area = xr.open_dataset(f)
-    file_search = tdir + '/' + exp + '/' + var + '*.nc'
+    file_search = tdir + '/' + exp + '/' + var + '_*.nc'
+    print(file_search)
     D = xr.open_mfdataset(file_search, combine = 'nested', concat_dim = 'time', decode_times = True)
+    #D = xr.open_mfdataset(file_search) #, combine = 'nested', concat_dim = 'time', decode_times = False)
     D['tau'] = D['tau'] / 24.0
     D = D.assign_attrs({'test_name' : exp})
     D = D.assign_attrs({'extent_file' : tdir + '/' + exp + '/ice_extent.nc'})

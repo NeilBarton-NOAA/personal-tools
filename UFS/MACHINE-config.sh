@@ -1,7 +1,7 @@
 #!/bin/sh
 machine=$(uname -n)
 if [[ ${machine:0:1} == h ]]; then
-    export module_file=ufs_hera.intel 
+    export module_file=ufs_hera.intel
     export ACCNR=marine-cpu
     m=hera.intel
     #defaults in scripts

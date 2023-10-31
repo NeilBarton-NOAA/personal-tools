@@ -5,17 +5,18 @@ set -u
 ################################################################################################
 
 source ${PWD}/MACHINE-config.sh
-#REPO=NeilBarton-NOAA && HASH=develop
-REPO=ufs-community && HASH=develop
-CODE_DIR=${NPB_WORKDIR}/CODE/ufs-weather-model_${HASH}_${REPO}
+#REPO=NeilBarton-NOAA && HASH=run
+REPO=rmontuoro && HASH=gefs/ep4
+#REPO=ufs-community && HASH=develop
+CODE_DIR=${NPB_WORKDIR}/CODE/ufs-weather-model_${HASH////\_}_${REPO}
 export RUNDIR_ROOT=${NPB_WORKDIR}/RUNS/RTs
 source ${PWD}/MACHINE-config.sh
 # Coupled Case
 # hera doesn't need the - $machine
 # wcoss2 may need - $machine
 case="
-COMPILE | s2swa_32bit | intel | -DAPP=S2SWA -D32BIT=ON -DCCPP_SUITES=FV3_GFS_v17_coupled_p8  |  | fv3 | 
-RUN     | cpld_control_c192_p8            | |  | 
+COMPILE | s2s | intel | -DAPP=S2S -DCCPP_SUITES=FV3_GFS_v17_coupled_p8  |  | fv3 | 
+RUN     | cpld_warmstart_c48     | | | 
 "
 #RUN     | cpld_S2S                  |  | fv3 | 
 #case="
@@ -46,4 +47,5 @@ echo ${CODE_DIR}/tests/rt.sh
 ####################################
 SUFFIX=${case}_$( date +%s )
 export RT_SUFFIX=_${SUFFIX}
-nohup ${CODE_DIR}/tests/rt.sh -a marine-cpu -kl ${config_file} >rt_output_${SUFFIX}.txt 2>&1 &
+nohup ${CODE_DIR}/tests/rt.sh -kl ${config_file} >rt_output_${SUFFIX}.txt 2>&1 &
+#nohup ${CODE_DIR}/tests/rt.sh -a marine-cpu -kl ${config_file} >rt_output_${SUFFIX}.txt 2>&1 &

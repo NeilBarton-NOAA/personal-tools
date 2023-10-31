@@ -124,6 +124,7 @@ if [[ $RUN_LINK_ICs == T ]]; then
     exit 1
   fi
 fi
+
 ####################################
 # edit options for run
 config_file=${CONFIGS_DIR}/config.base

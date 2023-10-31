@@ -55,6 +55,7 @@ for exp in exps:
     print(exp)
     file_search = tdir + '/' + exp + '/' + var + '*.nc'
     DAT = xr.open_mfdataset(file_search, combine = 'nested', concat_dim = 'time', decode_times = True)
+    #DAT = xr.open_mfdataset(file_search, combine = 'nested', concat_dim = 'time', decode_times = False)
     if 'member' in DAT.dims:
         DAT = DAT.mean('member')
     DAT['tau'] = DAT['tau'] / 24.0
