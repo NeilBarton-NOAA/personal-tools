@@ -6,17 +6,26 @@ set -u
 # C96 (~100 km), C192 (~50 km), C384 (25 km), C768 (~13 km), C1152 (~9km)
 ####################################
 # Set Top options
-export DTG=2017110200
+export DTG=2017100503
 #export DTG=2013040200
-export TEST_NAME=REPLAY_TEST_S2SWA_${DTG}
 export ICDIR=${NPB_WORKDIR}/ICs/${DTG} 
+export CICE_OUTPUT=T
+export ENS_SETTINGS=F
+#export CICE_RESTART='.false.'
+#export ice_ic='default'
+export ice_ic=${ICDIR}/iced.2017-10-05-10800.nc
+export TOP_RUNDIR=ICE_TESTING
+export TEST_NAME=DEV_TEST
+#export TEST_NAME=REPLAY_TEST_S2SWA_EP4_ORIG_NEWIC_${DTG}
 export FORECAST_LENGTH=16 # in days
 export WALLCLOCK=30
+export JOB_QUEUE=debug # batch or debug on hera
 export UFS_EXEC=ufs_S2SWA 
 export DEBUG=F
-export JOB_QUEUE=debug # batch or debug on hera
+REPO=ufs-community && HASH=develop
 #REPO=NeilBarton-NOAA && HASH=run
-REPO=rmontuoro && HASH=gefs/ep4
+#REPO=rmontuoro && HASH=gefs/ep4
+#REPO=rmontuoro && HASH=gefs/ep4/newCICE
 PATH_RUN=${NPB_WORKDIR}/CODE/ufs-weather-model_run_NeilBarton-NOAA/RUN 
 RUNDIR_MPI=F
 
@@ -27,7 +36,6 @@ RUNDIR_MPI=F
 
 ####################################
 # Model Options
-export ENS_SETTINGS=T
 export GOCART_NO3=F
 export WAV_RES=glo_025
 #export GRID_SPEC_FILE=${PWD}/grid_spec.nc
@@ -38,10 +46,10 @@ export WAV_RES=glo_025
 export ATM_INPES=12
 export ATM_JNPES=12
 export ATM_THRD=2
-export CHM_NMPI=$(( ATM_INPES * ATM_JNPES * 6 ))
+#export CHM_NMPI=$(( ATM_INPES * ATM_JNPES * 6 ))
 export OCN_NMPI=130
 export ICE_NMPI=72
-export WAV_NMPI=262
+export WAV_NMPI=0 #262
 #export WAV_THRD=1
 #export MED_NMPI=300
 

@@ -8,26 +8,30 @@ set -u
 source $PWD/MACHINE-config.sh
 
 ####################################
-REPO=NeilBarton-NOAA && HASH=GEFS && PSLOT=GEFS_TEST
+#REPO=NeilBarton-NOAA && HASH=GEFS && PSLOT=GEFS_TEST
 #REPO=NOAA-EMC && HASH=develop && PSLOT=DEV
+REPO=aerorahul && HASH=feature/gefs-warm-start 
+PSLOT=GEFS_WARM
+IDATE=2021032312
 #IDATE=2019120300
 #IDATE=2017091200
-IDATE=2013041500 
+#IDATE=2013041500 
 #IDATE=2015110100
 EDATE=$( $PWD/DTG-add-time.sh $IDATE 1 ) 
 RUN_TYPE=forecast-only #cycled
 CDUMP=gefs
 APP=S2S #W #ATM #ATM, S2S, S2SW
-RESDET=384
-RESENS=384
-NENS=1
-ICSDIR=${NPB_WORKDIR}/ICs/${IDATE}
+RESDET=48
+RESENS=48
+NENS=2
+GFS_CYC=4
+#ICSDIR=${NPB_WORKDIR}/ICs/${IDATE}
 START=warm
 
 ####################################
 # Sub-Components of script
 RUN_SETUP_EXPT=T
-RUN_LINK_ICs=T
+RUN_LINK_ICs=F
 RUN_EDIT_CONFIG=T
 RUN_SETUP_XML=T
 RUN_CRONTAB=T
@@ -40,16 +44,14 @@ RESENS=${RESENS:-96}
 REPO=${REPO:-NeilBarton-NOAA}
 NENS=${NENS:-0} 
 GFS_CYC=${GFS_CYC:-1}
-ENKF=${ENKF:-T}
-IAU=${IAU:-T}
-HPSSARCH=${HPSSARCH:-T}
+IAU=${IAU:-F}
+HPSSARCH=${HPSSARCH:-F}
 HASH=${HASH:-develop}
 CODE_DIR=${CODE_DIR:-${NPB_WORKDIR}/CODE/global-workflow_${HASH////\_}_${REPO}}
 SCRIPT_DIR=${CODE_DIR}/workflow
 
 CDUMP=${CDUMP:-gfs} 
 RUN_TYPE=${RUN_TYPE:-cycled}
-[[ ${ENKF} == F ]] && NENS=0
 # options depending on configuration
 if [[ ${RUN_TYPE} == cycled ]]; then
     PSLOT=${PSLOT:-${APP}_IAU-${IAU}_${START}_${RESDET}_${IDATE}}
@@ -138,8 +140,8 @@ sed -i "s:${HOMEDIR}:${COMROT}/GLOBAL:g" ${config_file}
 sed -i "s:${COMROT}/"'${PSLOT}'":${COMROT}:g" ${config_file}
 sed -i 's:KEEPDATA="NO":KEEPDATA="YES":g' ${config_file}
 [[ $HPSSARCH == F ]] && sed -i s:'HPSSARCH="YES":HPSSARCH="NO"':g ${config_file}
-[[ $ENKF == F ]] && sed -i s:'DOHYBVAR="YES":DOHYBVAR="NO"':g ${config_file}
-[[ $IAU == F ]] && sed -i 's:DOIAU="YES":DOIAU="NO":g' ${config_file}
+#[[ $ENKF == F ]] && sed -i s:'DOHYBVAR="YES":DOHYBVAR="NO"':g ${config_file}
+#[[ $IAU == F ]] && sed -i 's:DOIAU="YES":DOIAU="NO":g' ${config_file}
 
 fi
 

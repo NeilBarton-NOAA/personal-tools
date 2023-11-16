@@ -89,7 +89,6 @@ for i, f in enumerate(files):
         except:
             v_min = np.min(plot_data)
             v_max = np.max(plot_data)
-    print(plot_data.shape)
     if (plot_data.shape != lat.shape):
         lon, lat = np.meshgrid(lon,lat)
     #if lon.shape == (721, 1440):
@@ -99,19 +98,18 @@ for i, f in enumerate(files):
     except:
         print(np.min(plot_data), np.max(plot_data))
     #for domain in ['Arctic', 'Antarctic', 'Global']:
-    for domain in ['Arctic']:
+    for domain in ['Antarctic']:
         fig = plt.figure()
         if domain == 'Arctic':
             ax = fig.add_subplot(1,1,1, projection=ccrs.NorthPolarStereo())
             ax = npb.base_maps.Arctic(ax, labels = False)
         elif domain == 'Antarctic':
             ax = fig.add_subplot(1,1,1, projection=ccrs.SouthPolarStereo())
-            ax = npb.base_maps.Antarctic(ax, labels = False)
+            ax = npb.base_maps.Antarctic(ax, labels = True)
         elif domain == 'Global':
             ax = fig.add_subplot(1,1,1, projection=ccrs.Mollweide())
             ax = npb.base_maps.Global(ax, labels = False)
         ax = npb.base_maps.add_features(ax)
-        print(plot_data.shape)
         cf = ax.pcolormesh(lon, lat, plot_data, 
             vmin = v_min,
             vmax = v_max,
