@@ -55,7 +55,7 @@ def monthly(DAT, ICECON = None, pole = 'north'):
             if pole == 'north':
                 ax = fig.add_subplot(4,3,i+1, projection = ccrs.NorthPolarStereo())
                 ax = npb.base_maps.Arctic(ax, labels = False)
-                t_lon, t_lat = 180.0, 47.0
+                t_lon, t_lat = 180.0, 43.0
             elif pole == 'south':
                 ax = fig.add_subplot(4,3,i+1, projection = ccrs.SouthPolarStereo())
                 ax = npb.base_maps.Antarctic(ax, labels = False)

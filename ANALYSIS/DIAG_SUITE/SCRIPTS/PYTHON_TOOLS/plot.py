@@ -116,8 +116,14 @@ def ice_extent_imshowdiff(DAT1, DAT2, pole = 'north'):
         vmin = DAT1.DMIN
         vmax = DAT1.DMAX
     except:
-        vmin = np.nanmin(dat_plot)
-        vmax = -1 * vmin
+        mi = np.nanmin(dat_plot)
+        ma = np.nanmax(dat_plot)
+        if abs(mi) > abs(ma):
+            vmin = mi
+            vmax = -1 * vmin
+        else:
+            vmax = ma
+            vmin = -1 * vmax
     fig = plt.figure(figsize=(8, 6))
     ax = fig.add_subplot(1,1,1)
     cmap = plt.get_cmap('seismic')

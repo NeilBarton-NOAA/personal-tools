@@ -58,6 +58,7 @@ npb.plot.ice_extent_per_month(DAT, EXT)
 #       RPL = RPL.assign_attrs(attrs)
 for d in DAT:
     for obs in EXT:
+        
         npb.plot.ice_extent_imshowdiff(d, obs, pole = 'north')
         npb.plot.ice_extent_imshowdiff(d, obs, pole = 'south')
 

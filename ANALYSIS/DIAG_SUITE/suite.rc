@@ -1,7 +1,7 @@
 #!jinja2
 ########################
 {% set MODEL        = 'GEFS' %}
-{% set DOWNLOAD_DATA = True %}
+{% set DOWNLOAD_DATA = False %}
 {% set TOP_DIR_OUTPUT   = "/scratch2/NCEPDEV/stmp3/Neil.Barton/DIAG" %}
 {% set TOP_DIR_FIGURES   = "/scratch2/NCEPDEV/stmp3/Neil.Barton/FIGURES" %}
 
@@ -14,7 +14,7 @@
     {% set ICP = '20180101T12' %}
     {% set FCP = '20221231T12' %}
 {% elif MODEL == 'GEFS' %}
-    {% set EXPS = 'EP4, EP4a' %}
+    {% set EXPS = 'EP4' %}
     {% set MEMBERS = 11 %}
     {% set AICE_VAR     = 'aice_d' %}
     {% set ICP = '20171004T00' %}

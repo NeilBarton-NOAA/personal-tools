@@ -50,5 +50,5 @@ for exp in exps:
         print(f)
         DAT = xr.open_dataset(f)
         DAT = DAT.assign_attrs({'file_name' : f }) 
-        npb.icecalc.interp(DAT, OBS, var = var, force_calc = True)
+        npb.icecalc.interp(DAT, OBS, var = var, force_calc = False)
 

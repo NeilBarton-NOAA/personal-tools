@@ -51,8 +51,8 @@ for exp in exps:
     files.sort()
     exp_dat = []
     iiee_file = tdir + '/' + exp + '/iiee.nc'
-    if os.path.exists(iiee_file):
-       os.remove(iiee_file) 
+    #if os.path.exists(iiee_file):
+    #   os.remove(iiee_file) 
     if os.path.exists(iiee_file) == False:
         for f in files:
             print(f)
