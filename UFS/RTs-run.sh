@@ -5,9 +5,9 @@ set -u
 ################################################################################################
 
 source ${PWD}/MACHINE-config.sh
-REPO=NeilBarton-NOAA && HASH=run
+#REPO=NeilBarton-NOAA && HASH=run
 #REPO=rmontuoro && HASH=gefs/ep4
-#REPO=ufs-community && HASH=develop
+REPO=ufs-community && HASH=develop
 CODE_DIR=${NPB_WORKDIR}/CODE/ufs-weather-model_${HASH////\_}_${REPO}
 export RUNDIR_ROOT=${NPB_WORKDIR}/RUNS/RTs
 source ${PWD}/MACHINE-config.sh
@@ -15,9 +15,9 @@ source ${PWD}/MACHINE-config.sh
 # hera doesn't need the - $machine
 # wcoss2 may need - $machine
 case="
-COMPILE | s2swa_32bit_pdlib  | intel | -DAPP=S2SWA -D32BIT=ON -DCCPP_SUITES=FV3_GFS_v17_coupled_p8_ugwpv1 -DPDLIB=ON | | fv3 |
-RUN | cpld_control_gfsv17                               | + hera orion cheyenne wcoss2 acorn | baseline |
-RUN | cpld_control_gfsv17_iau                           | + hera orion cheyenne wcoss2 acorn | baseline | cpld_control_gfsv17
+#COMPILE | s2swa_32bit_pdlib  | intel | -DAPP=S2SWA -D32BIT=ON -DCCPP_SUITES=FV3_GFS_v17_coupled_p8_ugwpv1 -DPDLIB=ON | | fv3 |
+COMPILE | s2swa_32bit_pdlib  | intel | -DAPP=S2SWA -D32BIT=ON -DCCPP_SUITES=FV3_GFS_v17_coupled_p8 | | fv3 |
+RUN | cpld_bmark_p8                               | + hera orion cheyenne wcoss2 acorn | baseline |
 "
 #RUN     | cpld_S2S                  |  | fv3 | 
 #case="

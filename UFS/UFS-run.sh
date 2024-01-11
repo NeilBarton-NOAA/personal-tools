@@ -10,21 +10,33 @@ export DTG=2017100503
 #export DTG=2013040200
 export ICDIR=${NPB_WORKDIR}/ICs/${DTG} 
 export CICE_OUTPUT=T
-export ENS_SETTINGS=F
+export ENS_SETTINGS=T
 #export CICE_RESTART='.false.'
 #export ice_ic='default'
-export ice_ic=${ICDIR}/iced.2017-10-05-10800.nc
 export TOP_RUNDIR=ICE_TESTING
-export TEST_NAME=DEV_TEST
-#export TEST_NAME=REPLAY_TEST_S2SWA_EP4_ORIG_NEWIC_${DTG}
+#DIFF=0.05
+#ICE=${DIFF}
+export TEST_NAME=TEST_NEWCICE_ENS10
+#EDGE_${DIFF}_ENS3
+export ice_ic=${ICDIR}/iced.2017-10-05-10800.nc
+#export ice_ic=${ICDIR}/newIC_${DIFF}_iced.2017-10-05-10800.nc
+#export ice_ic=${ICDIR}/newIC_EDGE_Thickness${DIFF}_iced.2017-10-05-10800.nc
+#export ice_ic=${ICDIR}/newIC_EDGE_${DIFF}_iced.2017-10-05-10800.nc
+#export ice_ic=${ICDIR}/newIC_THICKNESSDIFF_${DIFF}_ICE_0.05_iced.2017-10-05-10800.nc
+#export ice_ic=${ICDIR}/testIC.nc
+#export ice_ic=${ICDIR}/philCICEic2.nc
+#export ice_ic=${ICDIR}/newIC_DIFFlimit_0.15_old_iced.2017-10-05-10800.nc
+#export TEST_NAME=DEV_TEST
+#export TEST_NAME=REPLAY_TEST_S2SWA_EP4_ORIG_LIMIT015_ENS3_${DTG}
+#export TEST_NAME=TEST 
 export FORECAST_LENGTH=16 # in days
-export WALLCLOCK=30
-export JOB_QUEUE=debug # batch or debug on hera
+export WALLCLOCK=360
+#export JOB_QUEUE=debug # batch or debug on hera
 export UFS_EXEC=ufs_S2SWA 
 export DEBUG=F
-REPO=ufs-community && HASH=develop
+#REPO=ufs-community && HASH=develop
 #REPO=NeilBarton-NOAA && HASH=run
-#REPO=rmontuoro && HASH=gefs/ep4
+REPO=rmontuoro && HASH=gefs/ep4_newCICE
 #REPO=rmontuoro && HASH=gefs/ep4/newCICE
 PATH_RUN=${NPB_WORKDIR}/CODE/ufs-weather-model_run_NeilBarton-NOAA/RUN 
 RUNDIR_MPI=F
@@ -43,8 +55,8 @@ export WAV_RES=glo_025
 
 ####################################
 # Set MPI options,  if NMPI=0, model will not run
-export ATM_INPES=12
-export ATM_JNPES=12
+export ATM_INPES=8
+export ATM_JNPES=8
 export ATM_THRD=2
 #export CHM_NMPI=$(( ATM_INPES * ATM_JNPES * 6 ))
 export OCN_NMPI=130
@@ -57,7 +69,7 @@ export WAV_NMPI=0 #262
 # IO options                        # DEFAULTS
 #export ATM_WPG=6                   # 48
 #export MOM6_IO_LAYOUT='3,2'        # 1,1
-#export RESTART_FREQ=12             # restart writeout (hours, all components)
+#export RESTART_FREQ=1             # restart writeout (hours, all components)
 #export OUTPUT_FREQ=3               # forecast length (FV3 and MOM6)
 #export CICE_OUTPUT=T               # F
 
