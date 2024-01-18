@@ -24,7 +24,7 @@ parser.add_argument('-r', '--replay', action = 'store', nargs = 1, \
         default=['/scratch2/NCEPDEV/stmp3/Neil.Barton/ICs/2017100503/ufs.cpld.cpl.r.2017-10-05-10800.nc'], \
         help="replay mediator restart file (ufs.cpld.cpl.r)")
 parser.add_argument('-d', '--dev', action = 'store', nargs = 1, \
-        default=['/home/Neil.Barton/ANALYSIS/MED/ufs.cpld.cpl.r.2013-04-01-36000.nc'], \
+        default=['/scratch2/NCEPDEV/stmp3/Neil.Barton/ufs.cpld.cpl.r.2013-04-01-21600.nc'], \
         help="dev mediator restart file (ufs.cpld.cpl.r)")
 args = parser.parse_args()
 r = args.replay[0]
@@ -67,21 +67,6 @@ const_lhvap = 2.501e6  # latent heat of evaporation  used in replay (J/kg)
 rdat['atmImp_Faxa_evap'] = (rdat['atmImp_Faxa_lat'].dims, -1.0 * rdat['atmImp_Faxa_lat'].values / const_lhvap)
 
 ################################################
-# add missing variables
-#   if lat/lon add lat and lon
-#   if variable, add as zero 
-for v in r_vars:
-#    if (v in d_vars) and (v != 'time') and (v[0:6] == 'atmExp'):
-#        print(v)
-#        print(ddat[v].mean().values)
-#        print(rdat[v].mean().values)
-#        #if np.sign(ddat[v].mean().values) != np.sign(rdat[v].mean().values):
-#        #    print(v)
-#        #    print(ddat[v].mean().values)
-#        #    print(rdat[v].mean().values)
-#        #    print('')
-#        #    print('')
-################################################
 # add new variables as zeros
 for v in diff_vars:
     if v[-3:] in ['lat', 'lon']:
@@ -90,5 +75,12 @@ for v in diff_vars:
     else:
         print('adding zeros', v)
         rdat[v] = (ddat[v].dims, np.zeros(ddat[v].shape))
-#print(diff_vars)
+
+################################################
+# save new file
+name_f = os.path.basename(r)
+dir_f = os.path.dirname(r)
+file_save = dir_f + '/TEST_MEDFILE.nc'
+rdat.to_netcdf(file_save)
+print('SAVED: ', file_save)
 
