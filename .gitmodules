@@ -2,3 +2,6 @@
 	path = UFS/TIMINGS
 	url = https://github.com/NeilBarton-NOAA/ufs-timings
 
+[submodule "ANALYSIS/DIAG_SUITE"]
+	path = ANALYSIS/DIAG_SUITE
+	url = https://github.com/NeilBarton-NOAA/DIAG_SUITE.git

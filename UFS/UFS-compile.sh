@@ -5,11 +5,11 @@ source $PWD/MACHINE-config.sh
 TOPDIR=$NPB_WORKDIR/CODE
 mkdir -p $TOPDIR
 
-#REPO=NeilBarton-NOAA && HASH=CICE 
+REPO=NeilBarton-NOAA && HASH=run
 #REPO=rmontuoro && HASH=gefs/ep4_newCICE
 #REPO=ufs-weather-model && HASH=Prototype-P8c
-REPO=ufs-community && HASH=develop
-COMPILE=F
+#REPO=ufs-community && HASH=develop
+COMPILE=T
 ########################
 # check out code
 cd $TOPDIR
@@ -35,6 +35,7 @@ module purge
 module use modulefiles
 module load ${module_file}
 
+#COMPILE | s2swa_32bit_pdlib  | intel | -DAPP=S2SWA -D32BIT=ON -DCCPP_SUITES=FV3_GFS_v17_coupled_p8 | | fv3 |
 declare -A COMPILES
 COMPILES=( 
 ["S2SWA"]="-DAPP=S2SWA -D32BIT=ON -DCCPP_SUITES=FV3_GFS_v17_coupled_p8"

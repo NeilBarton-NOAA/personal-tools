@@ -31,7 +31,6 @@ if [[ ${COMPILE} == T ]]; then
 cd ${TOPDIR}/${code}/sorc
 cat <<EOF > setup_all_ufs.sh
 #!/bin/sh
-sh checkout.sh 
 sh build_all.sh 
 sh link_workflow.sh  
 EOF

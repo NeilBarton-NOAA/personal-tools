@@ -11,11 +11,11 @@ REPO=ufs-community && HASH=develop
 CODE_DIR=${NPB_WORKDIR}/CODE/ufs-weather-model_${HASH////\_}_${REPO}
 export RUNDIR_ROOT=${NPB_WORKDIR}/RUNS/RTs
 source ${PWD}/MACHINE-config.sh
+#export COMPILE_QUEUE=debug
 # Coupled Case
 # hera doesn't need the - $machine
 # wcoss2 may need - $machine
 case="
-#COMPILE | s2swa_32bit_pdlib  | intel | -DAPP=S2SWA -D32BIT=ON -DCCPP_SUITES=FV3_GFS_v17_coupled_p8_ugwpv1 -DPDLIB=ON | | fv3 |
 COMPILE | s2swa_32bit_pdlib  | intel | -DAPP=S2SWA -D32BIT=ON -DCCPP_SUITES=FV3_GFS_v17_coupled_p8 | | fv3 |
 RUN | cpld_bmark_p8                               | + hera orion cheyenne wcoss2 acorn | baseline |
 "

@@ -6,19 +6,21 @@ set -u
 # C96 (~100 km), C192 (~50 km), C384 (25 km), C768 (~13 km), C1152 (~9km)
 ####################################
 # Set Top options
-export DTG=2017100503
+#export DTG=2017100503
 #export DTG=2013040200
-export ICDIR=${NPB_WORKDIR}/ICs/${DTG} 
+export DTG=2013040100
+export ICDIR=/scratch2/NCEPDEV/stmp3/Neil.Barton/RUNS/RTs/rt_304936/cpld_bmark_p8_intel
+#export ICDIR=${NPB_WORKDIR}/ICs/${DTG} 
 export CICE_OUTPUT=T
 export ENS_SETTINGS=T
 #export CICE_RESTART='.false.'
 #export ice_ic='default'
-export TOP_RUNDIR=ICE_TESTING
+export TOP_RUNDIR=MED_TESTING
 #DIFF=0.05
 #ICE=${DIFF}
-export TEST_NAME=TEST_NEWCICE_ENS10
+export TEST_NAME=RT
 #EDGE_${DIFF}_ENS3
-export ice_ic=${ICDIR}/iced.2017-10-05-10800.nc
+#export ice_ic=${ICDIR}/iced.2017-10-05-10800.nc
 #export ice_ic=${ICDIR}/newIC_${DIFF}_iced.2017-10-05-10800.nc
 #export ice_ic=${ICDIR}/newIC_EDGE_Thickness${DIFF}_iced.2017-10-05-10800.nc
 #export ice_ic=${ICDIR}/newIC_EDGE_${DIFF}_iced.2017-10-05-10800.nc
