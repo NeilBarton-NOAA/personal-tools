@@ -5,10 +5,8 @@ source $PWD/MACHINE-config.sh
 TOPDIR=$NPB_WORKDIR/CODE
 mkdir -p $TOPDIR
 
-REPO=NeilBarton-NOAA && HASH=run
-#REPO=rmontuoro && HASH=gefs/ep4_newCICE
-#REPO=ufs-weather-model && HASH=Prototype-P8c
-#REPO=ufs-community && HASH=develop
+#REPO=NeilBarton-NOAA && HASH=run
+REPO=ufs-community && HASH=develop
 COMPILE=T
 ########################
 # check out code

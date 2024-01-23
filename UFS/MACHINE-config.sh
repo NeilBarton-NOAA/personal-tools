@@ -15,7 +15,7 @@ elif [[ ${machine} == *Orion* ]]; then
     export STMPDIR=/work/noaa/stmp/'${USER}'
 elif [[ ${machine} == *[cd]login* ]]; then
     module_file=ufs_wcoss2.intel
-    #export ACCNR=marine-cpu
+    export ACCNR=GFS-DEV
     export HOMEDIR=/lfs/h2/emc/global/noscrub/'${USER}'
     m=wcoss2.intel
 else

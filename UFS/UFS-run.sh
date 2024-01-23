@@ -9,7 +9,7 @@ set -u
 export DTG=2013040100
 export ENS_SETTINGS=T
 export FORECAST_LENGTH=16 # in days
-export WALLCLOCK=360
+export WALLCLOCK=$(( 15 ))
 #export JOB_QUEUE=debug # batch or debug on hera
 export UFS_EXEC=ufs_S2SWA 
 export DEBUG=F
@@ -30,20 +30,20 @@ export WAV_RES=glo_025
 
 ####################################
 # Set MPI options,  if NMPI=0, model will not run
-export ATM_INPES=8
-export ATM_JNPES=8
+export ATM_INPES=16
+export ATM_JNPES=16
 export ATM_THRD=1
 export CHM_NMPI=$(( ATM_INPES * ATM_JNPES * 6 ))
-export OCN_NMPI=150
+export OCN_NMPI=130
 export ICE_NMPI=72
-export WAV_NMPI=262
-#export WAV_THRD=1
+export WAV_NMPI=250
+export WAV_THRD=1
 #export MED_NMPI=300
 
 ############
 # IO options                        # DEFAULTS
 export ATM_WPG=48                   # 48
-export MOM6_IO_LAYOUT='1,4'         # 1,1
+export MOM6_IO_LAYOUT='1,5'         # 1,1
 export RESTART_FREQ=48              # restart writeout (hours, all components)
 export OUTPUT_FREQ=3                # forecast length (FV3 and MOM6)
 #export CICE_OUTPUT=T               # F
@@ -53,7 +53,7 @@ export OUTPUT_FREQ=3                # forecast length (FV3 and MOM6)
 export UFS_HOME=${NPB_WORKDIR}/CODE/ufs-weather-model_${HASH////\_}_${REPO}
 export PATH_RUN=${PATH_RUN:-${UFS_HOME}/RUN}
 TOP_RUNDIR=${TOP_RUNDIR:-UFS}
-RUNDIR="${NPB_WORKDIR}/RUNS/${TOP_RUNDIR}/${TEST_NAME}"
+RUNDIR="${NPB_WORKDIR}/RUNS/${TOP_RUNDIR}"
 if [[ ${DEBUG} != T ]] && [[ ${RUNDIR_MPI} == T ]]; then
 [ ! -z ${ATM_INPES+x} ] && RUNDIR="${RUNDIR}_ATM_${ATM_INPES}x${ATM_JNPES}"
 [ ! -z ${ATM_THRD+x} ] && RUNDIR="${RUNDIR}-${ATM_THRD}"
