@@ -6,13 +6,14 @@ set -u
 # C96 (~100 km), C192 (~50 km), C384 (25 km), C768 (~13 km), C1152 (~9km)
 ####################################
 # Set Top options
-export DTG=2013040100
+#export DTG=2013040100
 export ENS_SETTINGS=T
-export FORECAST_LENGTH=16 # in days
-export WALLCLOCK=$(( 15 ))
-#export JOB_QUEUE=debug # batch or debug on hera
+export FORECAST_LENGTH=0.25 # in days
+export WALLCLOCK=$(( 20 ))
+export JOB_QUEUE=debug # batch or debug on hera
 export UFS_EXEC=ufs_S2SWA 
 export DEBUG=F
+export CPP_SUITE=FV3_GFS_v17_coupled_p8_ugwpv1
 #REPO=ufs-community && HASH=develop
 REPO=NeilBarton-NOAA && HASH=run
 PATH_RUN=${NPB_WORKDIR}/CODE/ufs-weather-model_run_NeilBarton-NOAA/RUN 
@@ -30,22 +31,22 @@ export WAV_RES=glo_025
 
 ####################################
 # Set MPI options,  if NMPI=0, model will not run
-export ATM_INPES=16
-export ATM_JNPES=16
-export ATM_THRD=1
+export ATM_INPES=8
+export ATM_JNPES=8
+export ATM_THRD=2
 export CHM_NMPI=$(( ATM_INPES * ATM_JNPES * 6 ))
 export OCN_NMPI=130
 export ICE_NMPI=72
-export WAV_NMPI=250
+export WAV_NMPI=280
 export WAV_THRD=1
 #export MED_NMPI=300
 
 ############
 # IO options                        # DEFAULTS
-export ATM_WPG=48                   # 48
-export MOM6_IO_LAYOUT='1,5'         # 1,1
-export RESTART_FREQ=48              # restart writeout (hours, all components)
-export OUTPUT_FREQ=3                # forecast length (FV3 and MOM6)
+export ATM_WPG=0 #48                   # 48
+#export MOM6_IO_LAYOUT='1,5'         # 1,1
+#export RESTART_FREQ=48              # restart writeout (hours, all components)
+#export OUTPUT_FREQ=3                # forecast length (FV3 and MOM6)
 #export CICE_OUTPUT=T               # F
 
 ############

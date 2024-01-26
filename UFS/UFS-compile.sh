@@ -5,8 +5,8 @@ source $PWD/MACHINE-config.sh
 TOPDIR=$NPB_WORKDIR/CODE
 mkdir -p $TOPDIR
 
-#REPO=NeilBarton-NOAA && HASH=run
-REPO=ufs-community && HASH=develop
+REPO=NeilBarton-NOAA && HASH=run
+#REPO=ufs-community && HASH=develop
 COMPILE=T
 ########################
 # check out code
@@ -35,8 +35,9 @@ module load ${module_file}
 
 #COMPILE | s2swa_32bit_pdlib  | intel | -DAPP=S2SWA -D32BIT=ON -DCCPP_SUITES=FV3_GFS_v17_coupled_p8 | | fv3 |
 declare -A COMPILES
+#FV3_GFS_v17_coupled_p8_ugwpv1
 COMPILES=( 
-["S2SWA"]="-DAPP=S2SWA -D32BIT=ON -DCCPP_SUITES=FV3_GFS_v17_coupled_p8"
+["S2SWA"]="-DAPP=S2SWA -D32BIT=ON -DCCPP_SUITES=FV3_GFS_v17_coupled_p8_ugwpv1,FV3_GFS_v17_coupled_p8"
 #["S2SWA_64BIT"]="-DAPP=S2SWA -D32BIT=OFF -DCCPP_SUITES=FV3_GFS_v17_coupled_p8"
 #["ATM"]="-DAPP=ATM -DCCPP_SUITES=FV3_GFS_v16"
 )
