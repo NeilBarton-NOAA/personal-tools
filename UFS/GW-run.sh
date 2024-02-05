@@ -8,21 +8,16 @@ set -u
 source $PWD/MACHINE-config.sh
 
 ####################################
-#REPO=NeilBarton-NOAA && HASH=GEFS && PSLOT=GEFS_TEST
+REPO=NeilBarton-NOAA && HASH=GEFS && PSLOT=GEFS_TEST
 #REPO=NOAA-EMC && HASH=develop && PSLOT=DEV
-REPO=aerorahul && HASH=feature/gefs-warm-start 
-PSLOT=GEFS_WARM
 IDATE=2021032312
-#IDATE=2019120300
-#IDATE=2017091200
-#IDATE=2013041500 
-#IDATE=2015110100
 EDATE=$( $PWD/DTG-add-time.sh $IDATE 1 ) 
 RUN_TYPE=forecast-only #cycled
 CDUMP=gefs
-APP=S2S #W #ATM #ATM, S2S, S2SW
-RESDET=48
-RESENS=48
+APP=S2SWA #W #ATM #ATM, S2S, S2SW
+RESDETATM=384
+RESENSATM=384
+RESDETOCN=025
 NENS=2
 GFS_CYC=4
 #ICSDIR=${NPB_WORKDIR}/ICs/${IDATE}
@@ -64,7 +59,7 @@ fi
 # personalized options
 ICSDIR=${ICSDIR:-${NPB_WORKDIR}/ICs}
 EXPDIR=${NPB_WORKDIR}/RUNS/GW
-COMROT=${NPB_WORKDIR}/RUNS/GW/${PSLOT}/COMROT 
+COMROOT=${NPB_WORKDIR}/RUNS/GW/${PSLOT}/COMROOT 
 CONFIGS_DIR=${EXPDIR}/${PSLOT}
 MAIL=F
 
@@ -76,9 +71,9 @@ if [[ ! -d $CODE_DIR ]]; then
 fi
 
 ####################################
-# link restart files to COMROT
+# link restart files to COMROOT
 #if [[ $RUN_LINK_ICs == T ]]; then
-#  source ${PWD}/LINK-ICs.sh ${IDATE} ${COMROT} ${APP} ${CDUMP} ${NENS} 
+#  source ${PWD}/LINK-ICs.sh ${IDATE} ${COMROOT} ${APP} ${CDUMP} ${NENS} 
 #  if (( $? > 0 )); then
 #    echo 'LINK-ICs.sh failed'
 #    exit 1
@@ -97,16 +92,17 @@ OPTIONS="${OPTIONS} --edate ${EDATE} "
 OPTIONS="${OPTIONS} --app ${APP} "
 OPTIONS="${OPTIONS} --start ${START} "
 OPTIONS="${OPTIONS} --gfs_cyc ${GFS_CYC} "
-OPTIONS="${OPTIONS} --resdet ${RESDET} "
-OPTIONS="${OPTIONS} --resens ${RESENS} "
+OPTIONS="${OPTIONS} --resdetatmos ${RESDETATM} "
+OPTIONS="${OPTIONS} --resensatmos ${RESENSATM} "
+OPTIONS="${OPTIONS} --resdetocean ${RESDETOCN} "
 OPTIONS="${OPTIONS} --pslot ${PSLOT} "
 OPTIONS="${OPTIONS} --expdir ${EXPDIR} "
-OPTIONS="${OPTIONS} --comrot ${COMROT} "
+OPTIONS="${OPTIONS} --comroot ${COMROOT} "
 OPTIONS="${OPTIONS} --nens ${NENS} "
-OPTIONS="${OPTIONS} --resens ${RESENS} "
 if [[ $RUN_TYPE != forecast-only ]]; then
 OPTIONS="${OPTIONS} --start ${START} "
 fi
+OPTIONS="${OPTIONS} --o "
 echo "${SCRIPT_DIR}/setup_expt.py ${CDUMP} ${RUN_TYPE} ${OPTIONS}"
 ${SCRIPT_DIR}/setup_expt.py ${CDUMP} ${RUN_TYPE} ${OPTIONS}
 if [[ $? != 0 ]]; then
@@ -120,7 +116,7 @@ fi
 ####################################
 # link ICs 
 if [[ $RUN_LINK_ICs == T ]]; then
-  ${PWD}/LINK-ICs.sh ${IDATE} ${COMROT} ${APP} ${CDUMP} ${NENS} 
+  ${PWD}/LINK-ICs.sh ${IDATE} ${COMROOT} ${APP} ${CDUMP} ${NENS} 
   if (( $? > 0 )); then
     echo 'LINK-ICs.sh failed'
     exit 1
@@ -136,8 +132,8 @@ echo " "
 echo "EDITING: $config_file"
 sed -i 's/fv3-cpu/marine-cpu/g' ${config_file}
 sed -i 's:HPSS_PROJECT=emc-global:HPSS_PROJECT=emc-marine:g' ${config_file}
-sed -i "s:${HOMEDIR}:${COMROT}/GLOBAL:g" ${config_file}
-sed -i "s:${COMROT}/"'${PSLOT}'":${COMROT}:g" ${config_file}
+sed -i "s:${HOMEDIR}:${COMROOT}/GLOBAL:g" ${config_file}
+sed -i "s:${COMROOT}/"'${PSLOT}'":${COMROOT}:g" ${config_file}
 sed -i 's:KEEPDATA="NO":KEEPDATA="YES":g' ${config_file}
 [[ $HPSSARCH == F ]] && sed -i s:'HPSSARCH="YES":HPSSARCH="NO"':g ${config_file}
 #[[ $ENKF == F ]] && sed -i s:'DOHYBVAR="YES":DOHYBVAR="NO"':g ${config_file}
@@ -170,8 +166,8 @@ set +u
 source ${config_file}
 cd ${EXPDIR}
 ln -s ${RUNDIR} RUNDIR
-ln -s ${COMROT}/logs LOGS_COMROT
-rm -r ${COMROT}/${PSLOT}
+ln -s ${COMROOT}/logs LOGS_COMROOT
+rm -r ${COMROOT}/${PSLOT}
 
 set -u
 xml_file=$(ls $CONFIGS_DIR/*.xml)

@@ -19,6 +19,8 @@ if [[ ! -d ${CODE} ]]; then
     git submodule update --init --recursive
 else
     cd ${CODE}
+    git pull
+    git submodule update --recursive
 fi
 
 ####################################
