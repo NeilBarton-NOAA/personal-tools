@@ -10,6 +10,8 @@
 #       Previously the ATM exported latent which was converted in the mediator to evap (sent to the ocean). 
 #       Now the ATM exports evap directly. So the new evap field will need to be created from the latent field.
 #   There are also a set of fields which will need to have their signs changed (taux,tauy,sensible). 
+#   atmImp---ie, imported from the atm
+#   atmExp---ie, exported to the atm from another model
 ########################
 import argparse
 import numpy as np
@@ -44,16 +46,13 @@ ddat = xr.open_dataset(d)
 #    variable -> variable 
 r_vars = set(rdat.variables.keys())
 d_vars = set(ddat.variables.keys())
-diff_vars = list(d_vars - r_vars)
 
 ################################################
 # update in code has fluxed defined as positive down, and some variables need to be multipled by -1 
-#   does the update code need atmExp_Faox_* variables added?
-#   replay code only has atmExp_Faii_* variables
 c_vars = ['tauy', 'taux', 'sen']
 for v in r_vars:
     v_name = v.split('_')[-1]
-    if (v[0:3] == 'atm') and (v_name in c_vars):
+    if (v[0:6] == 'atmImp') and (v_name in c_vars):
         print('Switching sign of', v)
         rdat[v] = rdat[v] * -1.0
 
@@ -63,18 +62,27 @@ for v in r_vars:
 #   https://github.com/NOAA-EMC/CMEPS/compare/cec8db8d09fa0a0b016d197a68edc67cbd100d97...9923d6d17700daf502d9a016138bf8eb8aad7f09
 #   latent heat / const_lhvap = > evap
 const_lhvap = 2.501e6  # latent heat of evaporation  used in replay (J/kg)
-# should this be multiplied by negative 1?
 rdat['atmImp_Faxa_evap'] = (rdat['atmImp_Faxa_lat'].dims, -1.0 * rdat['atmImp_Faxa_lat'].values / const_lhvap)
 
 ################################################
 # add new variables as zeros
+diff_vars = list(d_vars - r_vars)
 for v in diff_vars:
     if v[-3:] in ['lat', 'lon']:
-        print('adding lat/lon values', v)
+        #print('adding lat/lon values', v)
         rdat[v] = (ddat[v].dims, ddat[v].values)
+    elif (v.split('_')[1] == 'Foxx'):
+        old_name = v.split('_')[0] + '_Faxa_' + v.split('_')[-1]
+        rdat[v] = rdat[old_name]
+    elif (v.split('_')[0] == 'MedOcnAlb'):
+        rdat[v] = 0.06
     else:
         print('adding zeros', v)
         rdat[v] = (ddat[v].dims, np.zeros(ddat[v].shape))
+
+################################################
+# add global attribute
+rdat.assign_attrs({'File Edited' : 'Replay to Dev/GEFS'})
 
 ################################################
 # save new file
