@@ -4,8 +4,6 @@
 #                   same thickness in two categories where thickness is vicen / aicen.
 ####################################################################################
 import argparse
-import cartopy.crs as ccrs
-import matplotlib.pyplot as plt
 import numpy as np
 import os
 import shutil
@@ -35,8 +33,10 @@ method = args.method[0]
 limit = float(args.limit[0])
 plot = args.plot
 name_f = os.path.basename(infile)
-if args.directory[0] != False:
+if args.directory != False:
     dir_f = args.directory[0]
+    if not os.path.exists(dir_f):
+        os.makedirs(dir_f)
 else:
     dir_f = os.path.dirname(infile)
 dat = xr.open_dataset(infile)
@@ -168,6 +168,9 @@ print('SAVED: ' + new_file)
 ########################
 # plot differences in data
 if plot:
+    print("Plotting only works on hear")
+    import cartopy.crs as ccrs
+    import matplotlib.pyplot as plt
     sys.path.append('/home/Neil.Barton/TOOLS')
     import PYTHON_TOOLS as npb
     fig = plt.figure()
