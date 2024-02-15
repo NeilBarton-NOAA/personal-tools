@@ -10,18 +10,18 @@ source $PWD/MACHINE-config.sh
 ####################################
 REPO=NeilBarton-NOAA && HASH=GEFS && PSLOT=GEFS_TEST
 #REPO=NOAA-EMC && HASH=develop && PSLOT=DEV
-IDATE=2021032312
+IDATE=2017100400
 EDATE=$( $PWD/DTG-add-time.sh $IDATE 1 ) 
 RUN_TYPE=forecast-only #cycled
 CDUMP=gefs
 APP=S2SWA #W #ATM #ATM, S2S, S2SW
 RESDETATM=384
 RESENSATM=384
-RESDETOCN=025
-NENS=2
+#RESDETOCN=025
+NENS=1
 GFS_CYC=4
 #ICSDIR=${NPB_WORKDIR}/ICs/${IDATE}
-START=warm
+START=cold
 
 ####################################
 # Sub-Components of script
@@ -94,7 +94,7 @@ OPTIONS="${OPTIONS} --start ${START} "
 OPTIONS="${OPTIONS} --gfs_cyc ${GFS_CYC} "
 OPTIONS="${OPTIONS} --resdetatmos ${RESDETATM} "
 OPTIONS="${OPTIONS} --resensatmos ${RESENSATM} "
-OPTIONS="${OPTIONS} --resdetocean ${RESDETOCN} "
+#OPTIONS="${OPTIONS} --resdetocean ${RESDETOCN} "
 OPTIONS="${OPTIONS} --pslot ${PSLOT} "
 OPTIONS="${OPTIONS} --expdir ${EXPDIR} "
 OPTIONS="${OPTIONS} --comroot ${COMROOT} "
@@ -102,7 +102,7 @@ OPTIONS="${OPTIONS} --nens ${NENS} "
 if [[ $RUN_TYPE != forecast-only ]]; then
 OPTIONS="${OPTIONS} --start ${START} "
 fi
-OPTIONS="${OPTIONS} --o "
+#OPTIONS="${OPTIONS} --o "
 echo "${SCRIPT_DIR}/setup_expt.py ${CDUMP} ${RUN_TYPE} ${OPTIONS}"
 ${SCRIPT_DIR}/setup_expt.py ${CDUMP} ${RUN_TYPE} ${OPTIONS}
 if [[ $? != 0 ]]; then
@@ -135,9 +135,8 @@ sed -i 's:HPSS_PROJECT=emc-global:HPSS_PROJECT=emc-marine:g' ${config_file}
 sed -i "s:${HOMEDIR}:${COMROOT}/GLOBAL:g" ${config_file}
 sed -i "s:${COMROOT}/"'${PSLOT}'":${COMROOT}:g" ${config_file}
 sed -i 's:KEEPDATA="NO":KEEPDATA="YES":g' ${config_file}
+#sed -i 's:BASE_CPLIC="/scratch1/NCEPDEV/global/glopara/data/ICSDIR/prototype_ICs":BASE_CPLIC="/scratch2/NCEPDEV/stmp3/Neil.Barton/ICs":g' ${config_file}
 [[ $HPSSARCH == F ]] && sed -i s:'HPSSARCH="YES":HPSSARCH="NO"':g ${config_file}
-#[[ $ENKF == F ]] && sed -i s:'DOHYBVAR="YES":DOHYBVAR="NO"':g ${config_file}
-#[[ $IAU == F ]] && sed -i 's:DOIAU="YES":DOIAU="NO":g' ${config_file}
 
 fi
 
@@ -150,7 +149,7 @@ ln -s ${SCRIPT_DIR}/rocoto_viewer.py ${CONFIGS_DIR}
 echo " "
 echo "RUNNING: setup_xml.py after changes config.base:"
 echo "${SCRIPT_DIR}/setup_xml.py ${CONFIGS_DIR}"
-${SCRIPT_DIR}/setup_xml.py ${CONFIGS_DIR}
+${SCRIPT_DIR}/setup_xml.py ${CONFIGS_DIR} --maxtries 1
 if [[ $? != 0 ]]; then
     echo 'setup_xml.py failed'
     exit 1
@@ -167,6 +166,7 @@ source ${config_file}
 cd ${EXPDIR}
 ln -s ${RUNDIR} RUNDIR
 ln -s ${COMROOT}/logs LOGS_COMROOT
+ln -s ${CODE_DIR} .
 rm -r ${COMROOT}/${PSLOT}
 
 set -u

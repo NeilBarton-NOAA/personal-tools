@@ -6,9 +6,10 @@ set -u
 set -u
 #DTG=$1
 DTG=2017100400
-TOP_SRCDIR=${2:-/lfs/h2/emc/gefstemp/Bing.Fu/ep5ic}
+TOP_SRCDIR=${2:-${NPB_WORKDIR}/ICs}
+#TOP_SRCDIR=${2:-/lfs/h2/emc/gefstemp/Bing.Fu/ep5ic}
 TOP_DESDIR=${3:-${NPB_WORKDIR}/ICs}
-NENS=${4:-2}
+NENS=${4:-1}
 APP=${5:-S2SWA}
 
 ########################
@@ -23,8 +24,14 @@ LINK_FILES() {
     if [[ ${bn:0:3} == 'MOM' ]]; then
         bn=${PDY}.${cyc}0000.${bn}
     fi
+    if [[ ${bn} == mem*pert.nc ]]; then
+        bn=${PDY}.${cyc}0000.mom6_increment.nc
+    fi
     if [[ ${bn} == *ice* ]]; then
         bn=${PDY}.${cyc}0000.cice_model.res.nc
+    fi
+    if [[ ${bn} == *ww3* ]]; then
+        bn=${PDY}.${cyc}0000.restart.glo_025
     fi
     echo ${f} ${DIR}/${bn}
     ln -sf ${f} ${DIR}/${bn}
@@ -43,12 +50,10 @@ atm_cold_ics='gfs_ctrl.nc gfs_data*.nc sfc_data*.nc'
 med_ic='*ufs.cpld.cpl.r*'
 ocn_ic='*ORA*nc'
 ice_ic="*${DTG}*.nc"
-echo $ice_ic
 wav_ic='*ww3'
 
 #############################################
 # loop through members
-NENS=$(( NENS - 1 ))
 for MBR in $(seq -f '%03g' 0 ${NENS}); do
     echo "MEMBER: ${MBR} ${MBR:1:2}"
     ########################
@@ -56,6 +61,7 @@ for MBR in $(seq -f '%03g' 0 ${NENS}); do
     #   source 
     ATM_SRC=${TOP_SRCDIR}/gfs/aero/gefs.${PDY}/${cyc}/?${MBR:1:2}
     OCN_SRC=${TOP_SRCDIR}/ocn/${PDY}
+    OCNPERT_SRC=${TOP_SRCDIR}/ocn/${DTG}
     ICE_SRC=${TOP_SRCDIR}/ice
     WAV_SRC=${TOP_SRCDIR}/wav/${PDY}
     #   destination
@@ -95,6 +101,11 @@ for MBR in $(seq -f '%03g' 0 ${NENS}); do
     if [[ ${APP:0:3} == S2S ]]; then
         files=$(find -L ${OCN_SRC} -name "${ocn_ic}" 2>/dev/null)
         LINK_FILES ${files} ${OCN_DES}
+        if (( ${MBR} > 0 )); then
+            ocnpert_ic="mem${MBR}_pert.nc"
+            files=$(find -L ${OCNPERT_SRC} -name "${ocnpert_ic}" 2>/dev/null)
+            LINK_FILES ${files} ${OCN_DES}
+        fi 
         file=$(find -L ${ICE_SRC} -name "${ice_ic}" 2>/dev/null)
         LINK_FILES ${file} ${ICE_DES}
     fi

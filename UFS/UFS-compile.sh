@@ -5,8 +5,10 @@ source $PWD/MACHINE-config.sh
 TOPDIR=$NPB_WORKDIR/CODE
 mkdir -p $TOPDIR
 
-REPO=NeilBarton-NOAA && HASH=run
+#REPO=NeilBarton-NOAA && HASH=run
 #REPO=ufs-community && HASH=develop
+REPO=ufs-community && HASH=f6918a1
+
 COMPILE=T
 ########################
 # check out code
