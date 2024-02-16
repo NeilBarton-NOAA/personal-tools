@@ -1,0 +1,4 @@
+#%Module1.0############### 
+
+module-whatis ecbuild from ECMWF
+prepend-path PATH ~/TOOLS/ecbuild/bin

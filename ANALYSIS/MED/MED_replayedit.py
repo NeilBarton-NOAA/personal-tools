@@ -45,17 +45,13 @@ ddat = xr.open_dataset(d)
 #    Direction -> Imp: into the mediator (from model)
 #                 Exp: out of mediator (to the model)
 #    variable -> variable 
-r_vars = set(rdat.variables.keys())
-d_vars = set(ddat.variables.keys())
 
 ################################################
 # update in code has fluxed defined as positive down, and some variables need to be multipled by -1 
-c_vars = ['tauy', 'taux', 'sen']
-for v in r_vars:
-    v_name = v.split('_')[-1]
-    if (v[0:6] == 'atmImp') and (v_name in c_vars):
-        print('Switching sign of', v)
-        rdat[v] = rdat[v] * -1.0
+c_vars = ['atmImp_Faxa_tauy', 'atmImp_Faxa_taux', 'atmImp_Faxa_sen']
+for v in c_vars:
+    print('Switching sign of', v)
+    rdat[v] = rdat[v] * -1.0
 
 ################################################
 # add evaporation: (replay latent heat) to (dev evaporation)
@@ -66,22 +62,11 @@ print('Calculating atmIMP_Faxa_evap from atmIMP_Faxa_lat')
 const_lhvap = 2.501e6  # latent heat of evaporation  used in replay (J/kg)
 rdat['atmImp_Faxa_evap'] = (rdat['atmImp_Faxa_lat'].dims, -1.0 * rdat['atmImp_Faxa_lat'].values / const_lhvap)
 
-################################################
-# add new variables as zeros
-diff_vars = list(d_vars - r_vars)
-for v in diff_vars:
-    if v[-3:] in ['lat', 'lon']:
-        #print('adding lat/lon values', v)
-        rdat[v] = (ddat[v].dims, ddat[v].values)
-    elif (v.split('_')[1] == 'Foxx'):
-        old_name = v.split('_')[0] + '_Faxa_' + v.split('_')[-1]
-        rdat[v] = rdat[old_name]
-    elif (v.split('_')[0] == 'MedOcnAlb'):
-        print('adding albedo 0.06 value', v)
-        rdat[v] = (ddat[v].dims, np.zeros(ddat[v].shape) + 0.06)
-    else:
-        print('adding zeros', v)
-        rdat[v] = (ddat[v].dims, np.zeros(ddat[v].shape))
+###############################################
+# add albedo values
+c_vars = ['MedOcnAlb_o_So_anidf', 'MedOcnAlb_o_So_anidr', 'MedOcnAlb_o_So_avsdf', 'MedOcnAlb_o_So_avsdr']
+for v in c_vars:
+    rdat[v] = (ddat[v].dims, np.zeros(ddat[v].shape) + 0.06)
 
 ################################################
 # add global attribute
@@ -91,7 +76,7 @@ rdat.assign_attrs({'File Edited' : 'Replay to Dev/GEFS'})
 # save new file
 name_f = os.path.basename(r)
 dir_f = os.path.dirname(r)
-file_save = dir_f + '/TEST_TEST_MEDFILE.nc'
+file_save = dir_f + '/DEV_TEST_MEDFILE.nc'
 rdat.to_netcdf(file_save)
 print('SAVED: ', file_save)
 
