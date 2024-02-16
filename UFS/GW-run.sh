@@ -8,7 +8,8 @@ set -u
 source $PWD/MACHINE-config.sh
 
 ####################################
-REPO=NeilBarton-NOAA && HASH=GEFS && PSLOT=GEFS_TEST
+REPO=NeilBarton-NOAA && HASH=EP5dtest && PSLOT_GEFS_TEST
+#REPO=NeilBarton-NOAA && HASH=GEFS && PSLOT=GEFS_TEST
 #REPO=NOAA-EMC && HASH=develop && PSLOT=DEV
 IDATE=2017100400
 EDATE=$( $PWD/DTG-add-time.sh $IDATE 1 ) 
@@ -40,7 +41,7 @@ REPO=${REPO:-NeilBarton-NOAA}
 NENS=${NENS:-0} 
 GFS_CYC=${GFS_CYC:-1}
 IAU=${IAU:-F}
-HPSSARCH=${HPSSARCH:-F}
+HPSSARCH=${HPSSARCH:-T}
 HASH=${HASH:-develop}
 CODE_DIR=${CODE_DIR:-${NPB_WORKDIR}/CODE/global-workflow_${HASH////\_}_${REPO}}
 SCRIPT_DIR=${CODE_DIR}/workflow
