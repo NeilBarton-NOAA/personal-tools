@@ -8,9 +8,9 @@ set -u
 # Set Top options
 #export DTG=2013040100
 export ENS_SETTINGS=T
-export FORECAST_LENGTH=0.25 # in days
-export WALLCLOCK=$(( 20 ))
-export JOB_QUEUE=debug # batch or debug on hera
+export FORECAST_LENGTH=16 # in days
+export WALLCLOCK=$(( 4 * 60 ))
+#export JOB_QUEUE=debug # batch or debug on hera
 export UFS_EXEC=ufs_S2SWA 
 export DEBUG=F
 export CPP_SUITE=FV3_GFS_v17_coupled_p8_ugwpv1
@@ -31,8 +31,8 @@ export WAV_RES=glo_025
 
 ####################################
 # Set MPI options,  if NMPI=0, model will not run
-export ATM_INPES=8
-export ATM_JNPES=8
+export ATM_INPES=16
+export ATM_JNPES=16
 export ATM_THRD=2
 export CHM_NMPI=$(( ATM_INPES * ATM_JNPES * 6 ))
 export OCN_NMPI=130
@@ -54,17 +54,26 @@ export ATM_WPG=0 #48                   # 48
 export UFS_HOME=${NPB_WORKDIR}/CODE/ufs-weather-model_${HASH////\_}_${REPO}
 export PATH_RUN=${PATH_RUN:-${UFS_HOME}/RUN}
 TOP_RUNDIR=${TOP_RUNDIR:-UFS}
-RUNDIR="${NPB_WORKDIR}/RUNS/${TOP_RUNDIR}"
+if (( ${ATM_INPES} > 0 )); then
+    NAME=ATM
+    if [ ! -z ${OCN_NMPI+x} ] && [ ! -z ${ICE_NMPI+x} ]; then
+        (( ${OCN_NMPI} > 0 )) && (( ${ICE_NMPI} > 0 )) && NAME=S2S
+    fi
+fi
+[ ! -z ${WAV_NMPI+x} ] && [ ${WAV_NMPI} != 0 ] && NAME="${NAME}W"
+[ ! -z ${CHM_NMPI+x} ] && [ ${CHM_NMPI} != 0 ] && NAME="${NAME}A"
+
+RUNDIR="${NPB_WORKDIR}/RUNS/${TOP_RUNDIR}/${NAME}"
 if [[ ${DEBUG} != T ]] && [[ ${RUNDIR_MPI} == T ]]; then
-[ ! -z ${ATM_INPES+x} ] && RUNDIR="${RUNDIR}_ATM_${ATM_INPES}x${ATM_JNPES}"
-[ ! -z ${ATM_THRD+x} ] && RUNDIR="${RUNDIR}-${ATM_THRD}"
-[ ! -z ${CHM_NMPI+x} ] && [ ${CHM_NMPI} != 0 ] && RUNDIR="${RUNDIR}_CHM_${CHM_NMPI}"
-[ ! -z ${OCN_NMPI+x} ] && RUNDIR="${RUNDIR}_OCN_${OCN_NMPI}"
-[ ! -z ${OCN_THRD+x} ] && RUNDIR="${RUNDIR}-${OCN_THRD}"
-[ ! -z ${ICE_NMPI+x} ] && RUNDIR="${RUNDIR}_ICE_${ICE_NMPI}"
-[ ! -z ${ICE_THRD+x} ] && RUNDIR="${RUNDIR}-${ICE_THRD}"
-[ ! -z ${WAV_NMPI+x} ] && [ ${WAV_NMPI} != 0 ] && RUNDIR="${RUNDIR}_WAV_${WAV_NMPI}"
-[ ! -z ${WAV_THRD+x} ] && [ ${WAV_NMPI} != 0 ] && RUNDIR="${RUNDIR}-${WAV_THRD}"
+    [ ! -z ${ATM_INPES+x} ] && RUNDIR="${RUNDIR}_ATM_${ATM_INPES}x${ATM_JNPES}"
+    [ ! -z ${ATM_THRD+x} ] && RUNDIR="${RUNDIR}-${ATM_THRD}"
+    [ ! -z ${CHM_NMPI+x} ] && [ ${CHM_NMPI} != 0 ] && RUNDIR="${RUNDIR}_CHM_${CHM_NMPI}"
+    [ ! -z ${OCN_NMPI+x} ] && RUNDIR="${RUNDIR}_OCN_${OCN_NMPI}"
+    [ ! -z ${OCN_THRD+x} ] && RUNDIR="${RUNDIR}-${OCN_THRD}"
+    [ ! -z ${ICE_NMPI+x} ] && RUNDIR="${RUNDIR}_ICE_${ICE_NMPI}"
+    [ ! -z ${ICE_THRD+x} ] && RUNDIR="${RUNDIR}-${ICE_THRD}"
+    [ ! -z ${WAV_NMPI+x} ] && [ ${WAV_NMPI} != 0 ] && RUNDIR="${RUNDIR}_WAV_${WAV_NMPI}"
+    [ ! -z ${WAV_THRD+x} ] && [ ${WAV_NMPI} != 0 ] && RUNDIR="${RUNDIR}-${WAV_THRD}"
 fi
 ${PATH_RUN}/UFS-submit.sh ${RUNDIR}
 
