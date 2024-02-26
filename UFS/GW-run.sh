@@ -8,10 +8,12 @@ set -u
 source $PWD/MACHINE-config.sh
 
 ####################################
-REPO=NeilBarton-NOAA && HASH=EP5dtest && PSLOT_GEFS_TEST
+IDATE=2017100400
+IDATE=2019081400
+
+REPO=NeilBarton-NOAA && HASH=EP5dtest && PSLOT=EP5d_GW_${IDATE}
 #REPO=NeilBarton-NOAA && HASH=GEFS && PSLOT=GEFS_TEST
 #REPO=NOAA-EMC && HASH=develop && PSLOT=DEV
-IDATE=2017100400
 EDATE=$( $PWD/DTG-add-time.sh $IDATE 1 ) 
 RUN_TYPE=forecast-only #cycled
 CDUMP=gefs
@@ -19,7 +21,7 @@ APP=S2SWA #W #ATM #ATM, S2S, S2SW
 RESDETATM=384
 RESENSATM=384
 #RESDETOCN=025
-NENS=1
+NENS=10
 GFS_CYC=4
 #ICSDIR=${NPB_WORKDIR}/ICs/${IDATE}
 START=cold
@@ -46,7 +48,7 @@ HASH=${HASH:-develop}
 CODE_DIR=${CODE_DIR:-${NPB_WORKDIR}/CODE/global-workflow_${HASH////\_}_${REPO}}
 SCRIPT_DIR=${CODE_DIR}/workflow
 
-CDUMP=${CDUMP:-gfs} 
+CDUMP=${CDUMP:-gefs} 
 RUN_TYPE=${RUN_TYPE:-cycled}
 # options depending on configuration
 if [[ ${RUN_TYPE} == cycled ]]; then
@@ -100,6 +102,7 @@ OPTIONS="${OPTIONS} --pslot ${PSLOT} "
 OPTIONS="${OPTIONS} --expdir ${EXPDIR} "
 OPTIONS="${OPTIONS} --comroot ${COMROOT} "
 OPTIONS="${OPTIONS} --nens ${NENS} "
+OPTIONS="${OPTIONS} --icdir ${NPB_WORKDIR}/ICs "
 if [[ $RUN_TYPE != forecast-only ]]; then
 OPTIONS="${OPTIONS} --start ${START} "
 fi

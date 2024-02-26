@@ -5,7 +5,8 @@ TOPDIR=${NPB_WORKDIR}/CODE
 mkdir -p ${TOPDIR}
 cd ${TOPDIR}
 
-REPO=NeilBarton-NOAA && HASH=GEFS
+REPO=NeilBarton-NOAA && HASH=EP5dtest
+#REPO=NeilBarton-NOAA && HASH=GEFS
 #REPO=NeilBarton-NOAA && HASH=SFS
 #REPO=NOAA-EMC && HASH=develop
 COMPILE=T
