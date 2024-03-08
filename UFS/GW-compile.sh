@@ -1,19 +1,18 @@
-#!/bin/sh
-set -xu
-source ${PWD}/MACHINE-config.sh
-TOPDIR=${NPB_WORKDIR}/CODE
-mkdir -p ${TOPDIR}
-cd ${TOPDIR}
-
-REPO=NeilBarton-NOAA && HASH=GEFS
+#!/bin/sh 
+set -u
+########################
+# Code to Checkout/Compile
+REPO=NeilBarton-NOAA && HASH=EP5d_GEFS_ATMOS 
+#REPO=NeilBarton-NOAA && HASH=GEFS
 #REPO=NeilBarton-NOAA && HASH=SFS
 #REPO=NOAA-EMC && HASH=develop
 COMPILE=T
-code=global-workflow_${HASH////\_}_${REPO}
 
 ########################
 # check out code
-cd ${TOPDIR}
+code=global-workflow_${HASH////\_}_${REPO}
+TOPDIR=${NPB_WORKDIR}/CODE
+mkdir -p ${TOPDIR} && cd ${TOPDIR}
 if [[ ! -d ${code} ]]; then
     git clone --recursive https://github.com/${REPO}/global-workflow.git ${code}
     cd ${code}
