@@ -6,6 +6,7 @@ set -u
 #
 ####################################
 RUN_SETUP_EXPT=T && RUN_SETUP_XML=T && RUN_CRONTAB=T
+#REPO=NeilBarton-NOAA && HASH=EP5d_OCEANPERT && PSLOT=OCEANPERT_TEST
 REPO=NeilBarton-NOAA && HASH=EP5d_GEFS_ATMOS && PSLOT=ATMOSPERT
 #REPO=NOAA-EMC && HASH=develop && PSLOT=DEV
 
@@ -28,7 +29,6 @@ CODE_DIR=${CODE_DIR:-${NPB_WORKDIR}/CODE/global-workflow_${HASH////\_}_${REPO}}
 # User Defined Exp directories
 EXPDIR=${NPB_WORKDIR}/RUNS/GW
 COMROOT=${NPB_WORKDIR}/RUNS/GW/${PSLOT}/COMROOT 
-CONFIGS_DIR=${EXPDIR}/${PSLOT}
 
 ####################################
 # setup_expt.py script
@@ -59,9 +59,9 @@ if [[ $? != 0 ]]; then
 fi
 
 source $PWD/MACHINE-config.sh
-config_file=${CODE_DIR}/parm/config/${CDUMP:-gefs}/config.base
+config_file=${EXPDIR}/${PSLOT}/config.base
 sed -i "s:${COMROOT}/"'${PSLOT}'":${COMROOT}:g" ${config_file}
-#sed -i "s:${HOMEDIR}:${COMROOT}/GLOBAL:g" ${config_file}
+sed -i "s:${HOMEDIR}:${COMROOT}/GLOBAL:g" ${config_file}
 
 fi
 
@@ -85,19 +85,23 @@ fi
 ####################################
 # validate xml file
 if [[ ${RUN_CRONTAB} == T ]]; then
-
+# soft link items into EXDIR for easier development
+cd ${EXPDIR}/${PSLOT}
 set +u
 source ${EXPDIR}/${PSLOT}/config.base
-cd ${EXPDIR}
-ln -s ${RUNDIR} RUNDIR
-ln -s ${COMROOT}/logs/${IDATE} LOGS_COMROOT
-ln -s ${CODE_DIR} CODE
-ln -s ${CODE_DIR}/parm/config/${CDUMP:-gefs} ORIG_CONFIGS
-#ln -s ${COMROOT}/${PSLOT}/logs LOGS_COMROOT
-rm -r ${COMROOT}/${PSLOT}
-
 set -u
-xml_file=${EXPDIR}/${PSLOT}/${PSLOT}.xml
+ln -s ${RUNDIR} RUNDIR
+ln -s ${CODE_DIR} GW-CODE
+ln -s ${CODE_DIR}/parm/config/${CDUMP:-gefs} ORIG_CONFIGS
+if [[ ${RUN_TYPE:-forecast-only} == 'forecast-only' ]]; then
+    ln -s ${COMROOT}/logs/${IDATE} LOGS_COMROOT
+else
+    ln -s ${COMROOT}/${PSLOT}/logs LOGS_COMROOT
+fi
+echo $PWD
+rm -r ${COMROOT}/${PSLOT}
+# run metaschedular
+xml_file=${EXPDIR}/${PSLOT}.xml
 db_file=${xml_file:0:-3}db 
 cron_file=${xml_file:0:-3}crontab
 rocotorun -d ${db_file} -w ${xml_file}
@@ -105,15 +109,11 @@ if [[ $? != 0 ]]; then
     echo 'rocotorun failed, issues in xml file'
     exit 1
 fi
-
-####################################
 # start crontab
 echo " " 
 echo "STARTING CRONTAB:" 
 echo ${cron_file}
 crontab -l | cat - ${cron_file} | crontab -
-
-####################################
 # echo crontab file
 echo "db=${db_file}"
 echo "xml=${xml_file}"
