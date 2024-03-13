@@ -20,10 +20,6 @@ NENS=1
 # code location
 CODE_DIR=${CODE_DIR:-${NPB_WORKDIR}/CODE/global-workflow_${HASH////\_}_${REPO}}
 [[ ! -d ${CODE_DIR} ]] && echo "code is not at ${CODE_DIR}" &&  exit 1
-#if [[ ! -d ${CODE_DIR} ]]; then
-#    echo "code is not at ${CODE_DIR}"
-#    exit 1
-#fi
 
 ####################################
 # User Defined Exp directories

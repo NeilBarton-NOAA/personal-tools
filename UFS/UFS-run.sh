@@ -57,6 +57,8 @@ if (( ${ATM_INPES} > 0 )); then
     if [ ! -z ${OCN_NMPI+x} ] && [ ! -z ${ICE_NMPI+x} ]; then
         (( ${OCN_NMPI} > 0 )) && (( ${ICE_NMPI} > 0 )) && [[ ${NAME} == 'ATM' ]] && NAME=S2S
     fi
+    [ ! -z ${WAV_NMPI+x} ] && [ ${WAV_NMPI} != 0 ] && NAME="${NAME}W"
+    [ ! -z ${CHM_NMPI+x} ] && [ ${CHM_NMPI} != 0 ] && NAME="${NAME}A"
 fi
 [ ! -z ${WAV_NMPI+x} ] && [ ${WAV_NMPI} != 0 ] && [[ ${NAME:0:3} == 'S2S' ]] && NAME="${NAME}W"
 [ ! -z ${CHM_NMPI+x} ] && [ ${CHM_NMPI} != 0 ] && [[ ${NAME:0:3} == 'S2S' ]] && NAME="${NAME}A"

@@ -5,11 +5,12 @@ set -u
 ########################
 set -u
 #DTG=$1
-DTG=2017100400
-TOP_SRCDIR=${2:-${NPB_WORKDIR}/ICs}
-#TOP_SRCDIR=${2:-/lfs/h2/emc/gefstemp/Bing.Fu/ep5ic}
+#DTG=2017100400
+DTG=2019081400
+#TOP_SRCDIR=${2:-${NPB_WORKDIR}/ICs}
+TOP_SRCDIR=${2:-/lfs/h2/emc/gefstemp/Bing.Fu/ep5ic}
 TOP_DESDIR=${3:-${NPB_WORKDIR}/ICs}
-NENS=${4:-1}
+NENS=${4:-10}
 APP=${5:-S2SWA}
 
 ########################
@@ -55,7 +56,14 @@ wav_ic='*ww3'
 #############################################
 # loop through members
 for MBR in $(seq -f '%03g' 0 ${NENS}); do
-    echo "MEMBER: ${MBR} ${MBR:1:2}"
+    if [[ ${MBR:0:2} == 00 ]]; then
+        member=$(printf "%.i" ${MBR#00})
+    elif [[ ${MBR:0:1} == 0 ]]; then
+        member=$(printf "%.i" ${MBR#0})
+    else
+        member=$(printf "%.i" ${MBR})
+    fi
+    echo "MEMBER: ${MBR} ${member}"
     ########################
     # directory options
     #   source 
@@ -101,7 +109,7 @@ for MBR in $(seq -f '%03g' 0 ${NENS}); do
     if [[ ${APP:0:3} == S2S ]]; then
         files=$(find -L ${OCN_SRC} -name "${ocn_ic}" 2>/dev/null)
         LINK_FILES ${files} ${OCN_DES}
-        if (( ${MBR} > 0 )); then
+        if [[ ${MBR} != 000 ]]; then
             ocnpert_ic="mem${MBR}_pert.nc"
             files=$(find -L ${OCNPERT_SRC} -name "${ocnpert_ic}" 2>/dev/null)
             LINK_FILES ${files} ${OCN_DES}
@@ -112,8 +120,13 @@ for MBR in $(seq -f '%03g' 0 ${NENS}); do
     ###########
     # WAVES
     if [[ ${APP} == S2SW* ]]; then
-        files=$(find -L ${WAV_SRC} -name "?${MBR:1:2}*${wav_ic}" 2>/dev/null)
+        while (( ${member} > 4 )); do
+            member=$(( member - 3 ))
+        done
+        files=$(find -L ${WAV_SRC} -name "??${member}*${wav_ic}" 2>/dev/null)
         LINK_FILES ${files} ${WAV_DES}
     fi
+    echo ""
+    echo ""
 done
 

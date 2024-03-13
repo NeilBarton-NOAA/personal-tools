@@ -33,8 +33,6 @@ alias qme="squeue -u $USER --format='%.18i %.50j %.2t %.8M %.10l %.6D'"
 ARCHIVE_HOME=/NCEPDEV/emc-marine/1year/Neil.Barton
 
 if [[ $machine == h* ]]; then
-    #export NPB_WORKDIR=/scratch1/NCEPDEV/stmp2/Neil.Barton
-    #export NPB_WORKDIR=/scratch2/NCEPDEV/stmp1/Neil.Barton
     export NPB_WORKDIR=/scratch2/NCEPDEV/stmp3/Neil.Barton
     alias sd="cd $NPB_WORKDIR"
     #export ESMFMKFILE=/scratch2/NCEPDEV/stmp3/Neil.Barton/TOOLS/miniconda3/pkgs/esmf-8.4.0-mpi_mpich_h5a1934d_101/lib/esmf.mk
@@ -46,9 +44,12 @@ elif [[ ${machine} == *Orion* ]]; then
     alias sd2="cd /work/noaa/stmp/nbarton"
     export NPB_WORKDIR=/work/noaa/marine/nbarton
 elif [[ ${machine} == *[cd]login* ]]; then
-    export NPB_WORKDIR=/lfs/h2/emc/stmp/neil.barton
-    export NPB_CODEDIR=/lfs/h2/emc/couple/noscrub/neil.barton
-    alias ccd="cd $NPB_CODEDIR"
+    # list of working directories
+    export d1=/lfs/h2/emc/ptmp/neil.barton
+    export d2=/lfs/h2/emc/couple/noscrub/neil.barton
+    export d3=/lfs/h2/emc/ens/noscrub/neil.barton
+    export d4=/lfs/h2/emc/gefstemp/neil.barton
+    export NPB_WORKDIR=${d3}
     alias qme="qstat -u $USER"
     alias sd="cd $NPB_WORKDIR"
 else
