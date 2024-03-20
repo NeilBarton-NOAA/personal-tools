@@ -3,10 +3,8 @@ set -u
 ####################################
 # Run Script for seeting up global-worflow
 #   https://global-workflow.readthedocs.io/en/latest/index.html
-#
 ####################################
 RUN_SETUP_EXPT=T && RUN_SETUP_XML=T && RUN_CRONTAB=T
-#REPO=NeilBarton-NOAA && HASH=EP5d_OCEANPERT && PSLOT=OCEANPERT_TEST
 REPO=NeilBarton-NOAA && HASH=EP5d_GEFS_ATMOS && PSLOT=ATMOSPERT
 #REPO=NOAA-EMC && HASH=develop && PSLOT=DEV
 
@@ -15,6 +13,10 @@ IDATE=2017100400
 APP=S2SWA #ATM #ATM, S2S, S2SW
 RESENSATM=384
 NENS=1
+
+############
+#  GEFS Low-Res Test
+IDATE=2021032312 && RESDETATM=48 && RESENSATM=48 && YAML=F && PSLOT=LR_${PSLOT}
 
 ########################
 # code location
@@ -45,7 +47,7 @@ OPTIONS="${OPTIONS} --pslot ${PSLOT} "
 OPTIONS="${OPTIONS} --expdir ${EXPDIR} "
 OPTIONS="${OPTIONS} --comroot ${COMROOT} "
 OPTIONS="${OPTIONS} --nens ${NENS:-0} "
-OPTIONS="${OPTIONS} --yaml ${PWD}/YAMLS/gw_hera.yaml "
+[[ ${YAML:-T} == T ]] && OPTIONS="${OPTIONS} --yaml ${PWD}/YAMLS/gw_hera.yaml "
 
 echo "${CODE_DIR}/workflow/setup_expt.py ${CDUMP:-gefs} ${RUN_TYPE:-forecast-only} ${OPTIONS}"
 ${CODE_DIR}/workflow/setup_expt.py ${CDUMP:-gefs} ${RUN_TYPE:-forecast-only} ${OPTIONS}

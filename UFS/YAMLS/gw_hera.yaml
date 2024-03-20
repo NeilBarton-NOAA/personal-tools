@@ -1,6 +1,3 @@
-stage_ic:
-  STAGE_OCN_PERTURB_FILES: "true"
-
 base:
   DO_JEDIATMVAR: "NO"
   DO_JEDIATMENS: "NO"
@@ -12,4 +9,5 @@ base:
   HPSS_PROJECT: "emc-marine"
   KEEPDATA: "YES"
   BASE_CPLIC: "/scratch2/NCEPDEV/stmp3/Neil.Barton/ICs/GW_TEST"
+  USE_OCN_PERTURB_FILES: "true"
 
