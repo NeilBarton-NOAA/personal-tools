@@ -8,6 +8,7 @@ base:
   ACCOUNT: "marine-cpu"
   HPSS_PROJECT: "emc-marine"
   KEEPDATA: "YES"
-  BASE_CPLIC: "/scratch2/NCEPDEV/stmp3/Neil.Barton/ICs/GW_TEST"
   USE_OCN_PERTURB_FILES: "true"
+  #BASE_CPLIC: "/scratch2/NCEPDEV/stmp3/Neil.Barton/ICs/GW_TEST"
+  BASE_CPLIC: "/lfs/h2/emc/ens/noscrub/neil.barton/ICs/"
 
