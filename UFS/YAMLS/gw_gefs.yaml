@@ -7,7 +7,7 @@ base:
   FHMAX_GFS: 120
   KEEPDATA: "YES"
   USE_OCN_PERTURB_FILES: "true"
-  BASE_CPLIC: "/lfs/h2/emc/ens/noscrub/neil.barton/ICs/"
+  BASE_CPLIC: "/lfs/h2/emc/ens/noscrub/neil.barton/ICs/GW_TEST"
 #  BASE_CPLIC: "/scratch2/NCEPDEV/stmp3/Neil.Barton/ICs/GW_TEST"
 #  ACCOUNT: "marine-cpu"
 #  HPSS_PROJECT: "emc-marine"
