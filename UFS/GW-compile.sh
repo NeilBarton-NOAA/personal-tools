@@ -2,9 +2,8 @@
 set -u
 ########################
 # Code to Checkout/Compile
-REPO=NeilBarton-NOAA && HASH=EP5d_GEFS_ATMOS 
-#REPO=NeilBarton-NOAA && HASH=GEFS
-#REPO=NeilBarton-NOAA && HASH=SFS
+#REPO=NeilBarton-NOAA && HASH=GEFS_REFORECASTING
+REPO=NeilBarton-NOAA &&  HASH=EP5d_GEFS_ATMOS 
 #REPO=NOAA-EMC && HASH=develop
 COMPILE=T
 
@@ -29,7 +28,7 @@ if [[ ${COMPILE} == T ]]; then
 cd ${TOPDIR}/${code}/sorc
 cat <<EOF > setup_all_ufs.sh
 #!/bin/sh
-sh build_all.sh 
+sh build_all.sh -gu 
 sh link_workflow.sh  
 EOF
 chmod 755 setup_all_ufs.sh
