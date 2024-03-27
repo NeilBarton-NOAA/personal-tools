@@ -1,5 +1,6 @@
 #!/bin/sh
 machine=$(uname -n)
+GW_RUNDIR=${NPB_WORKDIR}/RUNS/GW
 if [[ ${machine:0:1} == h ]]; then
     export module_file=ufs_hera.intel
     export ACCNR=marine-cpu
@@ -16,6 +17,7 @@ elif [[ ${machine} == *Orion* ]]; then
 elif [[ ${machine} == *[cd]login* ]]; then
     module_file=ufs_wcoss2.intel
     export ACCNR=GFS-DEV
+    export GW_RUNDIR=/lfs/h2/emc/ptmp/neil.barton
     export HOMEDIR=/lfs/h2/emc/global/noscrub/'${USER}'
     m=wcoss2.intel
 else

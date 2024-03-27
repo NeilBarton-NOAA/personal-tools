@@ -5,18 +5,18 @@ set -u
 #   https://global-workflow.readthedocs.io/en/latest/index.html
 ####################################
 RUN_SETUP_EXPT=T && RUN_SETUP_XML=T && RUN_CRONTAB=T
-REPO=NeilBarton-NOAA && HASH=EP5d_GEFS_ATMOS && PSLOT=ATMOSPERT
+#REPO=NeilBarton-NOAA && HASH=EP5d_GEFS_ATMOS && PSLOT=ATMOSPERT && NENS=1
+REPO=NeilBarton-NOAA && HASH=EP5dtest && PSLOT=EP5dtest && NENS=10 && YAML=F
 #REPO=NOAA-EMC && HASH=develop && PSLOT=DEV
 
 ####################################
 IDATE=2017100400
 APP=S2SWA #ATM #ATM, S2S, S2SW
 RESENSATM=384
-NENS=1
 
 ############
 #  GEFS Low-Res Test
-IDATE=2021032312 && RESDETATM=48 && RESENSATM=48 && YAML=F && PSLOT=LR_${PSLOT}
+#IDATE=2021032312 && RESDETATM=48 && RESENSATM=48 && YAML=F && PSLOT=LR_${PSLOT}
 
 ########################
 # code location
@@ -25,8 +25,9 @@ CODE_DIR=${CODE_DIR:-${NPB_WORKDIR}/CODE/global-workflow_${HASH////\_}_${REPO}}
 
 ####################################
 # User Defined Exp directories
-EXPDIR=${NPB_WORKDIR}/RUNS/GW
-COMROOT=${NPB_WORKDIR}/RUNS/GW/${PSLOT}/COMROOT 
+source ${PWD}/MACHINE-config.sh
+EXPDIR=${GW_RUNDIR}
+COMROOT=${GW_RUNDIR}/${PSLOT}/COMROOT 
 
 ####################################
 # setup_expt.py script
@@ -47,7 +48,7 @@ OPTIONS="${OPTIONS} --pslot ${PSLOT} "
 OPTIONS="${OPTIONS} --expdir ${EXPDIR} "
 OPTIONS="${OPTIONS} --comroot ${COMROOT} "
 OPTIONS="${OPTIONS} --nens ${NENS:-0} "
-[[ ${YAML:-T} == T ]] && OPTIONS="${OPTIONS} --yaml ${PWD}/YAMLS/gw_hera.yaml "
+[[ ${YAML:-T} == T ]] && OPTIONS="${OPTIONS} --yaml ${PWD}/YAMLS/gw_gefs.yaml "
 
 echo "${CODE_DIR}/workflow/setup_expt.py ${CDUMP:-gefs} ${RUN_TYPE:-forecast-only} ${OPTIONS}"
 ${CODE_DIR}/workflow/setup_expt.py ${CDUMP:-gefs} ${RUN_TYPE:-forecast-only} ${OPTIONS}
