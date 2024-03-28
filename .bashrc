@@ -35,7 +35,6 @@ ARCHIVE_HOME=/NCEPDEV/emc-marine/1year/Neil.Barton
 if [[ $machine == h* ]]; then
     export NPB_WORKDIR=/scratch2/NCEPDEV/stmp3/Neil.Barton
     alias sd="cd $NPB_WORKDIR"
-    #export ESMFMKFILE=/scratch2/NCEPDEV/stmp3/Neil.Barton/TOOLS/miniconda3/pkgs/esmf-8.4.0-mpi_mpich_h5a1934d_101/lib/esmf.mk
     if [[ $(uname -n) != hfe07 ]] && [[ $(uname -n) != h*[cm]* ]]; then
         ssh -X hfe07
     fi
