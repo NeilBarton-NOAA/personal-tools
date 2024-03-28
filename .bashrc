@@ -45,13 +45,14 @@ elif [[ ${machine} == *Orion* ]]; then
     export NPB_WORKDIR=/work/noaa/marine/nbarton
 elif [[ ${machine} == *[cd]login* ]]; then
     # list of working directories
-    export d1=/lfs/h2/emc/ptmp/neil.barton
-    export d2=/lfs/h2/emc/couple/noscrub/neil.barton
-    export d3=/lfs/h2/emc/ens/noscrub/neil.barton
-    export d4=/lfs/h2/emc/gefstemp/neil.barton
-    export NPB_WORKDIR=${d3}
+    export ptmp=/lfs/h2/emc/ptmp/neil.barton
+    export couple_noscrub=/lfs/h2/emc/couple/noscrub/neil.barton
+    export ens_noscrub=/lfs/h2/emc/ens/noscrub/neil.barton
+    export gefstemp=/lfs/h2/emc/gefstemp/neil.barton
+    export NPB_WORKDIR=${ens_noscrub}
     alias qme="qstat -u $USER"
     alias sd="cd $NPB_WORKDIR"
+    alias qdelme="qselect -u ${USER} | xargs qdel"
 else
     echo "machine unknown in .bashrc: " $machine
 fi
