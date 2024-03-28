@@ -13,5 +13,5 @@ arguments:
   nens: 1
   comroot: {{ 'TOPCOMROOT' | getenv }}
   expdir: {{ 'TOPEXPDIR' | getenv }} 
-  yaml: {{ HOME }}/UFS/GW/atmos_ens_test.yaml
+  yaml: {{ HOME }}/UFS/GW/exp_enstest.yaml
 

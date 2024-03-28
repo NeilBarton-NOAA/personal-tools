@@ -10,8 +10,8 @@ arguments:
   resdetatmos: 384
   resensatmos: 384
   gfs_cyc: 1
-  nens: 11
+  nens: 10
   comroot: {{ 'TOPCOMROOT' | getenv }}
   expdir: {{ 'TOPEXPDIR' | getenv }} 
-  yaml: {{ HOME }}/UFS/GW/ep5dgw.yaml
+  yaml: {{ HOME }}/UFS/GW/exp_ep5dgw.yaml
 

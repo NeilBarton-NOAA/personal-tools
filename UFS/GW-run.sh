@@ -7,13 +7,15 @@ set -u
 # Code
 #REPO=NeilBarton-NOAA && HASH=EP5d_GEFS_ATMOS 
 REPO=NeilBarton-NOAA && HASH=EP5dtest 
-HOMEgfs=${NPB_WORKDIR}/CODE/global-workflow_${HASH////\_}_${REPO}
-YAML=${HOME}/UFS/GW/GEFS_EP5dgw.yaml
+HOMEgfs=${1:-${NPB_WORKDIR}/CODE/global-workflow_${HASH////\_}_${REPO}}
+YAML=${2:-${HOME}/UFS/GW/EP5dgw.yaml}
 
 ########################
 # Check Code
 [[ ! -d ${HOMEgfs} ]] && echo "code is not at ${HOMEgfs}" &&  exit 1
 [[ ! -f ${YAML} ]] && echo "yaml file not at ${YAML}" &&  exit 1
+echo "HOMEgfs: ${HOMEgfs}"
+echo "YAML: ${YAML}"
 
 export pslot=$(basename ${YAML/.yaml*})
 source ${PWD}/MACHINE-config.sh
