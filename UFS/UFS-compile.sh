@@ -5,9 +5,7 @@ source $PWD/MACHINE-config.sh
 TOPDIR=$NPB_WORKDIR/CODE
 mkdir -p $TOPDIR
 
-#REPO=NeilBarton-NOAA && HASH=run
-#REPO=ufs-community && HASH=develop
-REPO=ufs-community && HASH=f6918a1
+REPO=NeilBarton-NOAA && HASH=run
 
 COMPILE=T
 ########################
@@ -15,14 +13,15 @@ COMPILE=T
 cd $TOPDIR
 CODE=ufs-weather-model_${HASH////\_}_${REPO}
 if [[ ! -d ${CODE} ]]; then
-    git clone https://github.com/${REPO}/ufs-weather-model.git ${CODE}
+    git clone --recursive https://github.com/${REPO}/global-workflow.git ${code}
+    #git clone https://github.com/${REPO}/ufs-weather-model.git ${CODE}
     cd ${CODE}
     git checkout ${HASH}
-    git submodule update --init --recursive
+    #git submodule update --init --recursive
 else
     cd ${CODE}
     git pull
-    git submodule update --recursive
+    git submodule update --recursive --remote
 fi
 
 ####################################

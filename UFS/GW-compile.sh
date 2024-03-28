@@ -18,8 +18,8 @@ if [[ ! -d ${code} ]]; then
     git checkout --recurse-submodules ${HASH}
 else
     cd ${code}
+    git submodule update --recursive --remote
     git pull
-    git submodule update --recursive
 fi
 
 ########################
