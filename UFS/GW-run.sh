@@ -5,9 +5,10 @@ set -u
 # CI yamls can be found at ${HOMEgfs}/ci/cases/{pr/weekly}/
 ####################################
 # Code
-REPO=NeilBarton-NOAA && HASH=EP5d_GEFS_ATMOS 
+#REPO=NeilBarton-NOAA && HASH=EP5d_GEFS_ATMOS 
+REPO=NeilBarton-NOAA && HASH=EP5dtest 
 HOMEgfs=${NPB_WORKDIR}/CODE/global-workflow_${HASH////\_}_${REPO}
-YAML=${HOME}/UFS/GW/GEFS_EXP.yaml
+YAML=${HOME}/UFS/GW/GEFS_EP5dgw.yaml
 
 ########################
 # Check Code
