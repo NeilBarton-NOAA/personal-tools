@@ -1,6 +1,6 @@
 #!/bin/sh
 set -u
-PSLOT=EP5dtest
+PSLOT=EP5dgw
 MEMBERS=10
 export PDY=20171004
 export cyc=00
@@ -12,12 +12,14 @@ products/ocean/netcdf
 products/wave/gridded
 products/wave/station
 "
+source ${PWD}/MACHINE-config.sh
 
-export WORKDIR=${TOPCOMROOT}
+export TOPCOMROOT=${TOPCOMROOT}
+export PSLOT=${PSLOT}
     
 for D in ${DIRS_TO_KEEP}; do
     export SRC="gefs.${PDY}/${cyc}/mem*/${D}/*"
-    export DES="/NCEPDEV/emc-marine/1year/Neil.Barton/GW/${PSLOT}/${PDY}${cyc}_${D////\_}.tar"
+    export DES="/NCEPDEV/emc-marine/2year/Neil.Barton/${PSLOT}/${PDY}${cyc}_${D////\_}.tar"
     hsi mkdir -p $(dirname ${DES})
     submit_file=htar_${D////\_}
 
@@ -32,7 +34,7 @@ cat <<EOF > ${submit_file}
 #PBS -V
 set -xu
 
-cd ${WORKDIR}
+cd ${TOPCOMROOT}/${PSLOT}
 htar -cvf ${DES} ${SRC}
 EOF
 
@@ -43,8 +45,8 @@ EOF
     for M in $(seq 0 ${MEMBERS}); do
         M=$(printf "%03d" ${M})
         export ens_dir=gefs.${PDY}/${cyc}/mem${M}/${D}
-        export SRC=${WORKDIR}/${ens_dir}
-        export DST=${KEEP_DIR}/${ens_dir}
+        export SRC=${TOPCOMROOT}/${PSLOT}/${ens_dir}
+        export DST=${TOPEXPDIR}/${PSLOT}/${ens_dir}
     submit_file=rsync_${M}_${D////\_}
 cat <<EOF > ${submit_file}
 #!/bin/sh
@@ -66,6 +68,7 @@ EOF
         chmod 755 ${submit_file}
         qsub ${submit_file}
         rm ${submit_file}
+        
     done #members
 done #directories
 
