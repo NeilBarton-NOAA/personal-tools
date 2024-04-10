@@ -5,25 +5,24 @@ set -u
 ################################################################################################
 
 source ${PWD}/MACHINE-config.sh
-#REPO=NeilBarton-NOAA && HASH=run
-REPO=ufs-community && HASH=develop
+REPO=NeilBarton-NOAA && HASH=run
+#REPO=ufs-community && HASH=develop
 CODE_DIR=${NPB_WORKDIR}/CODE/ufs-weather-model_${HASH////\_}_${REPO}
 export RUNDIR_ROOT=${NPB_WORKDIR}/RUNS/RTs
 source ${PWD}/MACHINE-config.sh
 # Coupled Case
-#COMPILE | s2swa_32bit_pdlib  | intel | -DAPP=S2SWA -D32BIT=ON -DCCPP_SUITES=FV3_GFS_v17_coupled_p8 | | fv3 |
 case="
-COMPILE | s2swa_32bit  | intel | -DAPP=S2SWA -D32BIT=ON -DCCPP_SUITES=FV3_GFS_v17_coupled_p8 | + wcoss2 hera orion | fv3 |
-RUN | cpld_bmark_p8                               | + hera orion cheyenne wcoss2 acorn | baseline |
+COMPILE | s2swa_32bit  | intel | -DAPP=S2SWA -D32BIT=ON -DCCPP_SUITES=FV3_GFS_v17_coupled_p8,FV3_GFS_v17_coupled_p8_ugwpv1 | + wcoss2 hera orion | fv3 |
+RUN | cpld_control_p8_mixedmode                               | + hera orion cheyenne wcoss2 acorn | baseline |
 "
 
 ############
 # run tests
-config_file=${PWD}/CONF/RUN_CASE
+config_file=${PWD}/RUN_CASE
 if [[ -f ${config_file} ]]; then
   rm ${config_file}
 fi
-cat << EOF > ${PWD}/CONF/RUN_CASE
+cat << EOF > ${PWD}/RUN_CASE
 ${case}
 EOF
 echo ${case}  

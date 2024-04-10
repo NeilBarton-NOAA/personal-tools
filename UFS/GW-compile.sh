@@ -3,7 +3,8 @@ set -u
 ########################
 # Code to Checkout/Compile
 #REPO=NeilBarton-NOAA && HASH=GEFS_REFORECASTING
-REPO=NeilBarton-NOAA &&  HASH=EP5d_GEFS_ATMOS 
+#REPO=NeilBarton-NOAA &&  HASH=EP5d_GEFS_ATMOS 
+REPO=NeilBarton-NOAA &&  HASH=EP5dtest
 #REPO=NOAA-EMC && HASH=develop
 COMPILE=T
 

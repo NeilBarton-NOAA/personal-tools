@@ -1,23 +1,21 @@
 #!/bin/sh
 # remove build directory if rebuilding 
 set -u
-source $PWD/MACHINE-config.sh
-TOPDIR=$NPB_WORKDIR/CODE
-mkdir -p $TOPDIR
-
+source ${PWD}/MACHINE-config.sh
+TOPDIR=${NPB_WORKDIR}/CODE
+mkdir -p ${TOPDIR}
 REPO=NeilBarton-NOAA && HASH=run
 
 COMPILE=T
 ########################
 # check out code
-cd $TOPDIR
+cd ${TOPDIR}
 CODE=ufs-weather-model_${HASH////\_}_${REPO}
 if [[ ! -d ${CODE} ]]; then
-    git clone --recursive https://github.com/${REPO}/global-workflow.git ${code}
-    #git clone https://github.com/${REPO}/ufs-weather-model.git ${CODE}
+    git clone https://github.com/${REPO}/ufs-weather-model.git ${CODE}
     cd ${CODE}
     git checkout ${HASH}
-    #git submodule update --init --recursive
+    git submodule update --init --recursive
 else
     cd ${CODE}
     git pull

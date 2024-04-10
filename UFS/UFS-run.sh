@@ -7,13 +7,13 @@ set -u
 ####################################
 # Set Top options
 REPO=NeilBarton-NOAA && HASH=run
-export DTG=2013040100
+#export DTG=2013040100
 export ENS_SETTINGS=F
-export FORECAST_LENGTH=5 # in days
-export WALLCLOCK=$(( 2 * 60 ))
+export FORECAST_LENGTH=1 # in days
+export WALLCLOCK=30 #$(( 2 * 60 )) # in minutes
 export JOB_QUEUE=debug # batch or debug on hera
 #TOP_RUNDIR=IC_DEBUG && NAME=NEW_ICE_IC 
-RUNDIR_MPI=T
+RUNDIR_MPI=F
 export DEBUG=F
 PATH_RUN=${NPB_WORKDIR}/CODE/ufs-weather-model_run_NeilBarton-NOAA/RUN 
 
@@ -60,8 +60,6 @@ if (( ${ATM_INPES} > 0 )); then
     [ ! -z ${WAV_NMPI+x} ] && [ ${WAV_NMPI} != 0 ] && NAME="${NAME}W"
     [ ! -z ${CHM_NMPI+x} ] && [ ${CHM_NMPI} != 0 ] && NAME="${NAME}A"
 fi
-[ ! -z ${WAV_NMPI+x} ] && [ ${WAV_NMPI} != 0 ] && [[ ${NAME:0:3} == 'S2S' ]] && NAME="${NAME}W"
-[ ! -z ${CHM_NMPI+x} ] && [ ${CHM_NMPI} != 0 ] && [[ ${NAME:0:3} == 'S2S' ]] && NAME="${NAME}A"
 
 RUNDIR="${NPB_WORKDIR}/RUNS/${TOP_RUNDIR}/${NAME}"
 RUNDIR_MPI=${RUNDIR_MPI:-F}
