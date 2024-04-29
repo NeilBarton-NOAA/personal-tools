@@ -1,4 +1,10 @@
+
 [submodule "UFS/TIMINGS"]
 	path = UFS/TIMINGS
-	url = https://github.com/NeilBarton-NOAA/ufs-timings
-
+	url = https://github.com/NeilBarton-NOAA/ufs-timings.git
+[submodule "REPLAY_ICS"]
+	path = REPLAY_ICS
+	url = https://github.com/NeilBarton-NOAA/REPLAY_ICS
+[submodule "ANALYSIS/DIAG_SUITE"]
+	path = ANALYSIS/DIAG_SUITE
+	url = https://github.com/NeilBarton-NOAA/DIAG_SUITE
