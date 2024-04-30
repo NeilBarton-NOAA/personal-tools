@@ -13,5 +13,5 @@ arguments:
   nens: 10
   comroot: {{ 'TOPCOMROOT' | getenv }}
   expdir: {{ 'TOPEXPDIR' | getenv }} 
-  yaml: {{ HOME }}/UFS/GW/exp_ep5dgw.yaml
+  yaml: {{ HOME }}/UFS/GW-YAML/exp_ep5dgw.yaml
 

@@ -1,0 +1,18 @@
+experiment:
+  system: gefs
+  mode: forecast-only
+
+arguments:
+  idate: 2023123000
+  edate: 2023123000
+  pslot: {{ 'pslot' | getenv }}
+  app: S2S
+  resdetatmos: 96
+  resensatmos: 96
+  start: 'warm'
+  gfs_cyc: 1
+  nens: 1
+  comroot: {{ 'TOPCOMROOT' | getenv }}
+  expdir: {{ 'TOPEXPDIR' | getenv }} 
+  yaml: {{ HOME }}/UFS/GW-YAMLS/exp_sfstest.yaml
+
