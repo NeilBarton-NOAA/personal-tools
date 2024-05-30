@@ -3,16 +3,16 @@ experiment:
   mode: forecast-only
 
 arguments:
-  idate: 2017100500
-  edate: 2017100500
   pslot: {{ 'pslot' | getenv }}
   app: S2SWA
-  resdetatmos: 384
-  resensatmos: 384
-  start: 'warm'
+  resdetatmos: 48
+  resensatmos: 48
+  resdetocean: 5.0
   gfs_cyc: 1
-  nens: 1
+  start: warm
+  nens: 2
   comroot: {{ 'TOPCOMROOT' | getenv }}
   expdir: {{ 'TOPEXPDIR' | getenv }} 
-  yaml: {{ HOME }}/UFS/GW-YAMLS/exp_replaytest.yaml
-
+  idate: 2021032312
+  edate: 2021032312
+  yaml: {{ HOME }}/UFS/YAMLS-GW/CI_warm_GEFS_C48_S2SWA_options.yaml

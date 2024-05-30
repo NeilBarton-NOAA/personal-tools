@@ -4,7 +4,7 @@ source $PWD/MACHINE-config.sh
 TOPDIR=$NPB_WORKDIR/CODE
 machine=$(uname -n)
 REPO=NeilBarton-NOAA 
-#REPO=NOAA-EMC
+REPO=NOAA-EMC
 code=UFS_UTILS_${REPO}
 ########################
 # check out code
@@ -19,6 +19,6 @@ fi
 cd ${TOPDIR}/${code}
 sh build_all.sh
 cd fix
-sh link_fixdirs.sh emc ${m} 
+sh link_fixdirs.sh emc hera 
 echo 'DONE'
 

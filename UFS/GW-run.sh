@@ -6,10 +6,10 @@ set -u
 ####################################
 # Code
 #REPO=NeilBarton-NOAA && HASH=EP5d_GEFS_ATMOS 
-REPO=NeilBarton-NOAA && HASH=EP5dtest 
 REPO=NeilBarton-NOAA && HASH=replay_ics 
+REPO=NeilBarton-NOAA && HASH=SFS_C96X100 
 HOMEgfs=${1:-${NPB_WORKDIR}/CODE/global-workflow_${HASH////\_}_${REPO}}
-YAML=${2:-${HOME}/UFS/GW/REPLAY_ICS.yaml}
+YAML=${2:-${HOME}/UFS/YAMLS-GW/SFS_TEST.yaml}
 
 ########################
 # Check Code
@@ -22,11 +22,13 @@ export pslot=$(basename ${YAML/.yaml*})
 if [[ ${HOMEgfs} == *develop* ]]; then
     pslot=dev_${pslot}
 fi
-source ${PWD}/MACHINE-config.sh
+CD=$(dirname "$0")
+source ${CD}/MACHINE-config.sh
 if [[ ${YAML} == *CI* ]]; then
     source ${HOMEgfs}/ci/platforms/config.${m/.*}
 fi
 ${HOMEgfs}/workflow/create_experiment.py --yaml "${YAML}" 
+
 ################################################
 # Soft link items into EXPDIR for easier development
 cd ${TOPEXPDIR}/${pslot}

@@ -3,15 +3,17 @@ experiment:
   mode: forecast-only
 
 arguments:
-  idate: 2017100400
-  edate: 2017100400
+  idate: 2023012300
+  edate: 2023012300
   pslot: {{ 'pslot' | getenv }}
-  app: S2SWA
-  resdetatmos: 384
-  resensatmos: 384
+  app: S2S
+  resdetatmos: 96
+  resensatmos: 96
+  resdetocean: 1
+  start: 'warm'
   gfs_cyc: 1
   nens: 1
   comroot: {{ 'TOPCOMROOT' | getenv }}
   expdir: {{ 'TOPEXPDIR' | getenv }} 
-  yaml: {{ HOME }}/UFS/GW-YAML/exp_enstest.yaml
+  yaml: {{ HOME }}/UFS/YAMLS-GW/SFS_TEST_options.yaml
 

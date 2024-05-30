@@ -3,16 +3,16 @@ experiment:
   mode: forecast-only
 
 arguments:
-  idate: 2023123000
-  edate: 2023123000
+  idate: 2017100500
+  edate: 2017100500
   pslot: {{ 'pslot' | getenv }}
   app: S2S
-  resdetatmos: 96
-  resensatmos: 96
+  resdetatmos: 384
+  resensatmos: 384
   start: 'warm'
   gfs_cyc: 1
   nens: 1
   comroot: {{ 'TOPCOMROOT' | getenv }}
   expdir: {{ 'TOPEXPDIR' | getenv }} 
-  yaml: {{ HOME }}/UFS/GW-YAMLS/exp_sfstest.yaml
+  yaml: {{ HOME }}/UFS/YAMLS-GW/REPLAY_ICS_options.yaml
 

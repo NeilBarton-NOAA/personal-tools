@@ -7,7 +7,9 @@ set -u
 ####################################
 # Set Top options
 REPO=NeilBarton-NOAA && HASH=run
-#export DTG=2013040100
+export APP=S2S
+#export DTG=2023012300
+#export ICDIR=${NPB_WORKDIR}/ICs/REPLAY_ICs/C96mx100/${DTG}/mem000
 export ENS_SETTINGS=F
 export FORECAST_LENGTH=1 # in days
 export WALLCLOCK=30 #$(( 2 * 60 )) # in minutes
@@ -19,25 +21,24 @@ PATH_RUN=${NPB_WORKDIR}/CODE/ufs-weather-model_run_NeilBarton-NOAA/RUN
 
 ####################################
 # Resolution Options
-#export ATM_RES=C192
-#export OCN_RES=025
+export ATM_RES=C96
+export OCN_RES=100
 
 ####################################
 # Model Options
-export GOCART_NO3=F
-export WAV_RES=glo_025
+#export GOCART_NO3=F
+#export WAV_RES=glo_025
 
 ####################################
-# Set MPI options,  if NMPI=0, model will not run
-export ATM_INPES=12
-export ATM_JNPES=12
-export ATM_THRD=2
-export CHM_NMPI=$(( ATM_INPES * ATM_JNPES * 6 ))
-export OCN_NMPI=130
-export ICE_NMPI=120
-export WAV_NMPI=280
-export WAV_THRD=2
-export MED_NMPI=300
+# Set MPI options,  
+#export ATM_INPES=12
+#export ATM_JNPES=12
+#export ATM_THRD=2
+#export OCN_NMPI=130
+#export ICE_NMPI=76
+#export WAV_NMPI=280
+#export WAV_THRD=2
+#export MED_NMPI=300
 
 ############
 # IO options                        # DEFAULTS
@@ -52,15 +53,7 @@ export MED_NMPI=300
 export UFS_HOME=${NPB_WORKDIR}/CODE/ufs-weather-model_${HASH////\_}_${REPO}
 export PATH_RUN=${PATH_RUN:-${UFS_HOME}/RUN}
 TOP_RUNDIR=${TOP_RUNDIR:-UFS}
-if (( ${ATM_INPES} > 0 )); then
-    NAME=${NAME:-ATM}
-    if [ ! -z ${OCN_NMPI+x} ] && [ ! -z ${ICE_NMPI+x} ]; then
-        (( ${OCN_NMPI} > 0 )) && (( ${ICE_NMPI} > 0 )) && [[ ${NAME} == 'ATM' ]] && NAME=S2S
-    fi
-    [ ! -z ${WAV_NMPI+x} ] && [ ${WAV_NMPI} != 0 ] && NAME="${NAME}W"
-    [ ! -z ${CHM_NMPI+x} ] && [ ${CHM_NMPI} != 0 ] && NAME="${NAME}A"
-fi
-
+NAME=${NAME:-${APP}}
 RUNDIR="${NPB_WORKDIR}/RUNS/${TOP_RUNDIR}/${NAME}"
 RUNDIR_MPI=${RUNDIR_MPI:-F}
 if [[ ${DEBUG} != T ]] && [[ ${RUNDIR_MPI} == T ]]; then
@@ -74,6 +67,8 @@ if [[ ${DEBUG} != T ]] && [[ ${RUNDIR_MPI} == T ]]; then
     [ ! -z ${WAV_NMPI+x} ] && [ ${WAV_NMPI} != 0 ] && RUNDIR="${RUNDIR}_WAV_${WAV_NMPI}"
     [ ! -z ${WAV_THRD+x} ] && [ ${WAV_NMPI} != 0 ] && RUNDIR="${RUNDIR}-${WAV_THRD}"
 fi
+CD=$(dirname "$0")
+source ${CD}/MACHINE-config.sh
 export UFS_EXEC=${UFS_EXEC:-ufs_S2SWA}
 ${PATH_RUN}/UFS-submit.sh ${RUNDIR}
 

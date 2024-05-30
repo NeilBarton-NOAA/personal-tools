@@ -4,12 +4,12 @@ base:
   DO_JEDIOCNVAR: "NO"
   DO_JEDISNOWDA: "NO"
   DO_MERGENSST: "NO"
-  FHMAX_GFS: 120
+  FHMAX_GFS: 24
   KEEPDATA: "NO"
-  USE_REPLAY_ICS: "true"
+  OFFSET_START_HOUR: 3
   USE_OCN_PERTURB_FILES: "true"
   USE_ATM_PERTURB_FILES: "true"
   ACCOUNT: {{ 'ACCNR' | getenv }} 
   HPSS_PROJECT: "emc-marine"
-  BASE_CPLIC: {{ 'TOPICDIR' | getenv }}/REPLAY_ICs/C96mx100
+  BASE_CPLIC: {{ 'TOPICDIR' | getenv }}/REPLAY_ICs
 
