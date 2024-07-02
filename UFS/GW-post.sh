@@ -18,68 +18,25 @@ products/ocean/netcdf
 products/wave/gridded
 products/wave/station
 "
-
 export TOPCOMROOT=${TOPCOMROOT}
 export PSLOT=${PSLOT}
-    
-
-submt_file=htar_${PSLOT}
-
-cat <<EOF > ${submit_file}
-#!/bin/sh
-#PBS -N HTAR_${D////\_}
-#PBS -j oe
-#PBS -A GEFS-DEV
-#PBS -q dev_transfer
-#PBS -l select=1:ncpus=1:mem=5GB
-#PBS -l walltime=4:00:00
-#PBS -V
-set -xu
-
+  
+################################################
+################################################
+################################################
 for D in ${DIRS_TO_KEEP}; do
     export SRC="gefs.${PDY}/${cyc}/mem*/${D}/*"
     export DES="/NCEPDEV/emc-marine/2year/${USER}/${PSLOT}/${PDY}${cyc}_${D////\_}.tar"
     hsi mkdir -p $(dirname ${DES})
     cd ${TOPCOMROOT}/${PSLOT}
     htar -cvf ${DES} ${SRC}
+    for M in $(seq 0 ${MEMBERS}); do
+        M=$(printf "%03d" ${M})
+        export ens_dir=gefs.${PDY}/${cyc}/mem${M}/${D}
+        export SRC=${TOPCOMROOT}/${PSLOT}/${ens_dir}
+        export DST=${RSYNC_DIR}/${PSLOT}/${ens_dir}
+        echo ${SRC}
+        mkdir -p ${DST}
+        rsync -au ${SRC}/* ${DST}
+    done
 done
-
-EOF
-chmod 755 ${submit_file}
-qsub ${submit_file}
-#rm ${submit_file}
-
-submit_file=rsync_${PSLOT}
-cat <<EOF > ${submit_file}
-#!/bin/sh
-#PBS -N RSYNC_${M}_${D////\_}
-#PBS -j oe
-#PBS -A GEFS-DEV
-#PBS -q dev
-#PBS -l select=1:ncpus=1
-#PBS -l walltime=1:00:00
-#PBS -V
-set -xu
-
-for D in ${DIRS_TO_KEEP}; do
-for M in $(seq 0 ${MEMBERS}); do
-    M=$(printf "%03d" ${M})
-    export ens_dir=gefs.${PDY}/${cyc}/mem${M}/${D}
-    export SRC=${TOPCOMROOT}/${PSLOT}/${ens_dir}
-    export DST=${RSYNC_DIR}/${PSLOT}/${ens_dir}
-    echo ${SRC}
-    mkdir -p ${DST}
-    rsync -au ${SRC}/* ${DST}
-done
-done
-
-echo "DONE"
-EOF
-chmod 755 ${submit_file}
-qsub ${submit_file}
-rm ${submit_file}
-        
-
-
-
-
