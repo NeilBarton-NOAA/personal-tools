@@ -1,9 +1,15 @@
 #!/bin/sh
 set -u
-PSLOT=EP5dgw
-MEMBERS=10
-export PDY=20171004
-export cyc=00
+EXP_ID=EP5r2
+DTG=2021010700
+export MEMBERS=10
+export PDY=${DTG:0:10}
+export cyc=${DTG:10:12}
+echo $PDY $cyc
+
+export PSLOT=${EXP_ID}_${DTG}
+export TOPCOMROOT=/lfs/h2/emc/ptmp/neil.barton/${PSLOT}
+export RSYNC_DIR=/lfs/h2/emc/ens/noscrub/neil.barton/RUNS
 
 export DIRS_TO_KEEP="
 model_data/ice/history 
@@ -12,16 +18,12 @@ products/ocean/netcdf
 products/wave/gridded
 products/wave/station
 "
-source ${PWD}/MACHINE-config.sh
 
 export TOPCOMROOT=${TOPCOMROOT}
 export PSLOT=${PSLOT}
     
-for D in ${DIRS_TO_KEEP}; do
-    export SRC="gefs.${PDY}/${cyc}/mem*/${D}/*"
-    export DES="/NCEPDEV/emc-marine/2year/Neil.Barton/${PSLOT}/${PDY}${cyc}_${D////\_}.tar"
-    hsi mkdir -p $(dirname ${DES})
-    submit_file=htar_${D////\_}
+
+submt_file=htar_${PSLOT}
 
 cat <<EOF > ${submit_file}
 #!/bin/sh
@@ -34,20 +36,20 @@ cat <<EOF > ${submit_file}
 #PBS -V
 set -xu
 
-cd ${TOPCOMROOT}/${PSLOT}
-htar -cvf ${DES} ${SRC}
-EOF
+for D in ${DIRS_TO_KEEP}; do
+    export SRC="gefs.${PDY}/${cyc}/mem*/${D}/*"
+    export DES="/NCEPDEV/emc-marine/2year/${USER}/${PSLOT}/${PDY}${cyc}_${D////\_}.tar"
+    hsi mkdir -p $(dirname ${DES})
+    cd ${TOPCOMROOT}/${PSLOT}
+    htar -cvf ${DES} ${SRC}
+done
 
-    chmod 755 ${submit_file}
-    qsub ${submit_file}
-    rm ${submit_file}
-    # members
-    for M in $(seq 0 ${MEMBERS}); do
-        M=$(printf "%03d" ${M})
-        export ens_dir=gefs.${PDY}/${cyc}/mem${M}/${D}
-        export SRC=${TOPCOMROOT}/${PSLOT}/${ens_dir}
-        export DST=${TOPEXPDIR}/${PSLOT}/${ens_dir}
-    submit_file=rsync_${M}_${D////\_}
+EOF
+chmod 755 ${submit_file}
+qsub ${submit_file}
+#rm ${submit_file}
+
+submit_file=rsync_${PSLOT}
 cat <<EOF > ${submit_file}
 #!/bin/sh
 #PBS -N RSYNC_${M}_${D////\_}
@@ -59,18 +61,24 @@ cat <<EOF > ${submit_file}
 #PBS -V
 set -xu
 
-echo ${SRC}
-mkdir -p ${DST}
-rsync -au ${SRC}/* ${DST}
+for D in ${DIRS_TO_KEEP}; do
+for M in $(seq 0 ${MEMBERS}); do
+    M=$(printf "%03d" ${M})
+    export ens_dir=gefs.${PDY}/${cyc}/mem${M}/${D}
+    export SRC=${TOPCOMROOT}/${PSLOT}/${ens_dir}
+    export DST=${RSYNC_DIR}/${PSLOT}/${ens_dir}
+    echo ${SRC}
+    mkdir -p ${DST}
+    rsync -au ${SRC}/* ${DST}
+done
+done
 
 echo "DONE"
 EOF
-        chmod 755 ${submit_file}
-        qsub ${submit_file}
-        rm ${submit_file}
+chmod 755 ${submit_file}
+qsub ${submit_file}
+rm ${submit_file}
         
-    done #members
-done #directories
 
 
 
