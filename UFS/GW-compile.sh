@@ -3,10 +3,7 @@ set -u
 # https://global-workflow.readthedocs.io/en/latest/
 ########################
 # Code to Checkout/Compile
-REPO=NeilBarton-NOAA && HASH=replay_ics
-#REPO=NeilBarton-NOAA && HASH=develop
-#REPO=NeilBarton-NOAA &&  HASH=SFS_C96X100
-#REPO=NeilBarton-NOAA &&  HASH=REFORECASTING
+REPO=NeilBarton-NOAA && HASH=EP5r2
 #REPO=NOAA-EMC && HASH=develop
 COMPILE=T
 

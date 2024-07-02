@@ -5,11 +5,10 @@ set -u
 # CI yamls can be found at ${HOMEgfs}/ci/cases/{pr/weekly}/
 ####################################
 # Code
-#REPO=NeilBarton-NOAA && HASH=EP5d_GEFS_ATMOS 
-REPO=NeilBarton-NOAA && HASH=replay_ics 
-#REPO=NeilBarton-NOAA && HASH=SFS_C96X100 
+REPO=NeilBarton-NOAA && HASH=EP5r2
 HOMEgfs=${1:-${NPB_WORKDIR}/CODE/global-workflow_${HASH////\_}_${REPO}}
-YAML=${2:-${HOME}/UFS/YAMLS-GW/SFS_TEST.yaml}
+YAML=${2:-${HOME}/UFS/YAMLS-GW/EP5r2.yaml}
+export START_DATE=2021072900
 
 ########################
 # Check Code
@@ -18,7 +17,7 @@ YAML=${2:-${HOME}/UFS/YAMLS-GW/SFS_TEST.yaml}
 echo "HOMEgfs: ${HOMEgfs}"
 echo "YAML: ${YAML}"
 
-export pslot=$(basename ${YAML/.yaml*})
+export pslot=$(basename ${YAML/.yaml*})_${START_DATE}
 if [[ ${HOMEgfs} == *develop* ]]; then
     pslot=dev_${pslot}
 fi
