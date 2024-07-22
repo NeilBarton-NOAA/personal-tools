@@ -6,9 +6,7 @@ base:
   DO_MERGENSST: "NO"
   FHMAX_GFS: 120
   KEEPDATA: "NO"
-  OFFSET_START_HOUR: 3
-  USE_OCN_PERTURB_FILES: "false"
-  USE_ATM_PERTURB_FILES: "true"
+  REPLAY_ICS: "YES"
   ACCOUNT: {{ 'ACCNR' | getenv }} 
   HPSS_PROJECT: "emc-marine"
   BASE_CPLIC: {{ 'TOPICDIR' | getenv }}/REPLAY_ICs/C96mx100

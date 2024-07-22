@@ -5,10 +5,9 @@ set -u
 # CI yamls can be found at ${HOMEgfs}/ci/cases/{pr/weekly}/
 ####################################
 # Code
-REPO=NeilBarton-NOAA && HASH=gefs_replay_ci
+REPO=NeilBarton-NOAA && HASH=gefs_replay_ci 
 HOMEgfs=${1:-${NPB_WORKDIR}/CODE/global-workflow_${HASH////\_}_${REPO}}
-YAML=${2:-${HOMEgfs}/ci/cases/pr/C96_S2S_gefs_replay_ics.yaml}
-#export START_DATE=2021072900
+YAML=${2:-${HOMEgfs}/ci/cases/pr/C96_S2SWA_gefs_replay_ics.yaml}
 
 ########################
 # Check Code

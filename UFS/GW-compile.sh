@@ -3,13 +3,16 @@ set -u
 # https://global-workflow.readthedocs.io/en/latest/
 ########################
 # Code to Checkout/Compile
-REPO=NeilBarton-NOAA && HASH=EP5r2
-#REPO=NOAA-EMC && HASH=develop
+REPO=NeilBarton-NOAA && HASH=gefs_replay_ci
+GFS=F
 COMPILE=T
 
 ########################
 # check out code
 code=global-workflow_${HASH////\_}_${REPO}
+if [[ ${GFS} == T ]]; then
+    code=${code}_GFS
+fi
 TOPDIR=${NPB_WORKDIR}/CODE
 mkdir -p ${TOPDIR} && cd ${TOPDIR}
 if [[ ! -d ${code} ]]; then
@@ -25,10 +28,15 @@ fi
 ########################
 # build model
 if [[ ${COMPILE} == T ]]; then
+if [[ ${GFS} == T ]]; then
+    OPTIONS='-gu -j 8'
+else #GEFS or SFS
+    OPTIONS='-w -j 8'
+fi
 cd ${TOPDIR}/${code}/sorc
 cat <<EOF > setup_all_ufs.sh
 #!/bin/sh
-sh build_all.sh -w
+sh build_all.sh ${OPTIONS}
 sh link_workflow.sh  
 EOF
 chmod 755 setup_all_ufs.sh

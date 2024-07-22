@@ -6,7 +6,7 @@ arguments:
   idate: 2023012300
   edate: 2023012300
   pslot: {{ 'pslot' | getenv }}
-  app: S2S
+  app: {{ 'APP' | getenv }}
   resdetatmos: 96
   resensatmos: 96
   resdetocean: 1
