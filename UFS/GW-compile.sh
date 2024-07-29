@@ -3,9 +3,10 @@ set -u
 # https://global-workflow.readthedocs.io/en/latest/
 ########################
 # Code to Checkout/Compile
-REPO=NeilBarton-NOAA && HASH=gefs_replay_ci
+REPO=NeilBarton-NOAA && HASH=develop
+#gefs_replay_ci
 GFS=F
-COMPILE=T
+COMPILE=F
 
 ########################
 # check out code

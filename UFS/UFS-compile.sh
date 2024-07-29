@@ -5,8 +5,8 @@ source ${PWD}/MACHINE-config.sh
 TOPDIR=${NPB_WORKDIR}/CODE
 mkdir -p ${TOPDIR}
 #REPO=NeilBarton-NOAA && HASH=run
-REPO=NeilBarton-NOAA && HASH=skeb_fix
-#REPO=ufs-community && HASH=develop
+#REPO=NeilBarton-NOAA && HASH=skeb_fix
+REPO=ufs-community && HASH=develop
 
 COMPILE=F
 ########################

@@ -12,8 +12,8 @@ export RUNDIR_ROOT=${NPB_WORKDIR}/RUNS/RTs
 source ${PWD}/MACHINE-config.sh
 # Coupled Case
 case="
-COMPILE | s2swa_32bit  | intel | -DAPP=S2SWA -D32BIT=ON -DCCPP_SUITES=FV3_GFS_v17_coupled_p8,FV3_GFS_v17_coupled_p8_ugwpv1 | + wcoss2 hera orion | fv3 |
-RUN | cpld_control_p8_mixedmode                               | + hera orion cheyenne wcoss2 acorn | baseline |
+COMPILE | s2swa_32bit_pdlib_sfs  | intel | -DAPP=S2SWA -D32BIT=ON -DHYDRO=ON -DCCPP_SUITES=FV3_GFS_v17_coupled_p8_ugwpv1 -DPDLIB=ON | - noaacloud | fv3 |
+RUN | cpld_control_sfs                                  | - noaacloud                          | baseline |
 "
 
 ############
