@@ -3,8 +3,8 @@ experiment:
   mode: forecast-only
 
 arguments:
-  idate: 2017100500
-  edate: 2017100500
+  idate: 2018041900
+  edate: 2018041900
   pslot: {{ 'pslot' | getenv }}
   app: S2SWA
   resdetatmos: 384
@@ -14,5 +14,5 @@ arguments:
   nens: 10
   comroot: {{ 'RUNTESTS' | getenv }}/COMROOT
   expdir: {{ 'RUNTESTS' | getenv }}/EXPDIR
-  yaml: {{ HOME }}/UFS/YAMLS-GW/REPLAY_ICS_options.yaml
+  yaml: {{ HOME }}/UFS/YAMLS-GW/GEFS_options.yaml
 

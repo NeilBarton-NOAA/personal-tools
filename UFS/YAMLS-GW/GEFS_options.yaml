@@ -5,5 +5,5 @@ base:
   KEEPDATA: "NO"
   REPLAY_ICS: "YES"
   ACCOUNT: {{ 'ACCNR' | getenv }} 
-  BASE_CPLIC: {{ 'TOPICDIR' | getenv }}/REPLAY_ICs
+  BASE_CPLIC: {{ 'TOPICDIR' | getenv }}/REPLAY_ICs/C384mx025
 
