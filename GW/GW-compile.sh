@@ -6,7 +6,7 @@ set -u
 REPO=NeilBarton-NOAA && HASH=develop
 #gefs_replay_ci
 GFS=F
-COMPILE=F
+COMPILE=T
 
 ########################
 # check out code

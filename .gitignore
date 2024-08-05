@@ -37,6 +37,7 @@
 ANALYSIS/CICE/interactive_node.sh
 TOOLS/cylc-7.8.1/
 TOOLS/Miniconda3-latest-Linux-x86_64.sh
+TOOLS/modulefiles/rocoto/
 UFS/CONF/
 UFS/FIGURES/
 
