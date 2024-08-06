@@ -14,5 +14,5 @@ arguments:
   nens: 10
   comroot: {{ 'RUNTESTS' | getenv }}/COMROOT
   expdir: {{ 'RUNTESTS' | getenv }}/EXPDIR
-  yaml: {{ HOME }}/UFS/YAMLS-GW/GEFS_options.yaml
+  yaml: {{ HOME }}/GW/YAMLS/GEFS_options.yaml
 
