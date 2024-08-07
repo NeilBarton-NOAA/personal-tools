@@ -16,13 +16,24 @@ YAML=${2:-${HOMEgfs}/ci/cases/pr/C96_S2SWA_gefs_replay_ics.yaml}
 echo "HOMEgfs: ${HOMEgfs}"
 echo "YAML: ${YAML}"
 
+########################
+# Machine Specific and Personallized options
+machine=$(uname -n)
+export TOPICDIR=${NPB_WORKDIR}/ICs
+export RUNTESTS=${NPB_WORKDIR}/RUNS
+ACCOUNT=marine-cpu
+[[ ${machine:0:3} == hfe ]] && m=hera
+[[ ${machine} == *[cd]login* ]] && m=wcoss2 && ACCOUNT=GFS-DEV 
+[[ ${machine} == *Orion* ]] && m=orion 
+[[ ${machine} == hercules* ]] && m=hercules
+
+############
+# set up run
 export pslot=$(basename ${YAML/.yaml*})
 CD=$(dirname "$0")
-source ${CD}/MACHINE-config.sh
 source ${HOMEgfs}/ci/platforms/config.${m/.*}
 source ${HOMEgfs}/workflow/gw_setup.sh
-echo $HPC_ACCOUNT
-export HPC_ACCOUNT=${ACCNR}
+export HPC_ACCOUNT=${ACCOUNT}
 ${HOMEgfs}/workflow/create_experiment.py --yaml "${YAML}" 
 
 ################################################

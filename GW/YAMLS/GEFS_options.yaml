@@ -4,6 +4,6 @@ base:
   FHMAX_GFS: 24
   KEEPDATA: "NO"
   REPLAY_ICS: "YES"
-  ACCOUNT: {{ 'ACCNR' | getenv }} 
+  ACCOUNT: {{ 'HPC_ACCOUNT' | getenv }} 
   BASE_CPLIC: {{ 'TOPICDIR' | getenv }}/REPLAY_ICs/C384mx025
 
