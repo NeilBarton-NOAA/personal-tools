@@ -8,6 +8,8 @@ set -u
 REPO=NeilBarton-NOAA && HASH=gefs_replay_ci 
 HOMEgfs=${1:-${NPB_WORKDIR}/CODE/global-workflow_${HASH////\_}_${REPO}}
 YAML=${2:-${HOMEgfs}/ci/cases/pr/C96_S2SWA_gefs_replay_ics.yaml}
+#YAML=${2:-${HOMEgfs}/ci/cases/pr/C48_ATM.yaml}
+#YAML=${2:-${HOMEgfs}/ci/cases/pr/C48_S2SWA_gefs.yaml}
 
 ########################
 # Check Code
@@ -29,7 +31,7 @@ ACCOUNT=marine-cpu
 
 ############
 # set up run
-export pslot=$(basename ${YAML/.yaml*})
+export pslot=${HASH}_$(basename ${YAML/.yaml*})
 CD=$(dirname "$0")
 source ${HOMEgfs}/ci/platforms/config.${m/.*}
 source ${HOMEgfs}/workflow/gw_setup.sh
@@ -43,12 +45,12 @@ set +u
 source ${TOPEXPDIR}/config.base
 set -u
 cd ${TOPEXPDIR}
-ln -s ${DATAROOT} DATAROOT
-ln -s ${HOMEgfs} GW-CODE
-ln -s ${HOMEgfs}/parm/config ORIG_CONFIGS
-ln -s ${COMROOT}/${PSLOT}/logs LOGS_COMROOT
-ln -s ${HOMEgfs}/workflow/setup_xml.py . 
-ln -s ${HOMEgfs}/workflow/rocoto_viewer.py .
+#ln -sf ${DATAROOT} DATAROOT
+ln -sf ${HOMEgfs} GW-CODE
+ln -sf ${HOMEgfs}/parm/config ORIG_CONFIGS
+ln -sf ${COMROOT}/${PSLOT}/logs LOGS_COMROOT
+ln -sf ${HOMEgfs}/workflow/setup_xml.py . 
+ln -sf ${HOMEgfs}/workflow/rocoto_viewer.py .
 
 ################################################
 # start rocotorun and add crontab

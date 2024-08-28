@@ -1,7 +1,7 @@
 #!/bin/sh
 set -u
 EXP_ID=LUCAS_WAVETEST
-DTG=1997110100
+DTG=2020110100
 APP=S2SW
 export PDY=${DTG:0:8}
 export cyc=${DTG:8:10}
@@ -30,11 +30,11 @@ fi
 for D in ${DIRS_TO_KEEP}; do
     echo ${PSLOT} ${D}
     export SRC="gefs.${PDY}/${cyc}/*/${D}/*"
-    export DES="/NCEPDEV/emc-marine/2year/${USER}/${EXP_ID}/${PDY}${cyc}_${D////\_}.tar"
+    export DES="/NCEPDEV/emc-marine/2year/${USER}/${EXP_ID}/${PSLOT}/${PDY}${cyc}_${D////\_}.tar"
     [[ -f htar.sh ]] && rm htar.sh
     name=htar${PSLOT}${D////\_} 
     printf "#!/bin/sh\n hsi mkdir -p $(dirname ${DES})\n cd ${TOPCOMROOT}\n htar -cvf ${DES} ${SRC}" >> htar.sh
-    sbatch -J ${name} -eo ${name}.out -n 1 -t 04:00:00 -A marine-cpu --partition=service htar.sh
+    sbatch -J ${name} -n 1 -t 04:00:00 -A marine-cpu --partition=service htar.sh
     [[ -f htar.sh ]] && rm htar.sh
 #   # Go Through Each directory
 #    for M in $(seq 0 ${MEMBERS}); do

@@ -15,5 +15,5 @@ else
     FILES=${@:1:$(($#-1))}
 fi
 echo "hercules:${REMOTE_FOLDER}"
-#scp -q -o LogLevel=QUIET ${FILES} nbarton@orion-dtn.hpc.msstate.edu:${REMOTE_FOLDER} 
+#scp ${FILES} nbarton@hercules-dtn.hpc.msstate.edu:${REMOTE_FOLDER} 
 scp -o LogLevel=QUIET ${FILES} nbarton@hercules-dtn.hpc.msstate.edu:${REMOTE_FOLDER} 
