@@ -15,6 +15,7 @@ imap <F5> <C-R>=strftime("%Y-%m-%d %a %I:%M %p UTC")<CR>
 nmap <F3> a<C-R>=strftime("Neil P. Barton (NOAA-EMC), %Y-%m-%d %a %I:%M %p UTC")<CR><Esc>
 imap <F3> <C-R>=strftime(" Neil P. Barton (NOAA-EMC), %Y-%m-%d %a %I:%M %p UTC")<CR>
 autocmd BufRead,BufNewFile *.rc* set filetype=cfg
+autocmd BufRead,BufNewFile *.cylc set filetype=cfg
 autocmd BufRead,BufNewFile *.com set filetype=csh
 autocmd BufRead,BufNewFile ar_setup set filetype=sh
 autocmd BufRead,BufNewFile dimension_config set filetype=make
