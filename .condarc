@@ -3,4 +3,4 @@ channels:
 #  - defaults
 #channel_priority: strict
 #safety_checks: disabled
-#solver: libmamba
+#solver: classic

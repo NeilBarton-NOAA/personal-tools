@@ -9,6 +9,7 @@
 .cache
 .conda/
 .config
+.cshrc
 .cylc/flow/defaults.out
 .cylc/global.rc
 .cylc/job-init-env.sh

@@ -10,5 +10,5 @@ while getopts ":d:w:c:t:" opt; do
 done
  
 log=$(rocotocheck -d $db -w $xml -c $c -t $t | grep log | awk '{print $2}')
-cat $log
-
+cat ${log}
+echo ${log}

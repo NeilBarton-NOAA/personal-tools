@@ -19,7 +19,7 @@ import netCDF4 as nc
 import numpy as np
 import sys
 import xarray as xr
-sys.path.append('/home/Neil.Barton/TOOLS')
+sys.path.append(os.environ.get('HOME') + '/TOOLS')
 import PYTHON_TOOLS as npb
 
 parser = argparse.ArgumentParser( description = "make a map of netcdf data")
@@ -28,7 +28,8 @@ parser.add_argument('-v', '--var', action = 'store', nargs = 1, help="variable t
 args = parser.parse_args()
 files = args.files
 var = args.var[0]
-save_dir = '/scratch2/NCEPDEV/stmp3/Neil.Barton/FIGURES'
+save_dir = os.environ.get('NPB_WORKDIR') + '/FIGURES'
+os.makedirs(save_dir, exist_ok=True)
 
 for i, f in enumerate(files):
     print(f, var)
@@ -97,8 +98,8 @@ for i, f in enumerate(files):
         print(plot_data.min().values, plot_data.max().values)
     except:
         print(np.min(plot_data), np.max(plot_data))
-    #for domain in ['Arctic', 'Antarctic', 'Global']:
-    for domain in ['Antarctic']:
+    for domain in ['Arctic', 'Antarctic', 'Global']:
+    #for domain in ['Antarctic']:
         fig = plt.figure()
         if domain == 'Arctic':
             ax = fig.add_subplot(1,1,1, projection=ccrs.NorthPolarStereo())

@@ -7,7 +7,8 @@ import pandas as pd
 import sys
 import xarray as xr
 
-sys.path.append('/home/Neil.Barton/TOOLS')
+HOME = os.environ.get('HOME')
+sys.path.append(HOME + '/TOOLS')
 import PYTHON_TOOLS as npb
 
 print('Libraries in .ipython/profile_default/startup/start.py have been loaded')
