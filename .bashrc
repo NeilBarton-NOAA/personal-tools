@@ -55,7 +55,7 @@ elif [[ ${machine} == *[cd]login* ]]; then
 else
     echo "machine unknown in .bashrc: " $machine
 fi
-
+export CYLC_WORKDIR=${NPB_WORKDIR}
 
 # modules
 source ~/.profile
