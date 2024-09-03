@@ -31,7 +31,7 @@ alias psu="ps U $USER"
 alias gitgeturl="git config --get remote.origin.url"
 alias qme="squeue -u $USER --format='%.18i %.50j %.2t %.8M %.10l %.6D'"
 alias qLUCAS="squeue -u ljones --format='%.18i %.50j %.2t %.8M %.10l %.6D'"
-ARCHIVE_HOME=/NCEPDEV/emc-marine/1year/Neil.Barton
+ARCHIVE_HOME="/NCEPDEV/emc-marine/*/Neil.Barton"
 
 if [[ ${machine} == *Orion* ]] || [[ ${machine} == hercules-* ]]; then
     alias sd="cd /work/noaa/marine/nbarton"
@@ -56,6 +56,7 @@ elif [[ ${machine} == *[cd]login* ]]; then
 else
     echo "machine unknown in .bashrc: " $machine
 fi
+alias "cylc_check"="cylc scan -t rich && cylc scan --states=stopped,paused"
 export CYLC_WORKDIR=${NPB_WORKDIR}
 
 # modules
