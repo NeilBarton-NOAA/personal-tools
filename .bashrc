@@ -37,6 +37,13 @@ if [[ ${machine} == *Orion* ]] || [[ ${machine} == hercules-* ]]; then
     alias sd="cd /work/noaa/marine/nbarton"
     alias sd2="cd /work/noaa/stmp/nbarton"
     export NPB_WORKDIR=/work/noaa/marine/nbarton
+elif [[ ${machine} == gaea** ]]; then
+    alias sd="cd /gpfs/f5/nggps_emc/scratch/Neil.Barton/"
+    export NPB_WORKDIR=/gpfs/f5/nggps_emc/scratch/Neil.Barton/
+    if [[ $(uname -n) != gaea63 ]]; then
+        ssh -X gaea63
+    fi
+    
 elif [[ $machine == h* ]]; then
     export NPB_WORKDIR=/scratch2/NCEPDEV/stmp3/Neil.Barton
     alias sd="cd $NPB_WORKDIR"
