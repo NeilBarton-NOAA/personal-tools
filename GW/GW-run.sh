@@ -5,11 +5,9 @@ set -u
 # CI yamls can be found at ${HOMEgfs}/ci/cases/{pr/weekly}/
 ####################################
 # Code
-REPO=NeilBarton-NOAA && HASH=gefs_replay_ci 
-HOMEgfs=${1:-${NPB_WORKDIR}/CODE/global-workflow_${HASH////\_}_${REPO}}
-YAML=${2:-${HOMEgfs}/ci/cases/pr/C96_S2SWA_gefs_replay_ics.yaml}
-#YAML=${2:-${HOMEgfs}/ci/cases/pr/C48_ATM.yaml}
-#YAML=${2:-${HOMEgfs}/ci/cases/pr/C48_S2SWA_gefs.yaml}
+REPO=NeilBarton-NOAA && HASH=SFS 
+HOMEgfs=${1:-${NPB_WORKDIR}/CODE/gw_${HASH////\_}_${REPO}}
+YAML=${2:-${HOME}/GW/YAMLS/GEFS.yaml}
 
 ########################
 # Check Code
@@ -26,8 +24,8 @@ export RUNTESTS=${NPB_WORKDIR}/RUNS
 ACCOUNT=marine-cpu
 [[ ${machine:0:3} == hfe ]] && m=hera
 [[ ${machine} == *[cd]login* ]] && m=wcoss2 && ACCOUNT=GFS-DEV 
-[[ ${machine} == *Orion* ]] && m=orion 
-[[ ${machine} == hercules* ]] && m=hercules
+[[ ${machine} == *Orion* ]] && m=orion && RUNDIRS=/work/noaa/stmp/nbarton/ORION/RUNDIRS
+[[ ${machine} == hercules* ]] && m=hercules && RUNDIRS=/work/noaa/stmp/nbarton/HERCULES/RUNDIRS
 
 ############
 # set up run
@@ -45,7 +43,7 @@ set +u
 source ${TOPEXPDIR}/config.base
 set -u
 cd ${TOPEXPDIR}
-#ln -sf ${DATAROOT} DATAROOT
+ln -sf ${RUNDIRS}/${PSLOT} RUNDIRS
 ln -sf ${HOMEgfs} GW-CODE
 ln -sf ${HOMEgfs}/parm/config ORIG_CONFIGS
 ln -sf ${COMROOT}/${PSLOT}/logs LOGS_COMROOT

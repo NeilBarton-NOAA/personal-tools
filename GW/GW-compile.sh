@@ -5,13 +5,14 @@ set -u
 # Code to Checkout/Compile
 #REPO=NOAA-EMC && HASH=develop
 #REPO=NeilBarton-NOAA && HASH=SFS_baseline
+#REPO=NeilBarton-NOAA && HASH=SFS
 REPO=NeilBarton-NOAA && HASH=gefs_replay_ci
 GFS=F
-COMPILE=T
+COMPILE=F
 
 ########################
 # check out code
-code=global-workflow_${HASH////\_}_${REPO}
+code=gw_${HASH////\_}_${REPO}
 if [[ ${GFS} == T ]]; then
     code=${code}_GFS
 fi
