@@ -1,0 +1,19 @@
+experiment:
+  system: gefs
+  mode: forecast-only
+
+arguments:
+  idate: {{ 'IDATE' | getenv }} 
+  edate: {{ 'IDATE' | getenv }}
+  pslot: {{ 'pslot' | getenv }}
+  app: S2S
+  resdetatmos: 96
+  resensatmos: 96
+  resdetocean: 1
+  start: 'cold'
+  gfs_cyc: 1
+  nens: 2
+  comroot: {{ 'RUNTESTS' | getenv }}/COMROOT
+  expdir: {{ 'RUNTESTS' | getenv }}/EXPDIR
+  yaml: {{ GFShome }}/parm/config/GEFS/YAMLS/SFS_defaults.yaml
+

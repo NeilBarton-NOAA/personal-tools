@@ -63,7 +63,7 @@ elif [[ ${machine} == *[cd]login* ]]; then
 else
     echo "machine unknown in .bashrc: " $machine
 fi
-alias "cylc_check"="cylc scan -t rich && cylc scan --states=stopped,paused"
+alias "cylc_check"="cylc scan -t rich && cylc scan --states=stopped,paused && uptime"
 export CYLC_WORKDIR=${NPB_WORKDIR}
 
 # modules
