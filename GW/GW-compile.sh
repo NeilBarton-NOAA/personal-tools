@@ -8,7 +8,7 @@ set -u
 #REPO=NeilBarton-NOAA && HASH=SFS
 REPO=NeilBarton-NOAA && HASH=gefs_replay_ci
 GFS=F
-COMPILE=F
+COMPILE=T
 
 ########################
 # check out code

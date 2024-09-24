@@ -6,13 +6,13 @@ TOPDIR=${NPB_WORKDIR}/CODE
 mkdir -p ${TOPDIR}
 #REPO=NeilBarton-NOAA && HASH=run
 #REPO=NeilBarton-NOAA && HASH=skeb_fix
-REPO=ufs-community && HASH=develop
-
+#REPO=ufs-community && HASH=develop
+REPO=NickSzapiro-NOAA && HASH=RT_bmark_gefs
 COMPILE=F
 ########################
 # check out code
 cd ${TOPDIR}
-CODE=ufs-weather-model_${HASH////\_}_${REPO}
+CODE=ufs_${HASH////\_}_${REPO}
 if [[ ! -d ${CODE} ]]; then
     git clone https://github.com/${REPO}/ufs-weather-model.git ${CODE}
     cd ${CODE}

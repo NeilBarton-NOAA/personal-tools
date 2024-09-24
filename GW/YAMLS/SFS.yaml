@@ -3,8 +3,8 @@ experiment:
   mode: forecast-only
 
 arguments:
-  idate: {{ 'IDATE' | getenv }} 
-  edate: {{ 'IDATE' | getenv }}
+  idate: 1994050100 
+  edate: 1994050100
   pslot: {{ 'pslot' | getenv }}
   app: S2S
   resdetatmos: 96
@@ -15,5 +15,6 @@ arguments:
   nens: 2
   comroot: {{ 'RUNTESTS' | getenv }}/COMROOT
   expdir: {{ 'RUNTESTS' | getenv }}/EXPDIR
-  yaml: {{ GFShome }}/parm/config/GEFS/YAMLS/SFS_defaults.yaml
+  icsdir: {{ 'TOPICDIR' | getenv }}/HR4/C96mx100
+  yaml: {{ 'YAML_DIR' | getenv }}/parm/config/gefs/yaml/SFS_defaults.yaml
 

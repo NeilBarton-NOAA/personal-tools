@@ -5,9 +5,11 @@ set -u
 # CI yamls can be found at ${HOMEgfs}/ci/cases/{pr/weekly}/
 ####################################
 # Code
+#REPO=NeilBarton-NOAA && HASH=gefs_replay_ci 
 REPO=NeilBarton-NOAA && HASH=SFS 
 HOMEgfs=${1:-${NPB_WORKDIR}/CODE/gw_${HASH////\_}_${REPO}}
-YAML=${2:-${HOME}/GW/YAMLS/GEFS.yaml}
+YAML=${2:-${HOME}/GW/YAMLS/SFS.yaml}
+#YAML=${2:-${HOMEgfs}/ci/cases/pr/C96_S2SWA_gefs_replay_ics.yaml}
 
 ########################
 # Check Code
@@ -22,7 +24,7 @@ machine=$(uname -n)
 export TOPICDIR=${NPB_WORKDIR}/ICs
 export RUNTESTS=${NPB_WORKDIR}/RUNS
 ACCOUNT=marine-cpu
-[[ ${machine:0:3} == hfe ]] && m=hera
+[[ ${machine:0:3} == hfe ]] && m=hera && RUNDIRS=/scratch1/NCEPDEV/stmp2/Neil.Barton/RUNDIRS
 [[ ${machine} == *[cd]login* ]] && m=wcoss2 && ACCOUNT=GFS-DEV 
 [[ ${machine} == *Orion* ]] && m=orion && RUNDIRS=/work/noaa/stmp/nbarton/ORION/RUNDIRS
 [[ ${machine} == hercules* ]] && m=hercules && RUNDIRS=/work/noaa/stmp/nbarton/HERCULES/RUNDIRS
@@ -34,6 +36,7 @@ CD=$(dirname "$0")
 source ${HOMEgfs}/ci/platforms/config.${m/.*}
 source ${HOMEgfs}/workflow/gw_setup.sh
 export HPC_ACCOUNT=${ACCOUNT}
+export YAML_DIR=${HOMEgfs}
 ${HOMEgfs}/workflow/create_experiment.py --yaml "${YAML}" 
 
 ################################################
