@@ -30,8 +30,7 @@ alias dirs='dirs -v'
 alias psu="ps U $USER"
 alias gitgeturl="git config --get remote.origin.url"
 alias qme="squeue -u $USER --format='%.18i %.50j %.2t %.8M %.10l %.6D'"
-alias qLUCAS="squeue -u ljones --format='%.18i %.50j %.2t %.8M %.10l %.6D'"
-ARCHIVE_HOME="/NCEPDEV/emc-marine/*/Neil.Barton"
+ARCHIVE_HOME="/NCEPDEV/emc-marine/*year/Neil.Barton"
 
 if [[ ${machine} == *Orion* ]] || [[ ${machine} == hercules-* ]]; then
     alias sd="cd /work/noaa/marine/nbarton"
@@ -60,6 +59,9 @@ elif [[ ${machine} == *[cd]login* ]]; then
     alias qme="qstat -u $USER"
     alias sd="cd $NPB_WORKDIR"
     alias qdelme="qselect -u ${USER} | xargs qdel"
+elif [[ $machine == nfe* ]]; then
+    export NPB_WORKDIR=/collab1/data/Neil.Barton
+    alias sd="cd $NPB_WORKDIR"
 else
     echo "machine unknown in .bashrc: " $machine
 fi

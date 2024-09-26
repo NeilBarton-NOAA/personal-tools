@@ -18,7 +18,6 @@
 .fontconfig
 .globus/
 .java/
-.ipython/
 .kshrc
 .lesshst
 .lmod.d/
@@ -29,9 +28,7 @@
 .rocoto/
 .sh_history
 .snapshot/
-.ssh/authorized_keys
-.ssh/id*
-.ssh/known_hosts
+.ssh/
 .subversion/
 .urs_cookies
 .vim/
