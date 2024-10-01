@@ -32,7 +32,7 @@ alias gitgeturl="git config --get remote.origin.url"
 alias qme="squeue -u $USER --format='%.18i %.50j %.2t %.8M %.10l %.6D'"
 ARCHIVE_HOME="/NCEPDEV/emc-marine/*year/Neil.Barton"
 
-if [[ ${machine} == *Orion* ]] || [[ ${machine} == hercules-* ]]; then
+if [[ ${machine} == orion* ]] || [[ ${machine} == hercules-* ]]; then
     alias sd="cd /work/noaa/marine/nbarton"
     alias sd2="cd /work/noaa/stmp/nbarton"
     export NPB_WORKDIR=/work/noaa/marine/nbarton
@@ -41,8 +41,7 @@ elif [[ ${machine} == gaea** ]]; then
     export NPB_WORKDIR=/gpfs/f5/nggps_emc/scratch/Neil.Barton/
     if [[ $(uname -n) != gaea63 ]]; then
         ssh -X gaea63
-    fi
-    
+    fi    
 elif [[ $machine == h* ]]; then
     export NPB_WORKDIR=/scratch2/NCEPDEV/stmp3/Neil.Barton
     alias sd="cd $NPB_WORKDIR"
