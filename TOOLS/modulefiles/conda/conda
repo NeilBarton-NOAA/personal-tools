@@ -1,4 +1,0 @@
-#%Module1.0###############
-
-module-whatis miniconda3
-prepend-path PATH /scratch2/NCEPDEV/stmp3/Neil.Barton/TOOLS/miniconda3/bin

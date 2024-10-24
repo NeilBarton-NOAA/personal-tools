@@ -1,4 +1,0 @@
-#%Module1.0###############
-
-module-whatis cylc-7.8.1
-prepend-path PATH /home/Neil.Barton/TOOLS/cylc-7.8.1/bin

@@ -5,9 +5,10 @@ set -u
 # Code to Checkout/Compile
 #REPO=NOAA-EMC && HASH=develop
 #REPO=NeilBarton-NOAA && HASH=SFS_baseline
-#REPO=NeilBarton-NOAA && HASH=SFS
-REPO=NeilBarton-NOAA && HASH=gefs_replay_ci
-GFS=F
+REPO=NeilBarton-NOAA && HASH=SFS
+#REPO=NeilBarton-NOAA && HASH=gefs_replay_ci
+GFS=T
+SFS=F
 COMPILE=T
 
 ########################
@@ -22,20 +23,20 @@ if [[ ! -d ${code} ]]; then
     git clone --recursive https://github.com/${REPO}/global-workflow.git ${code}
     cd ${code}
     git checkout --recurse-submodules ${HASH}
-else
-    cd ${code}
-    git submodule update --recursive --remote
-    git pull
+#else
+#    cd ${code}
+#    git submodule update --recursive --remote
+#    git pull
 fi
 
 ########################
 # build model
 if [[ ${COMPILE} == T ]]; then
-if [[ ${GFS} == T ]]; then
-    OPTIONS='-gu -j 8'
-else #GEFS or SFS
-    OPTIONS='-w -j 8'
-fi
+# GEFS COMPILE
+OPTIONS='-w -j 8'
+[[ ${GFS} == T ]] && OPTIONS='-gu -j 8'
+[[ ${SFS} == T ]] && OPTIONS='-w -y -j 8'
+
 cd ${TOPDIR}/${code}/sorc
 cat <<EOF > setup_all_ufs.sh
 #!/bin/sh
