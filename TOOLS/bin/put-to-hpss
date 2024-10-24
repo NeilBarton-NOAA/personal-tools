@@ -3,8 +3,7 @@
 #   htar -cvf ${ARCHIVE_HOME}/test.tar ${FILES}
 set -u
 LOCAL_FILE=${1:-$PWD}
-YEAR=${2:-1}
-HSI_DIR=/NCEPDEV/emc-marine/${YEAR}year/Neil.Barton
+HSI_DIR=${2:-/NCEPDEV/emc-marine/1year/Neil.Barton}
 
 echo "PUTTING FILE AT: ${HSI_DIR}/${LOCAL_FILE}"
 hsi -q put ${LOCAL_FILE} : ${HSI_DIR}/${LOCAL_FILE} 2>/dev/null
