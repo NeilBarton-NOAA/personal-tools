@@ -11,7 +11,6 @@ elif [[ ${machine} == *[cd]login* ]]; then
     module_file=ufs_wcoss2.intel
     # changes from defaults above
     export ACCNR=GFS-DEV
-    export TOPCOMROOT=/lfs/h2/emc/ptmp/neil.barton
 elif [[ ${machine} == *Orion* ]]; then
     module_file=ufs_orion.intel
     export HOMEDIR=/work/noaa/global/'${USER}'
