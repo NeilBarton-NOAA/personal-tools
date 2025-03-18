@@ -12,8 +12,9 @@ YAML=${2:-${HOMEgfs}/ci/cases/sfs/C96mx100_S2S.yaml}
 ####################################
 # YAMLS for CI testing
 #YAML=${HOMEgfs}/ci/cases/pr/C96_S2SWA_gefs_replay_ics.yaml
-#YAML=${HOMEgfs}/ci/cases/pr/C48_S2SWA_gefs.yaml
+YAML=${HOMEgfs}/ci/cases/pr/C48_S2SWA_gefs.yaml
 #YAML=${HOMEgfs}/ci/cases/pr/C48_S2SW.yaml
+#YAML=${HOMEgfs}/ci/cases/pr/C96_atm3DVar.yaml
 
 export pslot=${HASH}_$(basename ${YAML/.yaml*})
 SFS_BASELINE=F

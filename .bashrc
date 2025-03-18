@@ -24,6 +24,9 @@ export HISTSIZE=1000
 # env vars expand to directories
 shopt -s direxpand
 
+# modules
+source ~/.profile
+
 # aliases
 alias ls='ls -B --group-directories-first --color=auto'
 alias dirs='dirs -v'
@@ -37,20 +40,20 @@ if [[ ${machine} == orion* ]] || [[ ${machine} == hercules-* ]]; then
     alias sd="cd /work/noaa/marine/nbarton"
     alias sd2="cd /work/noaa/stmp/nbarton"
     export NPB_WORKDIR=/work/noaa/marine/nbarton
-    PATH=${PATH}:/work/noaa/marine/nbarton/TOOLS/hercules_miniconda3/bin
+    PATH=/work/noaa/marine/nbarton/TOOLS/hercules_miniconda3/bin:${PATH}
 elif [[ ${machine} == gaea** ]]; then
     alias sd="cd /gpfs/f5/nggps_emc/scratch/Neil.Barton/"
     export NPB_WORKDIR=/gpfs/f5/nggps_emc/scratch/Neil.Barton/
     if [[ $(uname -n) != gaea63 ]]; then
         ssh -X gaea63
     fi    
-elif [[ $machine == h* ]]; then
+elif [[ ${machine} == h* ]]; then
     export NPB_WORKDIR=/scratch2/NCEPDEV/stmp3/Neil.Barton
     alias sd="cd $NPB_WORKDIR"
     if [[ $(uname -n) != hfe07 ]] && [[ $(uname -n) != h*[cm]* ]]; then
         ssh -X hfe07
     fi
-    PATH=${PATH}:/scratch2/NCEPDEV/stmp3/Neil.Barton/TOOLS/miniconda3/bin
+    PATH=/scratch2/NCEPDEV/stmp3/Neil.Barton/TOOLS/miniconda3/bin:${PATH}
 elif [[ ${machine} == *[cd]login* ]]; then
     # list of working directories
     export ptmp=/lfs/h2/emc/ptmp/neil.barton
@@ -67,9 +70,7 @@ elif [[ $machine == nfe* ]]; then
 else
     echo "machine unknown in .bashrc: " $machine
 fi
-alias "cylc_check"="cylc scan -t rich && cylc scan --states=stopped,paused && uptime"
+alias "cylc_check"="cylc scan -t rich && cylc scan --states=stopped,paused && globus task list --limit 1000 --filter-status ACTIVE | grep ACTIVE | wc -l && psu | grep SCRIPT | grep get && uptime"
 export CYLC_WORKDIR=${NPB_WORKDIR}
 
-# modules
-source ~/.profile
 
