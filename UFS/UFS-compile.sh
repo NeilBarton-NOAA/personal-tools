@@ -1,14 +1,11 @@
 #!/bin/sh
 # remove build directory if rebuilding 
 set -u
-source ${PWD}/MACHINE-config.sh
 TOPDIR=${NPB_WORKDIR}/CODE
 mkdir -p ${TOPDIR}
-#REPO=NeilBarton-NOAA && HASH=run
-#REPO=NeilBarton-NOAA && HASH=skeb_fix
-#REPO=ufs-community && HASH=develop
-REPO=NickSzapiro-NOAA && HASH=RT_bmark_gefs
-COMPILE=F
+REPO=ufs-community && HASH=develop
+COMPILE=T
+
 ########################
 # check out code
 cd ${TOPDIR}
@@ -30,7 +27,9 @@ fi
 ####################################
 # build model
 if [[ ${COMPILE} == T ]]; then
-
+RT_COMPILER=intel
+source ${TOPDIR}/${CODE}/tests/detect_machine.sh
+module_file=ufs_${MACHINE_ID}.${RT_COMPILER}
 module purge
 [[ ${module_file} == *wcoss* ]] && module reset
 module use modulefiles
