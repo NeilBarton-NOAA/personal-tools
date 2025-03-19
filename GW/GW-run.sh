@@ -3,15 +3,16 @@ set -u
 ####################################
 # set up GW runs with YAML file
 # CI yamls can be found at ${HOMEgfs}/ci/cases/{pr/weekly}/
+# https://global-workflow.readthedocs.io/en/latest/
 ####################################
 # Code
-REPO=NeilBarton-NOAA && HASH=SFS 
+REPO=NOAA-EMC && HASH=develop
+#REPO=NeilBarton-NOAA && HASH=SFS 
 HOMEgfs=${1:-${NPB_WORKDIR}/CODE/gw_${HASH////\_}_${REPO}}
-YAML=${2:-${HOMEgfs}/ci/cases/sfs/C96mx100_S2S.yaml}
+#YAML=${2:-${HOMEgfs}/ci/cases/sfs/C96mx100_S2S.yaml}
 
 ####################################
 # YAMLS for CI testing
-#YAML=${HOMEgfs}/ci/cases/pr/C96_S2SWA_gefs_replay_ics.yaml
 YAML=${HOMEgfs}/ci/cases/pr/C48_S2SWA_gefs.yaml
 #YAML=${HOMEgfs}/ci/cases/pr/C48_S2SW.yaml
 #YAML=${HOMEgfs}/ci/cases/pr/C96_atm3DVar.yaml
@@ -35,6 +36,13 @@ ACCOUNT=marine-cpu
 [[ ${machine} == *[cd]login* ]] && m=wcoss2 && ACCOUNT=GFS-DEV 
 [[ ${machine} == *Orion* ]] && m=orion && RUNDIRS=/work/noaa/stmp/nbarton/ORION/RUNDIRS
 [[ ${machine} == hercules* ]] && m=hercules && RUNDIRS=/work/noaa/stmp/nbarton/HERCULES/RUNDIRS
+[[ ${machine} == gaea* ]] && m=gaeac6 && RUNDIRS=/gpfs/f6/scratch/Neil.Barton/sfs-emc/RUNDIRS && ACCOUNT=sfs-cpu
+#RUNDIRS=/gpfs/f6/scratch/Neil.Barton/RUNDIRS
+
+if [[ ${machine} == gaea* ]] && [[ ${ACCOUNT} == sfs-cpu ]]; then
+    edit_f=${HOMEgfs}/workflow/hosts/gaeac6.yaml
+    sed -i 's/normal/windfall/g' ${edit_f}
+fi
 
 ############
 # set up run
@@ -82,8 +90,12 @@ fi
 ################################################
 # start rocotorun and add crontab
 xml_file=${PWD}/${pslot}.xml && db_file=${PWD}/${pslot}.db && cron_file=${PWD}/${pslot}.crontab
-rocotorun -d ${db_file} -w ${xml_file}
-crontab -l | cat - ${cron_file} | crontab -
+if [[ ${machine} == gaea* ]]; then
+    scrontab -l | cat - ${cron_file} | scrontab -
+else
+    rocotorun -d ${db_file} -w ${xml_file}
+    crontab -l | cat - ${cron_file} | crontab -
+fi
 echo "CRONTAB INFO:"
 echo "db=${db_file}"
 echo "xml=${xml_file}"

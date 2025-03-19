@@ -42,7 +42,8 @@ if [[ ${machine} == orion* ]] || [[ ${machine} == hercules-* ]]; then
     export NPB_WORKDIR=/work/noaa/marine/nbarton
     PATH=/work/noaa/marine/nbarton/TOOLS/hercules_miniconda3/bin:${PATH}
 elif [[ ${machine} == gaea** ]]; then
-    export NPB_WORKDIR=/gpfs/f6/scratch/Neil.Barton/
+    export NPB_WORKDIR=/gpfs/f6/sfs-emc/scratch/Neil.Barton
+    #/gpfs/f6/scratch/Neil.Barton/
     alias sd="cd ${NPB_WORKDIR}"
     if [[ $(uname -n) != gaea63 ]]; then
         ssh -X gaea63
