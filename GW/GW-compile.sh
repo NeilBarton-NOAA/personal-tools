@@ -3,9 +3,7 @@ set -u
 # https://global-workflow.readthedocs.io/en/latest/
 ########################
 # Code to Checkout/Compile
-#REPO=NOAA-EMC && HASH=develop
-REPO=NeilBarton-NOAA && HASH=SFS
-#REPO=EricSinsky-NOAA && HASH=feature/update_reforecast
+REPO=NOAA-EMC && HASH=develop
 GEFS=T && SFS=F && GFS=F
 COMPILE=T
 
