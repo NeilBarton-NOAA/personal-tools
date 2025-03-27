@@ -19,6 +19,7 @@ YAML=${HOMEgfs}/ci/cases/pr/C48_S2SWA_gefs.yaml
 
 export pslot=${HASH}_$(basename ${YAML/.yaml*})
 SFS_BASELINE=F
+
 ########################
 # Check Code
 [[ ! -d ${HOMEgfs} ]] && echo "code is not at ${HOMEgfs}" &&  exit 1
@@ -55,6 +56,17 @@ export YAML_DIR=${HOMEgfs}
 ${HOMEgfs}/workflow/create_experiment.py --yaml "${YAML}" 
 echo "FINISHED: create_experiment.py"
 
+if [[ -d ${RUNDIRS}/${pslot} ]]; then
+    echo "Removing RUNDIR: ${RUNDIRS}/${pslot}"
+    rm -rf ${RUNDIRS}/${pslot} 
+fi
+
+################################################
+# All forecasts in SFS Baseline?
+if [[ ${SFS_BASELINE} == T ]]; then
+    ${PWD}/SFS-add_basline_dates.sh ${PWD}/${pslot}.xml 
+fi
+
 ################################################
 # Soft link items into EXPDIR for easier development
 TOPEXPDIR=${RUNTESTS}/EXPDIR/${pslot}
@@ -69,23 +81,6 @@ ln -sf ${COMROOT}/${PSLOT}/logs LOGS_COMROOT
 ln -sf ${HOMEgfs}/workflow/setup_xml.py . 
 ln -sf ${HOMEgfs}/workflow/rocoto_viewer.py .
 echo "FINISHED: soft-linking to EXPDIR"
-
-################################################
-# All forecasts in SFS Baseline?
-if [[ ${SFS_BASELINE} == T ]]; then
-    f=${TOPEXPDIR}/*xml
-    echo ${f}
-    line=$(grep -n 'cycledef group' ${f} | cut -d: -f1) 
-    sed -i ${line}d $f
-    MONTHS="05 11"
-    for Y in $(seq 1994 2023); do
-        for M in ${MONTHS}; do 
-            text="<cycledef group='"gefs"'>${Y}${M}010000 ${Y}${M}010000 24:00:00</cycledef>"
-            sed -i "${line} i   ${text}" ${f}
-            line=$(( line + 1))
-        done
-    done
-fi
 
 ################################################
 # start rocotorun and add crontab

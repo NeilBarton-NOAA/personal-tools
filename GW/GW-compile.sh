@@ -1,5 +1,6 @@
 #!/bin/sh 
 set -u
+set -x
 # https://global-workflow.readthedocs.io/en/latest/
 ########################
 # Code to Checkout/Compile
@@ -36,6 +37,7 @@ OPTIONS=""
 #[[ ${SFS} == T ]] && OPTIONS="${OPTIONS} sfs"
 #[[ ${GFS} == T ]] && OPTIONS="${OPTIONS} gfs"
 
+# Old Compile Options
 [[ ${GEFS} == T ]] && OPTIONS="-gw -j 8"
 [[ ${SFS} == T ]] && OPTIONS="-w -y -j 8"
 [[ ${GFS} == T ]] && OPTIONS="-w -y -j 8"
