@@ -71,7 +71,7 @@ elif [[ $machine == nfe* ]]; then
 else
     echo "machine unknown in .bashrc: " $machine
 fi
-alias "cylc_check"="cylc scan -t rich && cylc scan --states=stopped,paused && globus task list --limit 1000 --filter-status ACTIVE | grep ACTIVE | wc -l && psu | grep SCRIPT | grep get && uptime"
+alias "cylc_check"="~/.cylc_check.sh"
 export CYLC_WORKDIR=${NPB_WORKDIR}
 
 
