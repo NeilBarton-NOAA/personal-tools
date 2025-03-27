@@ -1,10 +1,13 @@
 #!/bin/sh 
 set -u
+set -x
 # https://global-workflow.readthedocs.io/en/latest/
 ########################
 # Code to Checkout/Compile
 REPO=NOAA-EMC && HASH=develop
-GEFS=T && SFS=F && GFS=F
+REPO=NeilBarton-NOAA && HASH=SFS_baseline_rocotofix
+#REPO=EricSinsky-NOAA && HASH=feature/update_reforecast
+GEFS=F && SFS=T && GFS=F
 COMPILE=T
 
 ########################
@@ -30,9 +33,14 @@ fi
 # build model
 if [[ ${COMPILE} == T ]]; then
 OPTIONS=""
-[[ ${GEFS} == T ]] && OPTIONS="${OPTIONS} gefs"
-[[ ${SFS} == T ]] && OPTIONS="${OPTIONS} sfs"
-[[ ${GFS} == T ]] && OPTIONS="${OPTIONS} gfs"
+#[[ ${GEFS} == T ]] && OPTIONS="${OPTIONS} gefs"
+#[[ ${SFS} == T ]] && OPTIONS="${OPTIONS} sfs"
+#[[ ${GFS} == T ]] && OPTIONS="${OPTIONS} gfs"
+
+# Old Compile Options
+[[ ${GEFS} == T ]] && OPTIONS="-gw -j 8"
+[[ ${SFS} == T ]] && OPTIONS="-w -y -j 8"
+[[ ${GFS} == T ]] && OPTIONS="-w -y -j 8"
 
 cd ${TOPDIR}/${code}/sorc
 cat <<EOF > setup_all_ufs.sh

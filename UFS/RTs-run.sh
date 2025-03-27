@@ -12,6 +12,8 @@ export RUNDIR_ROOT=${NPB_WORKDIR}/RUNS/RTs
 source ${PWD}/MACHINE-config.sh
 # GEFS Case
 case="
+COMPILE | s2swa_32bit_pdlib_sfs  | intel | -DAPP=S2SWA -D32BIT=ON -DHYDRO=ON -DCCPP_SUITES=FV3_GFS_v17_coupled_p8_ugwpv1 -DPDLIB=ON | - noaacloud | fv3 |
+RUN | cpld_control_sfs                                  | - noaacloud                          | baseline |
 COMPILE | s2swa | intel | -DAPP=S2SWA -DCCPP_SUITES=FV3_GFS_v17_coupled_p8_ugwpv1 | | fv3 |
 RUN | cpld_control_gefs                                 | - noaacloud                          | baseline |
 RUN | cpld_restart_gefs                                 | - noaacloud                          |          | cpld_control_gefs

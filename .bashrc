@@ -33,7 +33,7 @@ alias dirs='dirs -v'
 alias psu="ps U $USER"
 alias gitgeturl="git config --get remote.origin.url"
 alias qme="squeue -u $USER --format='%.18i %.50j %.2t %.8M %.10l %.6D'"
-alias qdelme="squeue -u $USER | grep -v JOBID | awk '{print $1}' | xargs scancel"
+alias qdelme="squeue -u nbarton | grep -v JOBID | cut -b 12-18 | xargs scancel"
 ARCHIVE_HOME="/NCEPDEV/emc-marine/*year/Neil.Barton"
 
 if [[ ${machine} == orion* ]] || [[ ${machine} == hercules-* ]]; then
@@ -72,7 +72,7 @@ elif [[ $machine == nfe* ]]; then
 else
     echo "machine unknown in .bashrc: " $machine
 fi
-alias "cylc_check"="cylc scan -t rich && cylc scan --states=stopped,paused && globus task list --limit 1000 --filter-status ACTIVE | grep ACTIVE | wc -l && psu | grep SCRIPT | grep get && uptime"
+alias "cylc_check"="~/.cylc_check.sh"
 export CYLC_WORKDIR=${NPB_WORKDIR}
 
 
