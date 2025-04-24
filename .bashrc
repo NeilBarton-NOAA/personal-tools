@@ -66,9 +66,16 @@ elif [[ ${machine} == *[cd]login* ]]; then
     alias qme="qstat -u $USER"
     alias sd="cd $NPB_WORKDIR"
     alias qdelme="qselect -u ${USER} | xargs qdel"
-elif [[ $machine == nfe* ]]; then
+elif [[ ${machine} == nfe* ]]; then
     export NPB_WORKDIR=/collab1/data/Neil.Barton
     alias sd="cd $NPB_WORKDIR"
+elif [[ ${machine} == mfe* ]]; then
+    if [[ $(uname -n) != mfe01.fairmont.rdhpcs.noaa.gov ]]; then
+        ssh -X mfe01.fairmont.rdhpcs.noaa.gov
+    fi
+    export NPB_WORKDIR=/collab2/data/Neil.Barton
+    alias sd="cd $NPB_WORKDIR"
+    alias qme="ps U $USER"
 else
     echo "machine unknown in .bashrc: " $machine
 fi

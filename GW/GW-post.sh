@@ -1,8 +1,10 @@
 #!/bin/sh
 set -u
 EXP_ID=SFS_CPCICs_C96mx100_S2S
-export TOPCOMROOT=${NPB_WORKDIR}/${EXP_ID}
+#export TOPCOMROOT=${NPB_WORKDIR}/${EXP_ID}
+export TOPCOMROOT=/collab2/data/Yangxing.Zheng/${EXP_ID}
 export ARCHIVE_DIR="/NCEPDEV/emc-marine/2year/${USER}/${EXP_ID}" 
+RUN=gefs
 machine=$(uname -n)
 hsi mkdir -p ${ARCHIVE_DIR}
 
@@ -18,30 +20,48 @@ if [[ ! -d ${TOPCOMROOT} ]]; then
     echo "FATAL: ${TOPCOMROOT} does not exist"
     exit 1
 fi
- 
+
+#if mercury kill any current htars
+#if [[ ${machine} == mfe* ]]; then
+#    ps U ${USER} | grep htar | grep -v color | awk '{print $1}' | xargs kill
+#fi
 ################################################
 ################################################
 ################################################
 for D in $(ls -d ${TOPCOMROOT}/*01/ ); do
     echo ${D}
-    DTG=${D##*gefs.}
+    DTG=${D##*${RUN}.}
     DTG=${DTG:0:8}00
     export PDY=${DTG:0:8}
     export cyc=${DTG:8:10}
     for D in ${DIRS_TO_KEEP}; do
-        echo ${EXP_ID} ${D}
-        export SRC="gefs.${PDY}/${cyc}/*/${D}/*"
+        export SRC="${RUN}.${PDY}/${cyc}/*/${D}/*"
         export DES="${ARCHIVE_DIR}/${PDY}${cyc}_${D////\_}.tar"
-        if [[ ${machine} == mfe* ]]; then
-            hsi mkdir -p $(dirname ${DES})
-            cd ${TOPCOMROOT}
-            htar -cvf ${DES} ${SRC}
+        hsi ls ${DES}.idx 2>/dev/null
+        err=${?} 
+        if (( ${err} > 0 )); then
+            TAR=T
         else
-            [[ -f htar.sh ]] && rm htar.sh
-            name=htar${EXP_ID}${D////\_} 
-            printf "#!/bin/sh\n hsi mkdir -p $(dirname ${DES})\n cd ${TOPCOMROOT}\n htar -cvf ${DES} ${SRC}" >> htar.sh
-            sbatch -J ${name} -n 1 -t 03:00:00 -A niagara --partition=service htar.sh
-            [[ -f htar.sh ]] && rm htar.sh
+            TAR=F
+        fi
+        if [[ ${TAR} == T ]]; then
+            echo '  htar:' ${DES}
+            if [[ ${machine} == mfe* ]]; then
+                N_TASK=$( ps U ${USER} | wc -l )
+                if (( ${N_TASK} > 200 )); then
+                    echo "too many background tasks, will exit"
+                    exit 1
+                fi
+                hsi -q mkdir -p $(dirname ${DES}) >&/dev/null
+                cd ${TOPCOMROOT}
+                nohup htar -cvf ${DES} ${SRC} > ~/htar.out 2>&1 &
+            else
+                [[ -f htar.sh ]] && rm htar.sh
+                name=htar${EXP_ID}${D////\_} 
+                printf "#!/bin/sh\n hsi mkdir -p $(dirname ${DES})\n cd ${TOPCOMROOT}\n htar -cvf ${DES} ${SRC}" >> htar.sh
+                sbatch -J ${name} -n 1 -t 03:00:00 -A niagara --partition=service htar.sh
+                [[ -f htar.sh ]] && rm htar.sh
+            fi
         fi
     done
 done #DTG/DIRS
