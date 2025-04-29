@@ -1,25 +1,25 @@
 #!/bin/sh
 set -u
-EXP_ID=SFS_CPCICs_C96mx100_S2S
+EXP_ID=SFS_C192mx025_S2S
 #export TOPCOMROOT=${NPB_WORKDIR}/${EXP_ID}
-export TOPCOMROOT=/collab2/data/Yangxing.Zheng/${EXP_ID}
+#export TOPCOMROOT=/collab2/data/Yangxing.Zheng/${EXP_ID}
+export TOPCOMROOT=/collab1/data/Philip.Pegion/SFS/bcash/*.newice
 export ARCHIVE_DIR="/NCEPDEV/emc-marine/2year/${USER}/${EXP_ID}" 
 RUN=gefs
 machine=$(uname -n)
 hsi mkdir -p ${ARCHIVE_DIR}
-
+#conf
 export DIRS_TO_KEEP="
-conf
 model/ocean/history 
 model/ice/history 
 products/atmos/grib2/1p00
 products/atmos/grib2/0p25
 products/atmos/grib2/0p50
 "
-if [[ ! -d ${TOPCOMROOT} ]]; then
-    echo "FATAL: ${TOPCOMROOT} does not exist"
-    exit 1
-fi
+#if [[ ! -d ${TOPCOMROOT} ]]; then
+#    echo "FATAL: ${TOPCOMROOT} does not exist"
+#    exit 1
+#fi
 
 #if mercury kill any current htars
 #if [[ ${machine} == mfe* ]]; then
@@ -28,10 +28,12 @@ fi
 ################################################
 ################################################
 ################################################
-for D in $(ls -d ${TOPCOMROOT}/*01/ ); do
-    echo ${D}
-    DTG=${D##*${RUN}.}
+for D in $(ls -d ${TOPCOMROOT}/ ); do
+    DDD=${D}
+    DD=$(ls -d ${D}/gefs.*/)
+    DTG=${DD##*${RUN}.}
     DTG=${DTG:0:8}00
+    echo ${DD}
     export PDY=${DTG:0:8}
     export cyc=${DTG:8:10}
     for D in ${DIRS_TO_KEEP}; do
@@ -58,7 +60,7 @@ for D in $(ls -d ${TOPCOMROOT}/*01/ ); do
             else
                 [[ -f htar.sh ]] && rm htar.sh
                 name=htar${EXP_ID}${D////\_} 
-                printf "#!/bin/sh\n hsi mkdir -p $(dirname ${DES})\n cd ${TOPCOMROOT}\n htar -cvf ${DES} ${SRC}" >> htar.sh
+                printf "#!/bin/sh\n hsi mkdir -p $(dirname ${DES})\n cd ${DDD}\n htar -cvf ${DES} ${SRC}" >> htar.sh
                 sbatch -J ${name} -n 1 -t 03:00:00 -A niagara --partition=service htar.sh
                 [[ -f htar.sh ]] && rm htar.sh
             fi
