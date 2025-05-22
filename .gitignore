@@ -42,7 +42,8 @@
 ANALYSIS/CICE/interactive_node.sh
 cylc-run/
 TOOLS/Miniconda3-latest-Linux-x86_64.sh
+TOOLS/miniconda3
 TOOLS/modulefiles/rocoto/
 GW/EXPDIR
 UFS/FIGURES/
-
+UFS/RUN_CASE

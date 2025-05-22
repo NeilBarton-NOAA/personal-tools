@@ -1,0 +1,3 @@
+#%Module1.0###############
+module-whatis "miniconda3 personal distrubution"
+prepend-path PATH /ncrc/home2/Neil.Barton/TOOLS/miniconda3/bin
