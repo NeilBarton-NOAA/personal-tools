@@ -33,7 +33,7 @@ alias dirs='dirs -v'
 alias psu="ps U $USER"
 alias gitgeturl="git config --get remote.origin.url"
 alias qme="squeue -u $USER --format='%.18i %.50j %.2t %.8M %.10l %.6D'"
-alias qdelme="squeue -u nbarton | grep -v JOBID | cut -b 12-18 | xargs scancel"
+alias qdelme="squeue -u $USER | grep -v JOBID | awk '{print \$1}' | xargs scancel"
 ARCHIVE_HOME="/NCEPDEV/emc-marine/*year/Neil.Barton"
 
 if [[ ${machine} == orion* ]] || [[ ${machine} == hercules-* ]]; then
@@ -41,12 +41,10 @@ if [[ ${machine} == orion* ]] || [[ ${machine} == hercules-* ]]; then
     alias sd2="cd /work/noaa/stmp/nbarton"
     export NPB_WORKDIR=/work/noaa/marine/nbarton
     PATH=/work/noaa/marine/nbarton/TOOLS/hercules_miniconda3/bin:${PATH}
-elif [[ ${machine} == gaea** ]]; then
+elif [[ ${machine} == gaea** ]] || [[ ${machine} == dtn* ]]; then
     export NPB_WORKDIR=/gpfs/f6/sfs-emc/scratch/Neil.Barton
-    PATH=~/TOOLS/miniconda3/bin:${PATH}
-    #/gpfs/f6/scratch/Neil.Barton/
     alias sd="cd ${NPB_WORKDIR}"
-    if [[ $(uname -n) != gaea63 ]]; then
+    if [[ $(uname -n) != gaea63 ]] && [[ ${machine} != dtn* ]]; then
         ssh -X gaea63
     fi    
 elif [[ ${machine} == h* ]]; then
@@ -55,7 +53,9 @@ elif [[ ${machine} == h* ]]; then
     if [[ $(uname -n) != hfe07 ]] && [[ $(uname -n) != h*[cm]* ]]; then
         ssh -X hfe07
     fi
-    PATH=/scratch2/NCEPDEV/stmp3/Neil.Barton/TOOLS/miniconda3/bin:${PATH}
+elif [[ $machine == nfe* ]]; then
+    export NPB_WORKDIR=/collab1/data/Neil.Barton
+    alias sd="cd $NPB_WORKDIR"
 elif [[ ${machine} == *[cd]login* ]]; then
     # list of working directories
     export ptmp=/lfs/h2/emc/ptmp/neil.barton

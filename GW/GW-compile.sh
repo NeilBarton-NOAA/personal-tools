@@ -1,12 +1,11 @@
 #!/bin/sh 
 set -u
-set -x
 # https://global-workflow.readthedocs.io/en/latest/
 ########################
 # Code to Checkout/Compile
-REPO=NOAA-EMC && HASH=develop
-REPO=NeilBarton-NOAA && HASH=SFS_baseline_rocotofix
-#REPO=EricSinsky-NOAA && HASH=feature/update_reforecast
+#REPO=NOAA-EMC && HASH=develop
+REPO=NeilBarton-NOAA && HASH=sfs_c6
+#REPO=NOAA-EMC && HASH=feature/gefs_reforecast_c6
 GEFS=F && SFS=T && GFS=F
 COMPILE=T
 
@@ -19,29 +18,29 @@ fi
 TOPDIR=${NPB_WORKDIR}/CODE
 mkdir -p ${TOPDIR} && cd ${TOPDIR}
 if [[ ! -d ${code} ]]; then
-    git clone --recursive https://github.com/${REPO}/global-workflow.git ${code}
+    #git clone --recursive https://github.com/${REPO}/global-workflow.git ${code} 
+    #cd ${code}
+    #echo "CODE Directory ${PWD}"
+    #git checkout --recurse-submodules ${HASH} 
+    git clone --branch ${HASH} --recurse-submodules https://github.com/${REPO}/global-workflow.git ${code} 
     cd ${code}
-    git checkout ${HASH}
-    git checkout --recurse-submodules ${HASH}
-#else
-#    cd ${code}
-#    git submodule update --recursive --remote
-#    git pull
+    git submodule update --init --recursive
 fi
 
 ########################
 # build model
 if [[ ${COMPILE} == T ]]; then
 OPTIONS=""
-#[[ ${GEFS} == T ]] && OPTIONS="${OPTIONS} gefs"
-#[[ ${SFS} == T ]] && OPTIONS="${OPTIONS} sfs"
-#[[ ${GFS} == T ]] && OPTIONS="${OPTIONS} gfs"
+[[ ${GEFS} == T ]] && OPTIONS="${OPTIONS} gefs"
+[[ ${SFS} == T ]] && OPTIONS="${OPTIONS} sfs"
+[[ ${GFS} == T ]] && OPTIONS="${OPTIONS} gfs"
 
 # Old Compile Options
-[[ ${GEFS} == T ]] && OPTIONS="-gw -j 8"
-[[ ${SFS} == T ]] && OPTIONS="-w -y -j 8"
-[[ ${GFS} == T ]] && OPTIONS="-w -y -j 8"
+#[[ ${GFS} == T ]] && OPTIONS="-gw -y -j 8"
+#[[ ${GEFS} == T ]] && OPTIONS="-w -j 8"
+#[[ ${SFS} == T ]] && OPTIONS="-w -y -j 8"
 
+echo "COMPILE OPTIONS: ${OPTIONS}"
 cd ${TOPDIR}/${code}/sorc
 cat <<EOF > setup_all_ufs.sh
 #!/bin/sh

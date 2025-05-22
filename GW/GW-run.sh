@@ -6,26 +6,26 @@ set -u
 # https://global-workflow.readthedocs.io/en/latest/
 ####################################
 # Code
-REPO=NOAA-EMC && HASH=develop
-#REPO=NeilBarton-NOAA && HASH=SFS 
+#REPO=NOAA-EMC && HASH=develop
+REPO=NeilBarton-NOAA && HASH=sfs_c6
 HOMEgfs=${1:-${NPB_WORKDIR}/CODE/gw_${HASH////\_}_${REPO}}
-#YAML=${2:-${HOMEgfs}/ci/cases/sfs/C96mx100_S2S.yaml}
+YAML=${2:-${HOMEgfs}/workflow/GEFS_16d.yaml}
+SFS_BASELINE=F
 
 ####################################
 # YAMLS for CI testing
-YAML=${HOMEgfs}/ci/cases/pr/C48_S2SWA_gefs.yaml
-#YAML=${HOMEgfs}/ci/cases/pr/C48_S2SW.yaml
-#YAML=${HOMEgfs}/ci/cases/pr/C96_atm3DVar.yaml
-
+YAML=${HOMEgfs}/dev/ci/cases/pr/C96mx100_S2S.yaml
+#YAML=${HOMEgfs}/dev/ci/cases/pr/C48_S2SWA_gefs.yaml
+#YAML=${HOMEgfs}/dev/ci/cases/pr/C48_S2SW.yaml
+#YAML=${HOMEgfs}/dev/ci/cases/pr/C96_atm3DVar.yaml
 export pslot=${HASH}_$(basename ${YAML/.yaml*})
-SFS_BASELINE=F
 
 ########################
 # Check Code
-[[ ! -d ${HOMEgfs} ]] && echo "code is not at ${HOMEgfs}" &&  exit 1
-[[ ! -f ${YAML} ]] && echo "yaml file not at ${YAML}" &&  exit 1
 echo "HOMEgfs: ${HOMEgfs}"
 echo "YAML: ${YAML}"
+[[ ! -d ${HOMEgfs} ]] && echo "code is not at ${HOMEgfs}" &&  exit 1
+[[ ! -f ${YAML} ]] && echo "yaml file not at ${YAML}" &&  exit 1
 
 ########################
 # Machine Specific and Personallized options
@@ -37,23 +37,22 @@ ACCOUNT=marine-cpu
 [[ ${machine} == *[cd]login* ]] && m=wcoss2 && ACCOUNT=GFS-DEV 
 [[ ${machine} == *Orion* ]] && m=orion && RUNDIRS=/work/noaa/stmp/nbarton/ORION/RUNDIRS
 [[ ${machine} == hercules* ]] && m=hercules && RUNDIRS=/work/noaa/stmp/nbarton/HERCULES/RUNDIRS
-[[ ${machine} == gaea* ]] && m=gaeac6 && RUNDIRS=/gpfs/f6/scratch/Neil.Barton/sfs-emc/RUNDIRS && ACCOUNT=sfs-cpu
-#RUNDIRS=/gpfs/f6/scratch/Neil.Barton/RUNDIRS
+[[ ${machine} == gaea* ]] && m=gaeac6 && RUNDIRS=/gpfs/f6/scratch/Neil.Barton/sfs-emc/RUNDIRS && ACCOUNT=ira-da
 
 if [[ ${machine} == gaea* ]] && [[ ${ACCOUNT} == sfs-cpu ]]; then
-    edit_f=${HOMEgfs}/workflow/hosts/gaeac6.yaml
+    edit_f=${HOMEgfs}/dev/workflow/hosts/gaeac6.yaml
     sed -i 's/normal/windfall/g' ${edit_f}
 fi
 
 ############
 # set up run
 CD=$(dirname "$0")
-source ${HOMEgfs}/ci/platforms/config.${m/.*}
-source ${HOMEgfs}/workflow/gw_setup.sh
+source ${HOMEgfs}/dev/ci/platforms/config.${m/.*}
+source ${HOMEgfs}/dev/ush/gw_setup.sh
 export HPC_ACCOUNT=${ACCOUNT}
 export YAML_DIR=${HOMEgfs}
 
-${HOMEgfs}/workflow/create_experiment.py --yaml "${YAML}" 
+${HOMEgfs}/dev/workflow/create_experiment.py --yaml "${YAML}" 
 echo "FINISHED: create_experiment.py"
 
 if [[ -d ${RUNDIRS}/${pslot} ]]; then
@@ -74,23 +73,27 @@ set +u
 source ${TOPEXPDIR}/config.base
 set -u
 cd ${TOPEXPDIR}
-ln -sf ${RUNDIRS}/${PSLOT} RUNDIRS
+
+#ln -sf ${RUNDIRS}/${PSLOT} RUNDIRS
+
 ln -sf ${HOMEgfs} GW-CODE
-ln -sf ${HOMEgfs}/parm/config ORIG_CONFIGS
+ln -sf ${HOMEgfs}/dev/workflow/setup_xml.py . 
+ln -sf ${HOMEgfs}/dev/workflow/rocoto_viewer.py .
+ln -sf ${HOMEgfs}/dev/parm/config ORIG_CONFIGS
 ln -sf ${COMROOT}/${PSLOT}/logs LOGS_COMROOT
-ln -sf ${HOMEgfs}/workflow/setup_xml.py . 
-ln -sf ${HOMEgfs}/workflow/rocoto_viewer.py .
 echo "FINISHED: soft-linking to EXPDIR"
 
 ################################################
 # start rocotorun and add crontab
 xml_file=${PWD}/${pslot}.xml && db_file=${PWD}/${pslot}.db && cron_file=${PWD}/${pslot}.crontab
-if [[ ${machine} == gaea* ]]; then
+if [[ ${machine} == gaea* ]] || [[ ${machine} == GAEA* ]]; then
     scrontab -l | cat - ${cron_file} | scrontab -
 else
     rocotorun -d ${db_file} -w ${xml_file}
     crontab -l | cat - ${cron_file} | crontab -
 fi
 echo "CRONTAB INFO:"
+echo "machine=${machine}"
+echo "cron_file=${cron_file}"
 echo "db=${db_file}"
 echo "xml=${xml_file}"
