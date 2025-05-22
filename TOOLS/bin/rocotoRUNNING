@@ -2,8 +2,18 @@
 set -u
 
 #declare -p dbs xmls
-dbs=( $(crontab -l | grep rocotorun | awk '{print $8}') )
-xmls=( $(crontab -l | grep rocotorun | awk '{print $10}') )
+if [[ ${machine} == gaea* ]]; then
+    scrons=$(scrontab -l | grep scron | awk '{print $6}') 
+    dbs=()
+    xmls=()
+    for scron in ${scrons}; do
+        dbs+=( ${scron%%scron.sh*}db )
+        xmls+=( ${scron%%scron.sh*}xml )
+    done
+else
+    dbs=( $(crontab -l | grep rocotorun | awk '{print $8}') )
+    xmls=( $(crontab -l | grep rocotorun | awk '{print $10}') )
+fi
 N=$(( ${#dbs[@]} - 1 ))
 
 for i in $(seq 0 $N); do
