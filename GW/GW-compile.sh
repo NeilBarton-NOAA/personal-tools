@@ -4,7 +4,7 @@ set -u
 ########################
 # Code to Checkout/Compile
 #REPO=NOAA-EMC && HASH=develop
-REPO=NeilBarton-NOAA && HASH=sfs_c6
+REPO=NeilBarton-NOAA && HASH=sfs_ICS
 #REPO=NOAA-EMC && HASH=feature/gefs_reforecast_c6
 GEFS=F && SFS=T && GFS=F
 COMPILE=T
