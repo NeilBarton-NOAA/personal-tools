@@ -1,6 +1,7 @@
 channels:
-  - conda-forge
-#  - defaults
+  - defaults
+#  - conda-forge
 #channel_priority: strict
 #safety_checks: disabled
 #solver: classic
+#solver: libmamba
