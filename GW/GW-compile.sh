@@ -4,7 +4,7 @@ set -x
 # https://global-workflow.readthedocs.io/en/latest/
 ########################
 # Code to Checkout/Compile
-REPO=NOAA-EMC && HASH=develop
+#REPO=NOAA-EMC && HASH=develop
 REPO=NeilBarton-NOAA && HASH=SFS_baseline_rocotofix
 #REPO=EricSinsky-NOAA && HASH=feature/update_reforecast
 GEFS=F && SFS=T && GFS=F
@@ -21,7 +21,7 @@ mkdir -p ${TOPDIR} && cd ${TOPDIR}
 if [[ ! -d ${code} ]]; then
     git clone --recursive https://github.com/${REPO}/global-workflow.git ${code}
     cd ${code}
-    git checkout ${HASH}
+    #git checkout ${HASH}
     git checkout --recurse-submodules ${HASH}
 #else
 #    cd ${code}
