@@ -1,6 +1,6 @@
 #!/bin/sh
 # WGET Data
-DIR=/work/noaa/marine/nbarton/DIAG/OBS/ice_concentration/noaa_cdr
+DIR=${NPB_WORKDIR}/DIAG/OBS/ice_concentration/noaa_cdr
 poles='north south'
 for p in ${poles}; do
     mkdir -p ${DIR}/${p}

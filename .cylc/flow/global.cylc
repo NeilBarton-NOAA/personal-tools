@@ -7,3 +7,12 @@
         job runner = slurm
         hosts = localhost
         install target = localhost
+        communication method = poll
+        execution polling intervals = PT1S
+        submission polling intervals = PT1S
+        #execution polling intervals = 20*PT30S, PT2M
+        #polling interval = PT10S
+        #job submission timeout = 60
+        #hosts = gaeac6.ncrc.gov
+        #install target = ~/cylc-run
+        #work directory = ~/cylc-run

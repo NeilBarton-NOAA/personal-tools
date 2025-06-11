@@ -33,28 +33,25 @@ alias dirs='dirs -v'
 alias psu="ps U $USER"
 alias gitgeturl="git config --get remote.origin.url"
 alias qme="squeue -u $USER --format='%.18i %.50j %.2t %.8M %.10l %.6D'"
-alias qdelme="squeue -u nbarton | grep -v JOBID | cut -b 12-18 | xargs scancel"
+alias qdelme="squeue -u $USER | grep -v JOBID | awk '{print \$1}' | xargs scancel"
 ARCHIVE_HOME="/NCEPDEV/emc-marine/*year/Neil.Barton"
 
 if [[ ${machine} == orion* ]] || [[ ${machine} == hercules-* ]]; then
-    alias sd="cd /work/noaa/marine/nbarton"
-    alias sd2="cd /work/noaa/stmp/nbarton"
     export NPB_WORKDIR=/work/noaa/marine/nbarton
     PATH=/work/noaa/marine/nbarton/TOOLS/hercules_miniconda3/bin:${PATH}
-elif [[ ${machine} == gaea** ]]; then
+elif [[ ${machine} == gaea** ]] || [[ ${machine} == dtn* ]]; then
     export NPB_WORKDIR=/gpfs/f6/sfs-emc/scratch/Neil.Barton
-    #/gpfs/f6/scratch/Neil.Barton/
-    alias sd="cd ${NPB_WORKDIR}"
-    if [[ $(uname -n) != gaea63 ]]; then
+    if [[ $(uname -n) != gaea63 ]] && [[ ${machine} != dtn* ]]; then
         ssh -X gaea63
     fi    
 elif [[ ${machine} == h* ]]; then
     export NPB_WORKDIR=/scratch2/NCEPDEV/stmp3/Neil.Barton
-    alias sd="cd $NPB_WORKDIR"
+    export PROJ_LIB=/scratch2/NCEPDEV/stmp3/Neil.Barton/TOOLS/miniconda3/share/proj
     if [[ $(uname -n) != hfe07 ]] && [[ $(uname -n) != h*[cm]* ]]; then
         ssh -X hfe07
     fi
-    PATH=/scratch2/NCEPDEV/stmp3/Neil.Barton/TOOLS/miniconda3/bin:${PATH}
+elif [[ $machine == nfe* ]]; then
+    export NPB_WORKDIR=/collab1/data/Neil.Barton
 elif [[ ${machine} == *[cd]login* ]]; then
     # list of working directories
     export ptmp=/lfs/h2/emc/ptmp/neil.barton
@@ -63,14 +60,19 @@ elif [[ ${machine} == *[cd]login* ]]; then
     export gefstemp=/lfs/h2/emc/gefstemp/neil.barton
     export NPB_WORKDIR=${ens_noscrub}
     alias qme="qstat -u $USER"
-    alias sd="cd $NPB_WORKDIR"
     alias qdelme="qselect -u ${USER} | xargs qdel"
-elif [[ $machine == nfe* ]]; then
+elif [[ ${machine} == nfe* ]]; then
     export NPB_WORKDIR=/collab1/data/Neil.Barton
-    alias sd="cd $NPB_WORKDIR"
+elif [[ ${machine} == mfe* ]]; then
+    if [[ $(uname -n) != mfe01.fairmont.rdhpcs.noaa.gov ]]; then
+        ssh -X mfe01.fairmont.rdhpcs.noaa.gov
+    fi
+    export NPB_WORKDIR=/collab2/data/Neil.Barton
+    alias qme="ps U $USER"
 else
     echo "machine unknown in .bashrc: " $machine
 fi
+alias sd="cd $NPB_WORKDIR"
 alias "cylc_check"="~/.cylc_check.sh"
 export CYLC_WORKDIR=${NPB_WORKDIR}
 

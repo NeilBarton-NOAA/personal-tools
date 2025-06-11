@@ -1,12 +1,15 @@
 #!/bin/sh -l
 #SBATCH -J NPBjob_card
-#SBATCH --time=04:00:00
+#SBATCH --time=06:00:00
 #SBATCH -o %x.o%j
 #SBATCH --ntasks=1
-#SBATCH --exclusive #may mean use all memory
-#SBATCH -A marine-cpu
-# for HPSS
-##SBATCH --partition=service
+#SBATCH --account=sfs-cpu
+#SBATCH --qos=windfall
+#SBATCH --clusters=c6
+#SBATCH --partition=dtn_f6
+#SBATCH --constraint=f6
 
-cd /home/Neil.Barton/UFS
-./CREATE-grid_spec_file.sh
+hsi ls -l $ARCHIVE_HOME
+/home/Neil.Barton/ANALYSIS/tar_ics.sh
+#cd /home/Neil.Barton/UFS
+#./CREATE-grid_spec_file.sh

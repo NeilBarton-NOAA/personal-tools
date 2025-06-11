@@ -1,9 +1,0 @@
-defaults:
-  !INC {{ HOMEgfs }}/parm/config/gefs/yaml/defaults.yaml
-base:
-  FHMAX_GFS: 24
-  FCST_BREAKPOINTS: ""
-  KEEPDATA: "YES"
-  REPLAY_ICS: "YES"
-  ACCOUNT: {{ 'HPC_ACCOUNT' | getenv }} 
-
