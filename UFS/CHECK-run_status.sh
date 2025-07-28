@@ -20,10 +20,10 @@ echo "  -c  : cleans/deletes large files rom the directories (default False)"
 echo ""
 echo "No options lists the directories that did not finish the forecast run"
 }
-while getopts "l:dch" flag; do
+while getopts "d:rch" flag; do
     case "${flag}" in
-        l)  TOPDIR=${OPTARG};;
-        d)  delete=T;;
+        d)  TOPDIR=${OPTARG};;
+        r)  delete=T;;
         c)  clean=T;;
         h)  show_help; exit 0;;
         *)  show_help; exit 0;;

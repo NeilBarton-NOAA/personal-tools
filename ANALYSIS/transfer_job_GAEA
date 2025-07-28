@@ -8,28 +8,5 @@
 #SBATCH --partition=dtn_f5_f6
 #SBATCH --constraint=f6
 
-DIRS="
-/NCEPDEV/emc-marine/2year/Neil.Barton/SFS_C192mx025_S2S
-/NCEPDEV/emc-marine/2year/Neil.Barton/SFS_C96mx100_S2S
-"
 
-files="
-2014110100_model_ice_history.tar
-2014110100_model_ocean_history.tar
-2014110100_products_atmos_grib2_0p25.tar
-2014110100_products_atmos_grib2_0p50.tar
-2014110100_products_atmos_grib2_1p00.tar
-"
-for d in ${DIRS}; do
-    DDD=${NPB_WORKDIR}/$(basename ${d})
-    mkdir -p ${DDD}
-    cd ${DDD}
-    for f in ${files}; do
-        htar -xvf ${d}/${f}
-    done
-done
-
-#hsi ls -l $ARCHIVE_HOME
-#cd /gpfs/f6/sfs-emc/scratch/Neil.Barton #/ICs/HR4/C384mx025
-#htar -xvf /5year/NCEPDEV/emc-global/emc.glopara/WCOSS2/GFSv17/retrotestgfs03/2023042200/gdasice.tar
-#htar -xvf /NCEPDEV/emc-marine/2year/Neil.Barton/ICS/HR4/C384mx025/2018012300.tar
+/gpfs/f6/sfs-emc/scratch/Neil.Barton/RUNS/UFS/htar.sh

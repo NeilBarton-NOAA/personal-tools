@@ -18,12 +18,12 @@ DEBUG=F
 #YAML=${HOMEgfs}/dev/ci/cases/sfs/C96mx100_S2S_REPLAY_ICS.yaml
 #YAML=${HOMEgfs}/dev/ci/cases/sfs/C192mx025_S2S_REPLAY_ICS.yaml
 #YAML=${HOMEgfs}/dev/ci/cases/sfs/C192mx025_S2SW_REPLAY_ICS.yaml
-#YAML=${HOMEgfs}/dev/ci/cases/sfs/C96mx100_S2S_CPC_ICS.yaml
-YAML=${HOMEgfs}/dev/ci/cases/sfs/C192mx025_S2S_CPC_ICS.yaml
+YAML=${HOMEgfs}/dev/ci/cases/sfs/C96mx100_S2S_CPC_ICS.yaml
+#YAML=${HOMEgfs}/dev/ci/cases/sfs/C192mx025_S2S_CPC_ICS.yaml
 #YAML=${HOMEgfs}/dev/ci/cases/pr/C48_S2SWA_gefs.yaml
 #YAML=${HOMEgfs}/dev/ci/cases/pr/C48_S2SW.yaml
 #YAML=${HOMEgfs}/dev/ci/cases/pr/C96_atm3DVar.yaml
-export pslot=${HASH}_$(basename ${YAML/.yaml*})_NEWLAYOUT
+export pslot=${HASH}_$(basename ${YAML/.yaml*})
 
 ########################
 # Check Code
