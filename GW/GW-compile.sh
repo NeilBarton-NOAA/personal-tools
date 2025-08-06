@@ -3,53 +3,30 @@ set -u
 # https://global-workflow.readthedocs.io/en/latest/
 ########################
 # Code to Checkout/Compile
-#REPO=NOAA-EMC && HASH=develop
-REPO=NeilBarton-NOAA && HASH=sfs_ICS
-#REPO=NOAA-EMC && HASH=feature/gefs_reforecast_c6
-GEFS=F && SFS=T && GFS=F
+REPO=NOAA-EMC && HASH=develop
+#REPO=NeilBarton-NOAA && HASH=sfs_ICS
+#REPO=XiaqiongZhou-NOAA && HASH=SFSbeta0.1
+SFS=T && GEFS=F && GFS=F
 COMPILE=T
 
 ########################
 # check out code
 code=gw_${HASH////\_}_${REPO}
-if [[ ${GFS} == T ]]; then
-    code=${code}_GFS
-fi
 TOPDIR=${NPB_WORKDIR}/CODE
 mkdir -p ${TOPDIR} && cd ${TOPDIR}
 if [[ ! -d ${code} ]]; then
-    #git clone --recursive https://github.com/${REPO}/global-workflow.git ${code} 
-    #cd ${code}
-    #echo "CODE Directory ${PWD}"
-    #git checkout --recurse-submodules ${HASH} 
-    git clone --branch ${HASH} --recurse-submodules https://github.com/${REPO}/global-workflow.git ${code} 
-    cd ${code}
-    git submodule update --init --recursive
+    git clone --recursive -b ${HASH} https://github.com/${REPO}/global-workflow.git ${code}
 fi
 
 ########################
 # build model
 if [[ ${COMPILE} == T ]]; then
 OPTIONS=""
-[[ ${GEFS} == T ]] && OPTIONS="${OPTIONS} gefs"
-[[ ${SFS} == T ]] && OPTIONS="${OPTIONS} sfs"
-[[ ${GFS} == T ]] && OPTIONS="${OPTIONS} gfs"
-
-# Old Compile Options
-#[[ ${GFS} == T ]] && OPTIONS="-gw -y -j 8"
-#[[ ${GEFS} == T ]] && OPTIONS="-w -j 8"
-#[[ ${SFS} == T ]] && OPTIONS="-w -y -j 8"
-
+[[ ${SFS} == T ]] && OPTIONS="${OPTIONS}sfs "
+[[ ${GEFS} == T ]] && OPTIONS="${OPTIONS}gefs "
+[[ ${GFS} == T ]] && OPTIONS="${OPTIONS}gfs "
 echo "COMPILE OPTIONS: ${OPTIONS}"
 cd ${TOPDIR}/${code}/sorc
-cat <<EOF > setup_all_ufs.sh
-#!/bin/sh
-sh build_all.sh ${OPTIONS}
-sh link_workflow.sh  
-EOF
-chmod 755 setup_all_ufs.sh
-echo "compiling in ${TOPDIR}/${code}/sorc"
-log_file=gw_${HASH////\_}_${REPO}_compile.log
-nohup ./setup_all_ufs.sh > ${log_file} 2>&1 &
-tail -f ${log_file}
+sh link_workflow.sh
+sh build_compute.sh -A ${COMPUTE_ACCOUNT} ${OPTIONS} >& ~/GW/GW_${code}_build.log &
 fi

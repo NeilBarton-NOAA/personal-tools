@@ -20,11 +20,8 @@ grep ${RT_COMPILE} ${CODE_DIR}/tests/rt.conf | grep COMPILE | head -n 1 >& ${CAS
 grep ${RT_RUN} ${CODE_DIR}/tests/rt.conf     | grep RUN     | head -n 1 >> ${CASE}
 
 ########################
-# Get ACCOUNT
-source ${CODE_DIR}/tests/detect_machine.sh
-ACCNR=marine-cpu
-[[ ${MACHINE_ID} == *[cd]login* ]] && ACCNR=GFS-DEV
-[[ ${MACHINE_ID} == gaea* ]] && ACCNR=drsa-precip3
+# Maybe need to load modules
+#source ${CODE_DIR}/tests/detect_machine.sh
 #module_file=ufs_${MACHINE_ID}.${RT_COMPILER}
 #cd ${CODE_DIR} && module purge && module use modulefiles && module load ${module_file}
 
@@ -32,5 +29,5 @@ ACCNR=marine-cpu
 # Run Case
 SUFFIX=$( basename ${CASE} )_$( date +%Y%m%d%h_%M-%S )
 echo "RUNS at ${RUNDIR_ROOT}"
-nohup ${CODE_DIR}/tests/rt.sh -a ${ACCNR} -ekl ${CASE} >rt_output_${SUFFIX}.txt 2>&1 &
+nohup ${CODE_DIR}/tests/rt.sh -a ${COMPUTE_ACCOUNT} -ekl ${CASE} >rt_output_${SUFFIX}.txt 2>&1 &
 #rm ${CASE}

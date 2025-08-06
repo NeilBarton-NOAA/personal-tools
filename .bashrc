@@ -15,18 +15,12 @@ export PS1="\e[0;31m\u\e[0;33m[\W]\e[0;30m:\e[m "
 PROMPT_COMMAND='echo -ne "\033]0;${HOSTNAME}\007"'
 bind '"\e[A": history-search-backward' 2>/dev/null
 bind '"\e[B": history-search-forward' 2>/dev/null
-
 ##  Set the number of commands to be maintained in history within a session.
 export HISTSIZE=1000
-##  Set the number of commands to be maintained in history across logins.
-#export HISTFILESIZE=0
-
 # env vars expand to directories
 shopt -s direxpand
-
 # modules
 source ~/.profile
-
 # aliases
 alias ls='ls -B --group-directories-first --color=auto'
 alias dirs='dirs -v'
@@ -34,26 +28,34 @@ alias psu="ps U $USER"
 alias gitgeturl="git config --get remote.origin.url"
 alias qme="squeue -u $USER --format='%.18i %.50j %.2t %.8M %.10l %.6D'"
 alias qdelme="squeue -u $USER | grep -v JOBID | awk '{print \$1}' | xargs scancel"
-ARCHIVE_HOME="/NCEPDEV/emc-marine/*year/Neil.Barton"
-
+alias "cylc_check"="~/.cylc_check.sh"
+export ARCHIVE_HOME="/NCEPDEV/emc-marine/*year/Neil.Barton"
+########################
+# machine specific
+# orion and hercules
 if [[ ${machine} == orion* ]] || [[ ${machine} == hercules-* ]]; then
+    export COMPUTE_ACCOUNT=marine-cpu
     export NPB_WORKDIR=/work/noaa/marine/nbarton
     PATH=/work/noaa/marine/nbarton/TOOLS/hercules_miniconda3/bin:${PATH}
+# gaeac6
 elif [[ ${machine} == gaea** ]] || [[ ${machine} == dtn* ]]; then
+    export COMPUTE_ACCOUNT=ira-sti
     export NPB_WORKDIR=/gpfs/f6/sfs-emc/scratch/Neil.Barton
     if [[ $(uname -n) != gaea63 ]] && [[ ${machine} != dtn* ]]; then
         ssh -X gaea63
-    fi    
+    fi
+# hera
 elif [[ ${machine} == h* ]]; then
+    export COMPUTE_ACCOUNT=marine-cpu
     export NPB_WORKDIR=/scratch2/NCEPDEV/stmp3/Neil.Barton
     export PROJ_LIB=/scratch2/NCEPDEV/stmp3/Neil.Barton/TOOLS/miniconda3/share/proj
     if [[ $(uname -n) != hfe07 ]] && [[ $(uname -n) != h*[cm]* ]]; then
         ssh -X hfe07
     fi
-elif [[ $machine == nfe* ]]; then
-    export NPB_WORKDIR=/collab1/data/Neil.Barton
+# WCOSS2
 elif [[ ${machine} == *[cd]login* ]]; then
     # list of working directories
+    export COMPUTE_ACCOUNT=GFS-DEV
     export ptmp=/lfs/h2/emc/ptmp/neil.barton
     export couple_noscrub=/lfs/h2/emc/couple/noscrub/neil.barton
     export ens_noscrub=/lfs/h2/emc/ens/noscrub/neil.barton
@@ -61,8 +63,7 @@ elif [[ ${machine} == *[cd]login* ]]; then
     export NPB_WORKDIR=${ens_noscrub}
     alias qme="qstat -u $USER"
     alias qdelme="qselect -u ${USER} | xargs qdel"
-elif [[ ${machine} == nfe* ]]; then
-    export NPB_WORKDIR=/collab1/data/Neil.Barton
+# mercury
 elif [[ ${machine} == mfe* ]]; then
     if [[ $(uname -n) != mfe01.fairmont.rdhpcs.noaa.gov ]]; then
         ssh -X mfe01.fairmont.rdhpcs.noaa.gov
@@ -73,7 +74,6 @@ else
     echo "machine unknown in .bashrc: " $machine
 fi
 alias sd="cd $NPB_WORKDIR"
-alias "cylc_check"="~/.cylc_check.sh"
 export CYLC_WORKDIR=${NPB_WORKDIR}
 
 
