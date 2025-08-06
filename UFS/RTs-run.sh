@@ -3,48 +3,34 @@ set -u
 ################################################################################################
 # https://github.com/ufs-community/ufs-weather-model/wiki/Running-regression-test-using-rt.sh
 ################################################################################################
-
-source ${PWD}/MACHINE-config.sh
-#REPO=ufs-community && HASH=develop
-REPO=NickSzapiro-NOAA && HASH=RT_bmark_gefs
-CODE_DIR=${NPB_WORKDIR}/CODE/ufs_${HASH////\_}_${REPO}
+RUN=SFS # GFS, GEFS
+CODE_DIR=${PWD}/RUN-UFS/UFS 
+#REPO=ufs-community && HASH=develop && CODE_DIR=${CODE_DIR}/ufs_${HASH////\_}_${REPO}
 export RUNDIR_ROOT=${NPB_WORKDIR}/RUNS/RTs
-source ${PWD}/MACHINE-config.sh
-# GEFS Case
-case="
-COMPILE | s2swa_32bit_pdlib_sfs  | intel | -DAPP=S2SWA -D32BIT=ON -DHYDRO=ON -DCCPP_SUITES=FV3_GFS_v17_coupled_p8_ugwpv1 -DPDLIB=ON | - noaacloud | fv3 |
-RUN | cpld_control_sfs                                  | - noaacloud                          | baseline |
-COMPILE | s2swa | intel | -DAPP=S2SWA -DCCPP_SUITES=FV3_GFS_v17_coupled_p8_ugwpv1 | | fv3 |
-RUN | cpld_control_gefs                                 | - noaacloud                          | baseline |
-RUN | cpld_restart_gefs                                 | - noaacloud                          |          | cpld_control_gefs
-RUN | cpld_dcp_gefs                                     | - noaacloud                          | baseline |
-"
+RT_COMPILER=intel
 
-############
-# run tests
-config_file=${PWD}/RUN_CASE
-if [[ -f ${config_file} ]]; then
-  rm ${config_file}
-fi
-cat << EOF > ${PWD}/RUN_CASE
-${case}
-EOF
-echo ${case}  
-case=$(echo ${case} | cut -d'|' -f1 | sed -e 's/^ *//' -e 's/ *$//')
-if [[ ${case} == "COMPILE" ]]; then
-    echo ${CODE_DIR} $module_file
-    TOPDIR=${PWD}
-    cd ${CODE_DIR}
-    module purge
-    module use modulefiles
-    module load ${module_file}
-    cd ${TOPDIR}
-fi
+########################
+# Get Case Test
+[[ ${RUN} == SFS ]]  && RT_COMPILE=s2swa_32bit_pdlib_sfs && RT_RUN=cpld_control_sfs 
+[[ ${RUN} == GEFS ]] && RT_COMPILE=s2swa_32bit           && RT_RUN=cpld_control_gefs
+[[ ${RUN} == GFS ]]  && RT_COMPILE=s2swa_32bit_pdlib     && RT_RUN=cpld_control_gfsv17
 
-echo ${CODE_DIR}/tests/rt.sh
+CASE=${PWD}/RUN_CASE
+grep ${RT_COMPILE} ${CODE_DIR}/tests/rt.conf | grep COMPILE | head -n 1 >& ${CASE}
+grep ${RT_RUN} ${CODE_DIR}/tests/rt.conf     | grep RUN     | head -n 1 >> ${CASE}
 
-####################################
-SUFFIX=${case}_$( date +%s )
-export RT_SUFFIX=_${SUFFIX}
-#nohup ${CODE_DIR}/tests/rt.sh -kl ${config_file} >rt_output_${SUFFIX}.txt 2>&1 &
-nohup ${CODE_DIR}/tests/rt.sh -a ${ACCNR} -ekl ${config_file} >rt_output_${SUFFIX}.txt 2>&1 &
+########################
+# Get ACCOUNT
+source ${CODE_DIR}/tests/detect_machine.sh
+ACCNR=marine-cpu
+[[ ${MACHINE_ID} == *[cd]login* ]] && ACCNR=GFS-DEV
+[[ ${MACHINE_ID} == gaea* ]] && ACCNR=drsa-precip3
+#module_file=ufs_${MACHINE_ID}.${RT_COMPILER}
+#cd ${CODE_DIR} && module purge && module use modulefiles && module load ${module_file}
+
+########################
+# Run Case
+SUFFIX=$( basename ${CASE} )_$( date +%Y%m%d%h_%M-%S )
+echo "RUNS at ${RUNDIR_ROOT}"
+nohup ${CODE_DIR}/tests/rt.sh -a ${ACCNR} -ekl ${CASE} >rt_output_${SUFFIX}.txt 2>&1 &
+#rm ${CASE}
