@@ -1,6 +1,0 @@
-#!/bin/sh
-set -u
-REMOTE_FILE=$1
-LOCAL_PATH=${2:-$PWD}
- 
-scp Neil.Barton@dtn-hera.fairmont.rdhpcs.noaa.gov:${REMOTE_FILE} ${LOCAL_PATH}
