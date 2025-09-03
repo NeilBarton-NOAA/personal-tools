@@ -6,7 +6,6 @@ set autoindent
 set laststatus=2
 set hlsearch
 set ruler
-set number
 command V visual
 imap <C-c> ############
 imap <C-f> !!!!!!!!!!!!
