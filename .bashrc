@@ -44,13 +44,13 @@ elif [[ ${machine} == gaea** ]] || [[ ${machine} == dtn* ]]; then
     if [[ $(uname -n) != gaea63 ]] && [[ ${machine} != dtn* ]]; then
         ssh -X gaea63
     fi
-# hera
-elif [[ ${machine} == h* ]]; then
+# ursa
+elif [[ ${machine} == ufe* ]]; then
     export COMPUTE_ACCOUNT=marine-cpu
-    export NPB_WORKDIR=/scratch2/NCEPDEV/stmp3/Neil.Barton
-    export PROJ_LIB=/scratch2/NCEPDEV/stmp3/Neil.Barton/TOOLS/miniconda3/share/proj
-    if [[ $(uname -n) != hfe07 ]] && [[ $(uname -n) != h*[cm]* ]]; then
-        ssh -X hfe07
+    export NPB_WORKDIR=/scratch4/NCEPDEV/stmp/Neil.Barton
+    #export PROJ_LIB=/scratch2/NCEPDEV/stmp3/Neil.Barton/TOOLS/miniconda3/share/proj
+    if [[ $(uname -n) != ufe03 ]] && [[ $(uname -n) != u*[cm]* ]]; then
+        ssh -X uf03
     fi
 # WCOSS2
 elif [[ ${machine} == *[cd]login* ]]; then

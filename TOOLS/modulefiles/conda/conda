@@ -3,6 +3,8 @@ module-whatis "miniconda3 personal distrubution"
 set machine [exec hostname]
 if { $machine == "hfe*" } {
     prepend-path PATH /scratch1/NCEPDEV/nems/Neil.Barton/TOOLS/miniconda3/bin
+} elseif { $machine == "ufe03" } {
+    prepend-path PATH /home/Neil.Barton/TOOLS/miniconda3/bin
 } else {
     prepend-path PATH /ncrc/home2/Neil.Barton/TOOLS/miniconda3/bin
 }
