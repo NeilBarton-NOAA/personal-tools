@@ -4,7 +4,7 @@
 # realizing the templated variables
 user:
   ACCOUNT: {{ 'HPC_ACCOUNT' | getenv }}
-  HOMEDIR: 'default'
+  HOMEDIR: '${COMROOT}/RUNS/HOMEDIR'
   STMP: 'default'
   PTMP: 'default'
   NOSCRUB: 'default'

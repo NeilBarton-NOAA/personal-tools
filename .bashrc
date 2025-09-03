@@ -34,11 +34,13 @@ export ARCHIVE_HOME="/NCEPDEV/emc-marine/*year/Neil.Barton"
 # machine specific
 # orion and hercules
 if [[ ${machine} == orion* ]] || [[ ${machine} == hercules-* ]]; then
+    node=${HOSTNAME#*-*-} && node=${node%%.*}
+    PROMPT_COMMAND='echo -ne "\033]0;${HOSTNAME%%-*}-0${node}\007"'
     export COMPUTE_ACCOUNT=marine-cpu
     export NPB_WORKDIR=/work/noaa/marine/nbarton
     PATH=/work/noaa/marine/nbarton/TOOLS/hercules_miniconda3/bin:${PATH}
 # gaeac6
-elif [[ ${machine} == gaea** ]] || [[ ${machine} == dtn* ]]; then
+elif [[ ${machine} == gaea* ]] || [[ ${machine} == dtn* ]]; then
     export COMPUTE_ACCOUNT=ira-sti
     export NPB_WORKDIR=/gpfs/f6/sfs-emc/scratch/Neil.Barton
     if [[ $(uname -n) != gaea63 ]] && [[ ${machine} != dtn* ]]; then

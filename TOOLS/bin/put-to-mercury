@@ -8,12 +8,11 @@ if (( ${#} == 0 )); then
 fi
 
 if [[ -f ${LAST_ARG} ]]; then
-    REMOTE_FOLDER=/work/noaa/marine/nbarton
+    REMOTE_FOLDER=/collab2/data/Neil.Barton
     FILES=${@}
 else
     REMOTE_FOLDER=${LAST_ARG}
     FILES=${@:1:$(($#-1))}
 fi
-echo "hercules:${REMOTE_FOLDER}"
-#scp ${FILES} nbarton@hercules-dtn.hpc.msstate.edu:${REMOTE_FOLDER}
-scp -o LogLevel=QUIET ${FILES} nbarton@hercules-dtn.hpc.msstate.edu:${REMOTE_FOLDER}
+
+scp ${FILES} Neil.Barton@dtn-mercury.fairmont.rdhpcs.noaa.gov:${REMOTE_FOLDER}

@@ -1,10 +1,11 @@
-#!/bin/sh 
+#!/bin/sh
 set -u
 # https://global-workflow.readthedocs.io/en/latest/
 ########################
 # Code to Checkout/Compile
 REPO=NOAA-EMC && HASH=develop
 #REPO=NeilBarton-NOAA && HASH=sfs_ICS
+#REPO=DavidHuber-NOAA && HASH=feature/191
 #REPO=XiaqiongZhou-NOAA && HASH=SFSbeta0.1
 SFS=T && GEFS=F && GFS=F
 COMPILE=T
@@ -28,5 +29,5 @@ OPTIONS=""
 echo "COMPILE OPTIONS: ${OPTIONS}"
 cd ${TOPDIR}/${code}/sorc
 sh link_workflow.sh
-sh build_compute.sh -A ${COMPUTE_ACCOUNT} ${OPTIONS} >& ~/GW/GW_${code}_build.log &
+sh build_compute.sh -A ${COMPUTE_ACCOUNT} ${OPTIONS} >& ~/GW/build_${code}.log &
 fi

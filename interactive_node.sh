@@ -3,7 +3,7 @@
 DEBUG=${T:-$1}
 machine=$(uname -n)
 if [[ ${machine} == h* ]]; then
-    # hera
+    # hera or hercules
     if [[ ${DEBUG} == F ]]; then
         salloc --x11=first -q debug -t 0:30:00 --nodes=1 -A marine-cpu --exclusive
     else

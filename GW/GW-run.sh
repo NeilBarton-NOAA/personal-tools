@@ -6,25 +6,26 @@ set -u
 # https://global-workflow.readthedocs.io/en/latest/
 ####################################
 # Code
-#REPO=NOAA-EMC && HASH=develop
+REPO=NOAA-EMC && HASH=develop
 #REPO=NeilBarton-NOAA && HASH=sfs_ICS
-REPO=XiaqiongZhou-NOAA && HASH=SFSbeta0.1
+#REPO=XiaqiongZhou-NOAA && HASH=SFSbeta0.1
 HOMEgfs=${1:-${NPB_WORKDIR}/CODE/gw_${HASH////\_}_${REPO}}
 YAML=${2:-${HOMEgfs}/workflow/GEFS_16d.yaml}
 SFS_BASELINE=F
 DEBUG=F
 ####################################
-# YAMLS for CI testing
-#YAML=${HOMEgfs}/dev/ci/cases/pr/C96mx100_S2S.yaml
-#YAML=${HOMEgfs}/dev/ci/cases/sfs/C96mx100_S2S_REPLAY_ICS.yaml
-YAML=${HOMEgfs}/dev/ci/cases/sfs/C192mx025_S2S_REPLAY_ICS.yaml
-#YAML=${HOMEgfs}/dev/ci/cases/sfs/C192mx025_S2SW_REPLAY_ICS.yaml
+# YAMLS for SFS
 #YAML=${HOMEgfs}/dev/ci/cases/sfs/C96mx100_S2S_CPC_ICS.yaml
+#YAML=${HOMEgfs}/dev/ci/cases/sfs/C96mx100_S2S_REPLAY_ICS.yaml
 #YAML=${HOMEgfs}/dev/ci/cases/sfs/C192mx025_S2S_CPC_ICS.yaml
+#YAML=${HOMEgfs}/dev/ci/cases/sfs/C192mx025_S2S_REPLAY_ICS.yaml
+#YAML=${HOMEgfs}/dev/ci/cases/sfs/C192mx025_S2SW_REPLAY_ICS.yaml
+# PR Testing
+YAML=${HOMEgfs}/dev/ci/cases/pr/C96mx100_S2S.yaml
 #YAML=${HOMEgfs}/dev/ci/cases/pr/C48_S2SWA_gefs.yaml
 #YAML=${HOMEgfs}/dev/ci/cases/pr/C48_S2SW.yaml
 #YAML=${HOMEgfs}/dev/ci/cases/pr/C96_atm3DVar.yaml
-export pslot=${HASH}_$(basename ${YAML/.yaml*})_linear
+export pslot=${HASH}_$(basename ${YAML/.yaml*})_NEWICS
 
 ########################
 # Check Code
@@ -41,14 +42,14 @@ machine=$(uname -n)
 [[ ${machine:0:3} == hfe ]] && m=hera && RUNDIRS=/scratch1/NCEPDEV/stmp2/${USER}/RUNDIRS
 [[ ${machine} == *[cd]login* ]] && m=wcoss2
 [[ ${machine} == *Orion* ]] && m=orion && RUNDIRS=/work/noaa/stmp/${USER}/ORION/RUNDIRS
-[[ ${machine} == hercules* ]] && m=hercules && RUNDIRS=/work/noaa/stmp/${USER}/HERCULES/RUNDIRS
-[[ ${machine} == gaea* ]] && m=gaeac6 && ACCOUNT=ira-sti && RUNDIRS=/gpfs/f6/${ACCOUNT}/world-shared/${USER}/RUNDIRS
+[[ ${machine} == hercules* ]] && m=hercules && RUNDIRS=/work2/noaa/stmp/${USER}/HERCULES/RUNDIRS
+[[ ${machine} == gaea* ]] && m=gaeac6 && RUNDIRS=/gpfs/f6/${ACCOUNT}/world-shared/${USER}/RUNDIRS
 
 ############
 # remove previous RUNDIR if it exists
 if [[ -d ${RUNDIRS}/${pslot} ]]; then
     echo "Removing RUNDIR: ${RUNDIRS}/${pslot}"
-    rm -rf ${RUNDIRS}/${pslot} 
+    rm -rf ${RUNDIRS}/${pslot}
 fi
 
 ############
@@ -56,9 +57,9 @@ fi
 CD=$(dirname "$0")
 source ${HOMEgfs}/dev/ci/platforms/config.${m/.*}
 source ${HOMEgfs}/dev/ush/gw_setup.sh
-export YAML_DIR=${HOMEgfs} 
+export YAML_DIR=${HOMEgfs}
 export HPC_ACCOUNT=${COMPUTE_ACCOUNT}
-${HOMEgfs}/dev/workflow/create_experiment.py --yaml "${YAML}" 
+${HOMEgfs}/dev/workflow/create_experiment.py --yaml "${YAML}"
 echo "FINISHED: create_experiment.py"
 
 ################################################
@@ -72,7 +73,7 @@ set +u && source ${TOPEXPDIR}/config.base && set -u
 cd ${TOPEXPDIR}
 
 ln -sf ${HOMEgfs} GW-CODE
-ln -sf ${HOMEgfs}/dev/workflow/setup_xml.py . 
+ln -sf ${HOMEgfs}/dev/workflow/setup_xml.py .
 ln -sf ${HOMEgfs}/dev/workflow/rocoto_viewer.py .
 ln -sf ${HOMEgfs}/dev/parm/config ORIG_CONFIGS
 ln -sf ${COMROOT}/${PSLOT}/logs LOGS_COMROOT
@@ -84,12 +85,8 @@ fi
 ################################################
 # start rocotorun and add crontab
 xml_file=${PWD}/${pslot}.xml && db_file=${PWD}/${pslot}.db && cron_file=${PWD}/${pslot}.crontab
-if [[ ${machine} == gaea* ]] || [[ ${machine} == GAEA* ]]; then
-    scrontab -l | cat - ${cron_file} | scrontab -
-else
-    rocotorun -d ${db_file} -w ${xml_file}
-    crontab -l | cat - ${cron_file} | crontab -
-fi
+~/TOOLS/bin/add-to-crontab ${cron_file}
+rocotorun -d ${db_file} -w ${xml_file}
 echo "CRONTAB INFO:"
 echo "machine=${machine}"
 echo "cron_file=${cron_file}"

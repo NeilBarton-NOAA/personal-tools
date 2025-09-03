@@ -1,0 +1,8 @@
+#!/bin/sh
+file=$1
+if [[ ${machine} == gaea* ]] || [[ ${machine} == GAEA* ]]; then
+    scrontab -l | cat - ${file} | scrontab -
+else
+    crontab -l | cat - ${file} | crontab -
+fi
+
