@@ -35,7 +35,7 @@ export ARCHIVE_HOME="/NCEPDEV/emc-marine/*year/Neil.Barton"
 # orion and hercules
 if [[ ${machine} == orion* ]] || [[ ${machine} == hercules-* ]]; then
     node=${HOSTNAME#*-*-} && node=${node%%.*}
-    PROMPT_COMMAND='echo -ne "\033]0;${HOSTNAME%%-*}-0${node}\007"'
+    PROMPT_COMMAND='echo -ne "\033]0;${HOSTNAME%%-*}0${node}\007"'
     export COMPUTE_ACCOUNT=marine-cpu
     export NPB_WORKDIR=/work/noaa/marine/nbarton
     PATH=/work/noaa/marine/nbarton/TOOLS/hercules_miniconda3/bin:${PATH}
@@ -52,7 +52,7 @@ elif [[ ${machine} == ufe* ]]; then
     export NPB_WORKDIR=/scratch4/NCEPDEV/stmp/Neil.Barton
     #export PROJ_LIB=/scratch2/NCEPDEV/stmp3/Neil.Barton/TOOLS/miniconda3/share/proj
     if [[ $(uname -n) != ufe03 ]] && [[ $(uname -n) != u*[cm]* ]]; then
-        ssh -X uf03
+        ssh -X ufe03
     fi
 # WCOSS2
 elif [[ ${machine} == *[cd]login* ]]; then
