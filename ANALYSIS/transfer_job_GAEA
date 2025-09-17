@@ -9,4 +9,9 @@
 #SBATCH --constraint=f6
 
 
-/gpfs/f6/sfs-emc/scratch/Neil.Barton/RUNS/UFS/htar.sh
+#/gpfs/f6/sfs-emc/scratch/Neil.Barton/RUNS/UFS/htar.sh
+cd $NPB_WORKDIR
+htar -xvf /NCEPDEV/emc-marine/2year/Neil.Barton/ICS/HR4/C384mx025/2001043000.tar
+
+
+

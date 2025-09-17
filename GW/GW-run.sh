@@ -6,8 +6,8 @@ set -u
 # https://global-workflow.readthedocs.io/en/latest/
 ####################################
 # Code
-REPO=NOAA-EMC && HASH=develop
-#REPO=NeilBarton-NOAA && HASH=sfs_ICS
+#REPO=NOAA-EMC && HASH=develop
+REPO=NeilBarton-NOAA && HASH=sfs_ICS
 #REPO=XiaqiongZhou-NOAA && HASH=SFSbeta0.1
 HOMEgfs=${1:-${NPB_WORKDIR}/CODE/gw_${HASH////\_}_${REPO}}
 YAML=${2:-${HOMEgfs}/workflow/GEFS_16d.yaml}
@@ -15,17 +15,17 @@ SFS_BASELINE=F
 DEBUG=F
 ####################################
 # YAMLS for SFS
-#YAML=${HOMEgfs}/dev/ci/cases/sfs/C96mx100_S2S_CPC_ICS.yaml
+YAML=${HOMEgfs}/dev/ci/cases/sfs/C96mx100_S2S_CPC_ICS.yaml
 #YAML=${HOMEgfs}/dev/ci/cases/sfs/C96mx100_S2S_REPLAY_ICS.yaml
 #YAML=${HOMEgfs}/dev/ci/cases/sfs/C192mx025_S2S_CPC_ICS.yaml
 #YAML=${HOMEgfs}/dev/ci/cases/sfs/C192mx025_S2S_REPLAY_ICS.yaml
 #YAML=${HOMEgfs}/dev/ci/cases/sfs/C192mx025_S2SW_REPLAY_ICS.yaml
 # PR Testing
-YAML=${HOMEgfs}/dev/ci/cases/pr/C96mx100_S2S.yaml
+#YAML=${HOMEgfs}/dev/ci/cases/pr/C96mx100_S2S.yaml
 #YAML=${HOMEgfs}/dev/ci/cases/pr/C48_S2SWA_gefs.yaml
 #YAML=${HOMEgfs}/dev/ci/cases/pr/C48_S2SW.yaml
 #YAML=${HOMEgfs}/dev/ci/cases/pr/C96_atm3DVar.yaml
-export pslot=${HASH}_$(basename ${YAML/.yaml*})_NEWICS
+export pslot=${HASH}_$(basename ${YAML/.yaml*})
 
 ########################
 # Check Code
@@ -43,7 +43,7 @@ machine=$(uname -n)
 [[ ${machine} == *[cd]login* ]] && m=wcoss2
 [[ ${machine} == *Orion* ]] && m=orion && RUNDIRS=/work/noaa/stmp/${USER}/ORION/RUNDIRS
 [[ ${machine} == hercules* ]] && m=hercules && RUNDIRS=/work2/noaa/stmp/${USER}/HERCULES/RUNDIRS
-[[ ${machine} == gaea* ]] && m=gaeac6 && RUNDIRS=/gpfs/f6/${ACCOUNT}/world-shared/${USER}/RUNDIRS
+[[ ${machine} == gaea* ]] && m=gaeac6 && RUNDIRS=/gpfs/f6/${COMPUTE_ACCOUNT}/world-shared/${USER}/RUNDIRS
 
 ############
 # remove previous RUNDIR if it exists
