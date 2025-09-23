@@ -5,9 +5,6 @@
 [submodule "REPLAY_ICS"]
 	path = REPLAY_ICS
 	url = https://github.com/NeilBarton-NOAA/REPLAY_ICS
-[submodule "ANALYSIS/DIAG_SUITE"]
-	path = ANALYSIS/DIAG_SUITE
-	url = https://github.com/NeilBarton-NOAA/DIAG_SUITE
 [submodule "UFS/RUN-UFS"]
 	path = UFS/RUN-UFS
 	url = https://github.com/NeilBarton-NOAA/RUN-UFS.git
