@@ -4,8 +4,8 @@ set -u
 ########################
 # Code to Checkout/Compile
 #REPO=NOAA-EMC && HASH=develop
-REPO=NOAA-EMC && HASH=dev/sfs
-#REPO=NeilBarton-NOAA && HASH=sfs_ICS
+#REPO=NOAA-EMC && HASH=dev/sfs
+REPO=NeilBarton-NOAA && HASH=sfs_atmos_products
 #REPO=DavidHuber-NOAA && HASH=feature/191
 #REPO=XiaqiongZhou-NOAA && HASH=SFSbeta0.1
 SFS=T && GEFS=F && GFS=F
@@ -17,7 +17,7 @@ code=gw_${HASH////\_}_${REPO}
 TOPDIR=${NPB_WORKDIR}/CODE
 mkdir -p ${TOPDIR} && cd ${TOPDIR}
 if [[ ! -d ${code} ]]; then
-    git clone --recursive -b ${HASH} https://github.com/${REPO}/global-workflow.git ${code}
+    git clone --recursive -b ${HASH} git@github.com:${REPO}/global-workflow.git ${code}
 fi
 
 ########################

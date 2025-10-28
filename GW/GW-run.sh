@@ -7,16 +7,16 @@ set -u
 ####################################
 # Code
 #REPO=NOAA-EMC && HASH=develop
-REPO=NeilBarton-NOAA && HASH=sfs_ICS
-#REPO=XiaqiongZhou-NOAA && HASH=SFSbeta0.1
+#REPO=NeilBarton-NOAA && HASH=sfs_ICS
+REPO=NOAA-EMC && HASH=dev/sfs
 HOMEgfs=${1:-${NPB_WORKDIR}/CODE/gw_${HASH////\_}_${REPO}}
 YAML=${2:-${HOMEgfs}/workflow/GEFS_16d.yaml}
 SFS_BASELINE=F
 DEBUG=F
 ####################################
 # YAMLS for SFS
-YAML=${HOMEgfs}/dev/ci/cases/sfs/C96mx100_S2S_CPC_ICS.yaml
-#YAML=${HOMEgfs}/dev/ci/cases/sfs/C96mx100_S2S_REPLAY_ICS.yaml
+#YAML=${HOMEgfs}/dev/ci/cases/sfs/C96mx100_S2S_CPC_ICS.yaml
+YAML=${HOMEgfs}/dev/ci/cases/sfs/C96mx100_S2S_REPLAY_ICS.yaml
 #YAML=${HOMEgfs}/dev/ci/cases/sfs/C192mx025_S2S_CPC_ICS.yaml
 #YAML=${HOMEgfs}/dev/ci/cases/sfs/C192mx025_S2S_REPLAY_ICS.yaml
 #YAML=${HOMEgfs}/dev/ci/cases/sfs/C192mx025_S2SW_REPLAY_ICS.yaml
@@ -25,7 +25,7 @@ YAML=${HOMEgfs}/dev/ci/cases/sfs/C96mx100_S2S_CPC_ICS.yaml
 #YAML=${HOMEgfs}/dev/ci/cases/pr/C48_S2SWA_gefs.yaml
 #YAML=${HOMEgfs}/dev/ci/cases/pr/C48_S2SW.yaml
 #YAML=${HOMEgfs}/dev/ci/cases/pr/C96_atm3DVar.yaml
-export pslot=${HASH}_$(basename ${YAML/.yaml*})
+export pslot=$(basename ${YAML/.yaml*})_${HASH////\_}_${REPO}
 
 ########################
 # Check Code
@@ -36,14 +36,25 @@ echo "YAML: ${YAML}"
 
 ########################
 # Machine Specific and Personallized options
-export TOPICDIR=${NPB_WORKDIR}/ICs
 export RUNTESTS=${NPB_WORKDIR}/RUNS
+TOPICDIR=${NPB_WORKDIR}/ICs
 machine=$(uname -n)
-[[ ${machine:0:3} == hfe ]] && m=hera && RUNDIRS=/scratch1/NCEPDEV/stmp2/${USER}/RUNDIRS
-[[ ${machine} == *[cd]login* ]] && m=wcoss2
-[[ ${machine} == *Orion* ]] && m=orion && RUNDIRS=/work/noaa/stmp/${USER}/ORION/RUNDIRS
-[[ ${machine} == hercules* ]] && m=hercules && RUNDIRS=/work2/noaa/stmp/${USER}/HERCULES/RUNDIRS
-[[ ${machine} == gaea* ]] && m=gaeac6 && RUNDIRS=/gpfs/f6/${COMPUTE_ACCOUNT}/world-shared/${USER}/RUNDIRS
+case ${machine} in
+    *Orion*)     m=orion ;    
+                 RUNDIRS=/work/noaa/stmp/${USER}/ORION/RUNDIRS ;
+                 TOPICDIR=/work/noaa/marine/Yangxing.Zheng/ICs ;;
+    hercules*)   m=hercules ; 
+                 RUNDIRS=/work2/noaa/stmp/${USER}/HERCULES/RUNDIRS ; 
+                 TOPICDIR=/work/noaa/marine/Yangxing.Zheng/ICs ;;
+    gaea*)       m=gaeac6 ;   
+                 RUNDIRS=/gpfs/f6/${COMPUTE_ACCOUNT}/world-shared/${USER}/RUNDIRS ;
+                 TOPICDIR=/gpfs/f6/sfs-emc/proj-shared/Yangxing.Zheng/SFS/ICs ;;
+    u*)          m=ursa ;     
+                 RUNDIRS=/scratch4/NCEPDEV/stmp/${USER}/RUNDIRS ; 
+                 TOPICDIR=/scratch4/NCEPDEV/global/Yangxing.Zheng/ICs ;;
+    *[cd]login*) m=wcoss2 ;;
+esac
+export TOPICDIR=${TOPICDIR}
 
 ############
 # remove previous RUNDIR if it exists
@@ -73,7 +84,6 @@ set +u && source ${TOPEXPDIR}/config.base && set -u
 cd ${TOPEXPDIR}
 
 ln -sf ${HOMEgfs} GW-CODE
-ln -sf ${HOMEgfs}/dev/workflow/setup_xml.py .
 ln -sf ${HOMEgfs}/dev/workflow/rocoto_viewer.py .
 ln -sf ${HOMEgfs}/dev/parm/config ORIG_CONFIGS
 ln -sf ${COMROOT}/${PSLOT}/logs LOGS_COMROOT
