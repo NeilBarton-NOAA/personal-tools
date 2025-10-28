@@ -11,7 +11,7 @@ if [[ ${machine} == h* ]]; then
     fi
 elif [[ ${machine} == gaea* ]]; then
     echo "gaea"
-    salloc --x11=first -t 2:00:00 --qos=hpss --partition=dtn_f5_f6 --constraint=f6 --nodes=1 -A ira-da #--exclusive
+    salloc --x11=first -t 4:00:00 --qos=hpss --partition=dtn_f5_f6 --constraint=f6 --nodes=1 -A ira-da #--exclusive
 fi
 source ~/.bashrc
 

@@ -12,3 +12,6 @@
 	name = NeilBarton-NOAA
 [push]
 	default = simple
+[safe]
+	directory = /gpfs/f6/sfs-emc/scratch/Yangxing.Zheng/SFS/GW-code/global-workflow
+	directory = /gpfs/f6/sfs-emc/world-shared/rg6/global-workflow

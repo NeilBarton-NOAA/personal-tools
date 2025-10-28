@@ -4,8 +4,8 @@ set -u
 ########################
 # Code to Checkout/Compile
 #REPO=NOAA-EMC && HASH=develop
-#REPO=NOAA-EMC && HASH=dev/sfs
-REPO=NeilBarton-NOAA && HASH=sfs_atmos_products
+#REPO=NeilBarton-NOAA && HASH=sfs_atmos_products
+REPO=NeilBarton-NOAA && HASH=sfs_dev
 #REPO=DavidHuber-NOAA && HASH=feature/191
 #REPO=XiaqiongZhou-NOAA && HASH=SFSbeta0.1
 SFS=T && GEFS=F && GFS=F

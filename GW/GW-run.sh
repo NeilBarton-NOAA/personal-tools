@@ -9,17 +9,18 @@ set -u
 #REPO=NOAA-EMC && HASH=develop
 #REPO=NeilBarton-NOAA && HASH=sfs_ICS
 REPO=NOAA-EMC && HASH=dev/sfs
+#REPO=XiaqiongZhou-NOAA && HASH=SFSbeta0.1
 HOMEgfs=${1:-${NPB_WORKDIR}/CODE/gw_${HASH////\_}_${REPO}}
-YAML=${2:-${HOMEgfs}/workflow/GEFS_16d.yaml}
 SFS_BASELINE=F
 DEBUG=F
+
 ####################################
 # YAMLS for SFS
+YAML=${PWD}/YAMLS/C96mx100_S2S_CPC_ICS_TEST.yaml
 #YAML=${HOMEgfs}/dev/ci/cases/sfs/C96mx100_S2S_CPC_ICS.yaml
-YAML=${HOMEgfs}/dev/ci/cases/sfs/C96mx100_S2S_REPLAY_ICS.yaml
-#YAML=${HOMEgfs}/dev/ci/cases/sfs/C192mx025_S2S_CPC_ICS.yaml
-#YAML=${HOMEgfs}/dev/ci/cases/sfs/C192mx025_S2S_REPLAY_ICS.yaml
-#YAML=${HOMEgfs}/dev/ci/cases/sfs/C192mx025_S2SW_REPLAY_ICS.yaml
+#YAML=${HOMEgfs}/dev/ci/cases/sfs/C96mx100_S2S_REPLAY_ICS.yaml
+#YAML=${HOMEgfs}/dev/ci/cases/sfs/C96mx100_S2S_CPC_ICS.yaml
+#YAML=${HOMEgfs}/dev/ci/cases/sfs/C96mx100_S2S_REPLAY_ICS.yaml
 # PR Testing
 #YAML=${HOMEgfs}/dev/ci/cases/pr/C96mx100_S2S.yaml
 #YAML=${HOMEgfs}/dev/ci/cases/pr/C48_S2SWA_gefs.yaml

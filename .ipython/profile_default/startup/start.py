@@ -1,3 +1,8 @@
+#from IPython import get_ipython
+#ipython = get_ipython()
+#if ipython:
+#    ipython.run_line_magic('matplotlib', 'inline')
+
 import cartopy.crs as ccrs
 import cartopy.feature as cfeature
 import glob

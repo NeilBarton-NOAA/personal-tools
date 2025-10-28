@@ -8,6 +8,7 @@
 .bash_logout
 .bash_profile
 .cache
+.copernicusmarine/
 .conda/
 .config
 .cshrc
@@ -26,6 +27,7 @@
 .lesshst
 .lmod.d/
 .local
+.mozilla/
 .ncviewrc
 .profile
 .python_history
