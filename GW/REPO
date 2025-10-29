@@ -1,0 +1,6 @@
+# Code
+REPO=NeilBarton-NOAA && HASH=sfs_dev
+#REPO=XiaqiongZhou-NOAA && HASH=SFSbeta0.1
+#REPO=NOAA-EMC && HASH=develop
+#REPO=NOAA-EMC && HASH=dev/sfs
+

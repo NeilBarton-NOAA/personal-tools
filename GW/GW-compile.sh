@@ -2,12 +2,8 @@
 set -u
 # https://global-workflow.readthedocs.io/en/latest/
 ########################
-# Code to Checkout/Compile
-#REPO=NOAA-EMC && HASH=develop
-#REPO=NeilBarton-NOAA && HASH=sfs_atmos_products
-REPO=NeilBarton-NOAA && HASH=sfs_dev
-#REPO=DavidHuber-NOAA && HASH=feature/191
-#REPO=XiaqiongZhou-NOAA && HASH=SFSbeta0.1
+# Options
+source ${PWD}/REPO
 SFS=T && GEFS=F && GFS=F
 COMPILE=T
 

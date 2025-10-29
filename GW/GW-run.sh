@@ -5,11 +5,8 @@ set -u
 # CI yamls can be found at ${HOMEgfs}/ci/cases/{pr/weekly}/
 # https://global-workflow.readthedocs.io/en/latest/
 ####################################
-# Code
-#REPO=NOAA-EMC && HASH=develop
-#REPO=NeilBarton-NOAA && HASH=sfs_ICS
-REPO=NOAA-EMC && HASH=dev/sfs
-#REPO=XiaqiongZhou-NOAA && HASH=SFSbeta0.1
+# options
+source ${PWD}/REPO
 HOMEgfs=${1:-${NPB_WORKDIR}/CODE/gw_${HASH////\_}_${REPO}}
 SFS_BASELINE=F
 DEBUG=F
@@ -26,16 +23,19 @@ YAML=${PWD}/YAMLS/C96mx100_S2S_CPC_ICS_TEST.yaml
 #YAML=${HOMEgfs}/dev/ci/cases/pr/C48_S2SWA_gefs.yaml
 #YAML=${HOMEgfs}/dev/ci/cases/pr/C48_S2SW.yaml
 #YAML=${HOMEgfs}/dev/ci/cases/pr/C96_atm3DVar.yaml
-export pslot=$(basename ${YAML/.yaml*})_${HASH////\_}_${REPO}
-
-########################
-# Check Code
+if [[ ${YAML} == ${PWD}/YAMLS/C96mx100_S2S_CPC_ICS_TEST.yaml ]]; then
+    export pslot=TEST_${HASH////\_}_${REPO}
+else
+    export pslot=$(basename ${YAML/.yaml*})_${HASH////\_}_${REPO}
+fi
+################################################
+# Check if Code exist
 echo "HOMEgfs: ${HOMEgfs}"
 echo "YAML: ${YAML}"
 [[ ! -d ${HOMEgfs} ]] && echo "code is not at ${HOMEgfs}" &&  exit 1
 [[ ! -f ${YAML} ]] && echo "yaml file not at ${YAML}" &&  exit 1
 
-########################
+################################################
 # Machine Specific and Personallized options
 export RUNTESTS=${NPB_WORKDIR}/RUNS
 TOPICDIR=${NPB_WORKDIR}/ICs
@@ -57,15 +57,15 @@ case ${machine} in
 esac
 export TOPICDIR=${TOPICDIR}
 
-############
+################################################
 # remove previous RUNDIR if it exists
 if [[ -d ${RUNDIRS}/${pslot} ]]; then
     echo "Removing RUNDIR: ${RUNDIRS}/${pslot}"
     rm -rf ${RUNDIRS}/${pslot}
 fi
 
-############
-# set up run
+################################################
+# set up gw experiment
 CD=$(dirname "$0")
 source ${HOMEgfs}/dev/ci/platforms/config.${m/.*}
 source ${HOMEgfs}/dev/ush/gw_setup.sh
@@ -83,7 +83,6 @@ echo "FINISHED: create_experiment.py"
 TOPEXPDIR=${RUNTESTS}/EXPDIR/${pslot}
 set +u && source ${TOPEXPDIR}/config.base && set -u
 cd ${TOPEXPDIR}
-
 ln -sf ${HOMEgfs} GW-CODE
 ln -sf ${HOMEgfs}/dev/workflow/rocoto_viewer.py .
 ln -sf ${HOMEgfs}/dev/parm/config ORIG_CONFIGS
@@ -93,6 +92,7 @@ echo "FINISHED: soft-linking to EXPDIR"
 if [[ ${DEBUG} == T ]]; then
     echo "DEBUGING, run set-up.xml in $EXPDIR" && exit 1
 fi
+
 ################################################
 # start rocotorun and add crontab
 xml_file=${PWD}/${pslot}.xml && db_file=${PWD}/${pslot}.db && cron_file=${PWD}/${pslot}.crontab
