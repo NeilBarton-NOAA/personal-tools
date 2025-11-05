@@ -2,7 +2,6 @@
 set -u
 # https://global-workflow.readthedocs.io/en/latest/
 ########################
-# Options
 source ${PWD}/REPO
 SFS=T && GEFS=F && GFS=F
 COMPILE=T

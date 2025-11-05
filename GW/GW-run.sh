@@ -5,7 +5,6 @@ set -u
 # CI yamls can be found at ${HOMEgfs}/ci/cases/{pr/weekly}/
 # https://global-workflow.readthedocs.io/en/latest/
 ####################################
-# options
 source ${PWD}/REPO
 HOMEgfs=${1:-${NPB_WORKDIR}/CODE/gw_${HASH////\_}_${REPO}}
 SFS_BASELINE=F

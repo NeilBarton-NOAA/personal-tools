@@ -62,7 +62,7 @@ elif [[ ${machine} == *[cd]login* ]]; then
     export couple_noscrub=/lfs/h2/emc/couple/noscrub/neil.barton
     export ens_noscrub=/lfs/h2/emc/ens/noscrub/neil.barton
     export gefstemp=/lfs/h2/emc/gefstemp/neil.barton
-    export NPB_WORKDIR=${ens_noscrub}
+    export NPB_WORKDIR=${ptmp}
     alias qme="qstat -u $USER"
     alias qdelme="qselect -u ${USER} | xargs qdel"
 # mercury
