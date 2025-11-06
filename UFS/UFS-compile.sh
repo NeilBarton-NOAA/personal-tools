@@ -3,15 +3,17 @@
 set -u
 TOPDIR=${NPB_WORKDIR}/CODE
 mkdir -p ${TOPDIR}
-REPO=ufs-community && HASH=develop
-COMPILE=T
+#REPO=ufs-community && HASH=develop
+REPO=NeilBarton-NOAA && HASH=cice_vars
+COMPILE=F
 
 ########################
 # check out code
 cd ${TOPDIR}
 CODE=ufs_${HASH////\_}_${REPO}
 if [[ ! -d ${CODE} ]]; then
-    git clone https://github.com/${REPO}/ufs-weather-model.git ${CODE}
+    #git clone https://github.com/${REPO}/ufs-weather-model.git ${CODE}
+    git clone git@github.com:${REPO}/ufs-weather-model.git ${CODE}
     cd ${CODE}
     git checkout ${HASH}
     git submodule update --init --recursive
