@@ -7,6 +7,9 @@
 from matplotlib.pylab import show
 ####################################
 def index_lon_lat_dat(lon, lat, dat):
+   ########################
+   # sort data with lonitudes going from lowest to highest
+   ########################
    from numpy import argsort, array, squeeze, zeros
    from numpy.ma import masked_where
    lon = lonE2W(lon)

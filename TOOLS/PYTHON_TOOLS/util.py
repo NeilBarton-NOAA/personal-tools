@@ -73,15 +73,6 @@ def intersect(a, b):
 
 ################################################
 ################################################
-def mkdirp(directory):
-    '''
-    '''
-    import os
-    if not os.path.exists(directory):
-        os.makedirs(directory)
-
-################################################
-################################################
 def pause(text=False):
     """
     Pause the program

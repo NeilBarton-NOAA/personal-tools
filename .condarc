@@ -1,6 +1,6 @@
 channels:
   - defaults
-#  - conda-forge
+  - conda-forge
 #channel_priority: strict
 #safety_checks: disabled
 #solver: classic
