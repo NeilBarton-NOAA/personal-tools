@@ -47,5 +47,6 @@ cylc-run/
 TOOLS/miniconda3
 TOOLS/modulefiles/rocoto/
 GW/EXPDIR
+GW/COMROOT
 UFS/FIGURES/
 UFS/RUN_CASE
