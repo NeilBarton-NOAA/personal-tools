@@ -4,6 +4,7 @@ base:
   FHMAX_GFS: 48
   FCST_BREAKPOINTS: ""
 ocn:
-  MOM6_INTERP_ICS: "NO"
+  MOM6_INTERP_ICS: "YES"
 nsst:
   NST_SPINUP: 1
+

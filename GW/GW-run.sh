@@ -5,37 +5,38 @@ set -u
 # CI yamls can be found at ${HOMEgfs}/ci/cases/{pr/weekly}/
 # https://global-workflow.readthedocs.io/en/latest/
 ####################################
-source ${PWD}/REPO
-HOMEgfs=${1:-${NPB_WORKDIR}/CODE/gw_${HASH////\_}_${REPO}}
+source ${PWD}/REPO_YAML
+BUILD=F
+CI_GFS=F && CI_GEFS=F && CI_SFS=F && CI_GCAPS=F
+UPDATE_MODULES=F
 SFS_BASELINE=F
-DEBUG=F
+ONLY_CHECKOUT=F
+
+HOMEgfs=${1:-${NPB_WORKDIR}/CODE/gw_${HASH////\_}_${REPO}}
 
 ####################################
-# YAMLS for SFS
-YAML=${PWD}/YAMLS/C96mx100_S2S_CPC_ICS_TEST.yaml
-#YAML=${HOMEgfs}/dev/ci/cases/sfs/C96mx100_S2S_CPC_ICS.yaml
-#YAML=${HOMEgfs}/dev/ci/cases/sfs/C96mx100_S2S_REPLAY_ICS.yaml
-#YAML=${HOMEgfs}/dev/ci/cases/sfs/C96mx100_S2S_CPC_ICS.yaml
-#YAML=${HOMEgfs}/dev/ci/cases/sfs/C96mx100_S2S_REPLAY_ICS.yaml
-# PR Testing
-#YAML=${HOMEgfs}/dev/ci/cases/pr/C96mx100_S2S.yaml
-#YAML=${HOMEgfs}/dev/ci/cases/pr/C48_S2SWA_gefs.yaml
-#YAML=${HOMEgfs}/dev/ci/cases/pr/C48_S2SW.yaml
-#YAML=${HOMEgfs}/dev/ci/cases/pr/C96_atm3DVar.yaml
-if [[ ${YAML} == ${PWD}/YAMLS/C96mx100_S2S_CPC_ICS_TEST.yaml ]]; then
-    export pslot=TEST_${HASH////\_}_${REPO}
-else
-    export pslot=$(basename ${YAML/.yaml*})_${HASH////\_}_${REPO}
+# Clone Model if code doesn't exists
+SCRIPT_DIR=$(readlink -f "$0") && SCRIPT_DIR=$(dirname ${SCRIPT_DIR})
+if [[ ! -d ${HOMEgfs} ]]; then
+    TOPDIR=${HOMEgfs}/../
+    mkdir -p ${TOPDIR} && cd ${TOPDIR}
+    git clone --recursive -b ${HASH} git@github.com:${REPO}/global-workflow.git $(basename ${HOMEgfs})
 fi
+[[ ${ONLY_CHECKOUT} == T ]] && exit 0
+
 ################################################
 # Check if Code exist
 echo "HOMEgfs: ${HOMEgfs}"
-echo "YAML: ${YAML}"
 [[ ! -d ${HOMEgfs} ]] && echo "code is not at ${HOMEgfs}" &&  exit 1
-[[ ! -f ${YAML} ]] && echo "yaml file not at ${YAML}" &&  exit 1
+if [[ ${CI_GFS} != T ]] || [[ ${CI_GEFS} != T ]] || [[ ${CI_SFS} != T ]] || [[ ${CI_GCAPS} != T ]]; then
+    YAML_DIR=${YAML_DIR:-$(dirname ${YAML})}
+    YAML_NAME=${YAML_NAME:-$(basename ${YAML%.yaml})}
+    echo "YAML: ${YAML_DIR}"
+    [[ ! -d ${YAML_DIR} ]] && echo "yaml directory does not exist at ${YAML_DIR}" &&  exit 1
+fi
 
 ################################################
-# Machine Specific and Personallized options
+# Machine Specific and Personalized options
 export RUNTESTS=${NPB_WORKDIR}/RUNS
 TOPICDIR=${NPB_WORKDIR}/ICs
 machine=$(uname -n)
@@ -57,48 +58,41 @@ esac
 export TOPICDIR=${TOPICDIR}
 
 ################################################
-# remove previous RUNDIR if it exists
-if [[ -d ${RUNDIRS}/${pslot} ]]; then
-    echo "Removing RUNDIR: ${RUNDIRS}/${pslot}"
-    rm -rf ${RUNDIRS}/${pslot}
+# Run Generate Workflow
+OPTIONS=()
+[[ ${BUILD} == T ]] && OPTIONS+=("-b")
+[[ ${UPDATE_MODULES} == T ]] && OPTIONS+=("-u")
+if [[ ${CI_GFS} != T ]] || [[ ${CI_GEFS} != T ]] || [[ ${CI_SFS} != T ]] || [[ ${CI_GCAPS} != T ]]; then
+    OPTIONS+=('-Y') && OPTIONS+=("${YAML_DIR}")
+    OPTIONS+=('-y') && OPTIONS+=("${YAML_NAME}")
+else
+    [[ ${CI_GFS:-T} == T ]] && OPTIONS+=("-G")
+    [[ ${CI_GEFS:-T} == T ]] && OPTIONS+=("-E")
+    [[ ${CI_SFS:-T} == T ]] && OPTIONS+=("-S")
+    [[ ${CI_GCAPS:-T} == T ]] && OPTIONS+=("-C")
+else
 fi
-
-################################################
-# set up gw experiment
-CD=$(dirname "$0")
-source ${HOMEgfs}/dev/ci/platforms/config.${m/.*}
-source ${HOMEgfs}/dev/ush/gw_setup.sh
-export YAML_DIR=${HOMEgfs}
-export HPC_ACCOUNT=${COMPUTE_ACCOUNT}
-${HOMEgfs}/dev/workflow/create_experiment.py --yaml "${YAML}"
-echo "FINISHED: create_experiment.py"
-
-################################################
-# if yes, add all SFS dates
-[[ ${SFS_BASELINE} == T ]] && ${PWD}/SFS-add_basline_dates.sh ${PWD}/${pslot}.xml
+OPTIONS+=("-D")
+OPTIONS+=("-c")
+cd ${HOMEgfs}/dev/workflow
+echo "RUNNING: ./generate_workflows.sh ${OPTIONS[@]}"
+./generate_workflows.sh "${OPTIONS[@]}" ${RUNTESTS}
+cd ${SCRIPT_DIR}
 
 ################################################
 # Soft link items into EXPDIR for easier development
-TOPEXPDIR=${RUNTESTS}/EXPDIR/${pslot}
-set +u && source ${TOPEXPDIR}/config.base && set -u
-cd ${TOPEXPDIR}
-ln -sf ${HOMEgfs} GW-CODE
-ln -sf ${HOMEgfs}/dev/workflow/rocoto_viewer.py .
-ln -sf ${HOMEgfs}/dev/parm/config ORIG_CONFIGS
-ln -sf ${COMROOT}/${PSLOT}/logs LOGS_COMROOT
-ln -sf ${RUNDIRS}/${PSLOT} RUNDIRS
-echo "FINISHED: soft-linking to EXPDIR"
-if [[ ${DEBUG} == T ]]; then
-    echo "DEBUGING, run set-up.xml in $EXPDIR" && exit 1
+ln -sf ${RUNTESTS}/EXPDIR .
+if [[ ${CI_GFS} != T ]] || [[ ${CI_GEFS} != T ]] || [[ ${CI_SFS} != T ]] || [[ ${CI_GCAPS} != T ]]; then
+    for YAML in ${YAML_NAME}; do
+        TOPEXPDIR=${RUNTESTS}/EXPDIR/${YAML}
+        COMROOT=${RUNTESTS}/COMROOT
+        [[ ${SFS_BASELINE} == T ]] && ${SCRIPT_DIR}/SFS-add_basline_dates.sh ${TOPEXPDIR}/${YAML}.xml
+        ln -sf ${HOMEgfs} ${TOPEXPDIR}/GW-CODE
+        ln -sf ${HOMEgfs}/dev/workflow/rocoto_viewer.py ${TOPEXPDIR}
+        ln -sf ${HOMEgfs}/dev/parm/config ${TOPEXPDIR}/ORIG_CONFIGS
+        ln -sf ${COMROOT}/${YAML}/logs ${TOPEXPDIR}/LOGS_COMROOT
+        ln -sf ${RUNDIRS}/${YAML} ${TOPEXPDIR}/RUNDIRS
+    done
+    echo "FINISHED: soft-linking to EXPDIR"
 fi
-
-################################################
-# start rocotorun and add crontab
-xml_file=${PWD}/${pslot}.xml && db_file=${PWD}/${pslot}.db && cron_file=${PWD}/${pslot}.crontab
-~/TOOLS/bin/add-to-crontab ${cron_file}
-rocotorun -d ${db_file} -w ${xml_file}
-echo "CRONTAB INFO:"
-echo "machine=${machine}"
-echo "cron_file=${cron_file}"
-echo "db=${db_file}"
-echo "xml=${xml_file}"
+rocotoMONITOR
