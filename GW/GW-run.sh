@@ -7,7 +7,7 @@ set -u
 ####################################
 source ${PWD}/REPO_YAML
 BUILD=F
-CI_GFS=F && CI_GEFS=F && CI_SFS=F && CI_GCAPS=F
+CI_GFS=F && CI_GEFS=T && CI_SFS=T && CI_GCAPS=F
 UPDATE_MODULES=F
 SFS_BASELINE=F
 ONLY_CHECKOUT=F
@@ -28,11 +28,15 @@ fi
 # Check if Code exist
 echo "HOMEgfs: ${HOMEgfs}"
 [[ ! -d ${HOMEgfs} ]] && echo "code is not at ${HOMEgfs}" &&  exit 1
-if [[ ${CI_GFS} != T ]] || [[ ${CI_GEFS} != T ]] || [[ ${CI_SFS} != T ]] || [[ ${CI_GCAPS} != T ]]; then
+VARS=(${CI_GFS} ${CI_GEFS} ${CI_SFS} ${CI_GCAPS}) && CI_TESTING=F
+for v in "${VARS[@]}"; do if [[ ${v} == "T" ]]; then CI_TESTING=T; break; fi; done
+if [[ "${CI_TESTING}" == "F" ]]; then
     YAML_DIR=${YAML_DIR:-$(dirname ${YAML})}
     YAML_NAME=${YAML_NAME:-$(basename ${YAML%.yaml})}
     echo "YAML: ${YAML_DIR}"
     [[ ! -d ${YAML_DIR} ]] && echo "yaml directory does not exist at ${YAML_DIR}" &&  exit 1
+else
+    echo "YAML: Performing CI tests"
 fi
 
 ################################################
@@ -62,7 +66,7 @@ export TOPICDIR=${TOPICDIR}
 OPTIONS=()
 [[ ${BUILD} == T ]] && OPTIONS+=("-b")
 [[ ${UPDATE_MODULES} == T ]] && OPTIONS+=("-u")
-if [[ ${CI_GFS} != T ]] || [[ ${CI_GEFS} != T ]] || [[ ${CI_SFS} != T ]] || [[ ${CI_GCAPS} != T ]]; then
+if [[ "${CI_TESTING}" == "F" ]]; then
     OPTIONS+=('-Y') && OPTIONS+=("${YAML_DIR}")
     OPTIONS+=('-y') && OPTIONS+=("${YAML_NAME}")
 else
@@ -70,7 +74,6 @@ else
     [[ ${CI_GEFS:-T} == T ]] && OPTIONS+=("-E")
     [[ ${CI_SFS:-T} == T ]] && OPTIONS+=("-S")
     [[ ${CI_GCAPS:-T} == T ]] && OPTIONS+=("-C")
-else
 fi
 OPTIONS+=("-D")
 OPTIONS+=("-c")
@@ -82,7 +85,7 @@ cd ${SCRIPT_DIR}
 ################################################
 # Soft link items into EXPDIR for easier development
 ln -sf ${RUNTESTS}/EXPDIR .
-if [[ ${CI_GFS} != T ]] || [[ ${CI_GEFS} != T ]] || [[ ${CI_SFS} != T ]] || [[ ${CI_GCAPS} != T ]]; then
+if [[ "${CI_TESTING}" == "F" ]]; then
     for YAML in ${YAML_NAME}; do
         TOPEXPDIR=${RUNTESTS}/EXPDIR/${YAML}
         COMROOT=${RUNTESTS}/COMROOT
