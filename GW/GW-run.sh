@@ -7,7 +7,7 @@ set -u
 ####################################
 source ${PWD}/REPO_YAML
 BUILD=F
-CI_GFS=F && CI_GEFS=T && CI_SFS=T && CI_GCAPS=F
+CI_GFS=F && CI_GEFS=F && CI_SFS=T && CI_GCAPS=F
 UPDATE_MODULES=F
 SFS_BASELINE=F
 ONLY_CHECKOUT=F
@@ -21,6 +21,7 @@ if [[ ! -d ${HOMEgfs} ]]; then
     TOPDIR=${HOMEgfs}/../
     mkdir -p ${TOPDIR} && cd ${TOPDIR}
     git clone --recursive -b ${HASH} git@github.com:${REPO}/global-workflow.git $(basename ${HOMEgfs})
+    [[ $? > 0 ]] && exit 1
 fi
 [[ ${ONLY_CHECKOUT} == T ]] && exit 0
 
