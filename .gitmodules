@@ -1,13 +1,10 @@
 
-[submodule "UFS/TIMINGS"]
-	path = UFS/TIMINGS
-	url = https://github.com/NeilBarton-NOAA/ufs-timings.git
 [submodule "REPLAY_ICS"]
 	path = REPLAY_ICS
 	url = https://github.com/NeilBarton-NOAA/REPLAY_ICS
-[submodule "UFS/RUN-UFS"]
-	path = UFS/RUN-UFS
-	url = https://github.com/NeilBarton-NOAA/RUN-UFS.git
 [submodule "DIAG_SUITE"]
 	path = DIAG_SUITE
 	url = https://github.com/NeilBarton-NOAA/DIAG_SUITE.git
+[submodule "RUN-UFS"]
+	path = RUN-UFS
+	url = git@github.com:NeilBarton-NOAA/RUN-UFS.git
