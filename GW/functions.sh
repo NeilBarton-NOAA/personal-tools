@@ -27,8 +27,8 @@ get_yamls() {
 DEFAULT_YAMLS=${1}
 CI_FORECAST=${2:-F}
 CI_DA=${3:-F}
+[[ -z "${YAML+x}" ]] && YAML=()
 if [[ ${DEFAULT_YAMLS} == T ]]; then
-    YAML=()
     for f in $( find ${PWD}/YAMLS -name C*.yaml ); do YAML+=("${f}"); done
 fi
 if [[ ${CI_FORECAST} == T ]]; then
@@ -93,6 +93,7 @@ source ${HOMEgfs}/dev/ci/platforms/config.${machine/.*}
 source ${HOMEgfs}/dev/ush/gw_setup.sh >& /dev/null
 export HPC_ACCOUNT=${COMPUTE_ACCOUNT}
 for YAML in ${YAMLS}; do
+    echo "create_experiment.py: ${YAML}"
     export pslot=$(basename ${YAML/.yaml*})_$(basename ${HOMEgfs})
     ${HOMEgfs}/dev/workflow/create_experiment.py --yaml "${YAML}"
     eval "$(PDY=0 cyc=0 source "${RUNTESTS}/EXPDIR/${pslot}/config.base" >& /dev/null; echo DATAROOT="${STMP}/RUNDIRS/${PSLOT}")"
