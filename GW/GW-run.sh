@@ -6,15 +6,14 @@ source ${PWD}/functions.sh && machine_config
 # https://global-workflow.readthedocs.io/en/latest/
 ####################################
 # Code
-REPO=NeilBarton-NOAA && HASH=ocnice_products
 #REPO=YangxingZheng-NOAA && HASH=sfs_products
 #REPO=XiaqiongZhou-NOAA && HASH=SFSbeta0.1
-#REPO=NOAA-EMC && HASH=dev/sfs
+REPO=NOAA-EMC && HASH=dev/sfs
 #REPO=NOAA-EMC && HASH=develop
 HOMEgfs=${NPB_WORKDIR}/CODE/gw_${HASH////\_}_${REPO}
-YAML=(${HOMEgfs}/dev/ci/cases/pr/C96mx100_S2S.yaml)
-DEFAULT_YAMLS=F
-CI_FORECASTS_YAMLS=F
+#YAML=(${HOMEgfs}/dev/ci/cases/pr/C96mx100_S2S.yaml)
+DEFAULT_YAMLS=T
+CI_FORECASTS_YAMLS=T
 CI_DA_YAMLS=F 
 SFS_BASELINE=F
 CLONE_ONLY=F

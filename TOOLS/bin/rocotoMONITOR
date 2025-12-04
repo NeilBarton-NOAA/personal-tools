@@ -31,7 +31,7 @@ printstats () {
 
 if [[ $db == F ]] || [[ $xml == F ]]; then
     if [[ ${machine} == gaea* ]]; then
-        scrons=$(scrontab -l | grep scron | awk '{print $6}') 
+        scrons=$(scrontab -l | grep scron | grep EXPDIR | awk '{print $6}') 
         dbs=()
         xmls=()
         for scron in ${scrons}; do
