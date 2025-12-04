@@ -32,10 +32,10 @@ if [[ ${DEFAULT_YAMLS} == T ]]; then
     for f in $( find ${PWD}/YAMLS -name C*.yaml ); do YAML+=("${f}"); done
 fi
 if [[ ${CI_FORECAST} == T ]]; then
-    for f in $( find ${HOMEgfs}/dev/ci/cases/pr -name *.yaml | xargs grep -l forecast-only | xargs grep -L ${machine} ); do YAML+=("$f"); done
+    for f in $( find ${HOMEgfs}/dev/ci/cases/pr -name *.yaml | xargs grep -l --exclude="*ecflow*" forecast-only | xargs grep -L ${machine} ); do YAML+=("$f"); done
 fi 
 if [[ ${CI_DA} == T ]]; then
-    for f in $( find ${HOMEgfs}/dev/ci/cases/pr -name *.yaml | xargs grep -l cycled | xargs grep -L ${machine} ); do YAML+=("$f"); done
+    for f in $( find ${HOMEgfs}/dev/ci/cases/pr -name *.yaml | xargs grep -l --exclude="*ecflow*" cycled | xargs grep -L ${machine} | xargs grep -lv ecflow); do YAML+=("$f"); done
 fi 
 export YAML
 }
@@ -163,7 +163,7 @@ for YAML in ${YAMLS}; do
         echo "Already in Crontab ${pslot}"
     else
         echo "Adding to crontab: ${YAML}.crontab"
-        scrontab -l | cat - ${f}.crontab | scrontab -
+        ${ct} -l | cat - ${f}.crontab | ${ct} -
     fi
 done
 }
