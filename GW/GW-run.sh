@@ -17,7 +17,7 @@ CI_FORECASTS_YAMLS=T
 CI_DA_YAMLS=F 
 SFS_BASELINE=F
 CLONE_ONLY=F
-BUILD_ONLY=F
+BUILD_ONLY=T
 ####################################
 # The work to set up an experiment
 clone_gw ${HOMEgfs} ${HASH} ${REPO}

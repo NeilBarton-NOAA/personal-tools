@@ -35,7 +35,7 @@ if [[ ${CI_FORECAST} == T ]]; then
     for f in $( find ${HOMEgfs}/dev/ci/cases/pr -name *.yaml | xargs grep -l --exclude="*ecflow*" forecast-only | xargs grep -L ${machine} ); do YAML+=("$f"); done
 fi 
 if [[ ${CI_DA} == T ]]; then
-    for f in $( find ${HOMEgfs}/dev/ci/cases/pr -name *.yaml | xargs grep -l --exclude="*ecflow*" cycled | xargs grep -L ${machine} | xargs grep -lv ecflow); do YAML+=("$f"); done
+    for f in $( find ${HOMEgfs}/dev/ci/cases/pr -name *.yaml | xargs grep -l --exclude="*ecflow*" cycled | xargs grep -L ${machine} ); do YAML+=("$f"); done
 fi 
 export YAML
 }
