@@ -3,7 +3,7 @@ defaults:
 base:
   FHMAX_GFS: 48
   FCST_BREAKPOINTS: ""
-  KEEPDATA: "NO"
+  KEEPDATA: "YES"
   HPSSARCH: "YES"
 ocn:
   MOM6_INTERP_ICS: "YES"

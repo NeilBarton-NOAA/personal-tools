@@ -13,7 +13,6 @@ hercules*)   m=hercules ;
              TOPICDIR=/work/noaa/marine/Yangxing.Zheng/ICs ;;
 gaea*)       m=gaeac6 ;   
              TOPICDIR=/gpfs/f6/sfs-emc/proj-shared/Yangxing.Zheng/SFS/ICs ;;
-             #TOPICDIR=${NPB_WORKDIR}/ICs ;; 
 u*)          m=ursa ;     
              TOPICDIR=/scratch4/NCEPDEV/global/Yangxing.Zheng/ICs ;;
 *[cd]login*) m=wcoss2 ;;
@@ -32,10 +31,10 @@ if [[ ${DEFAULT_YAMLS} == T ]]; then
     for f in $( find ${PWD}/YAMLS -name C*.yaml ); do YAML+=("${f}"); done
 fi
 if [[ ${CI_FORECAST} == T ]]; then
-    for f in $( find ${HOMEgfs}/dev/ci/cases/pr -name *.yaml | xargs grep -l --exclude="*ecflow*" forecast-only | xargs grep -L ${machine} ); do YAML+=("$f"); done
+    for f in $( find ${HOMEgfs}/dev/ci/cases/pr -name *.yaml | xargs grep -l --exclude="*ecflow*" forecast-only | xargs grep -L ${m} ); do YAML+=("$f"); done
 fi 
 if [[ ${CI_DA} == T ]]; then
-    for f in $( find ${HOMEgfs}/dev/ci/cases/pr -name *.yaml | xargs grep -l --exclude="*ecflow*" cycled | xargs grep -L ${machine} ); do YAML+=("$f"); done
+    for f in $( find ${HOMEgfs}/dev/ci/cases/pr -name *.yaml | xargs grep -l --exclude="*ecflow*" cycled | xargs grep -L ${m} ); do YAML+=("$f"); done
 fi 
 export YAML
 }
@@ -57,6 +56,16 @@ fi
 }
 
 ################################################
+# Clone gw if needed
+update_gw () {
+HOMEgfs=${1}
+ORIG_DIR=${PWD}
+cd ${HOMEgfs}
+git pull 
+git submodule update --init --recursive -j 10
+cd ${ORIG_DIR}
+}
+################################################
 # Build only gw options that are needed 
 build_gw () {
 HOMEgfs=${1}
@@ -64,7 +73,7 @@ ACCOUNT=${2}
 YAMLS=${@:3}
 # See of the link_workflow.sh script needs to run
 cd ${HOMEgfs}/sorc
-[[ ! -L ${HOMEgfs}/fix/mom6 ]] && sh link_workflow.sh
+[[ ! -L ${HOMEgfs}/exec/sfs_model.exe ]] && sh link_workflow.sh
 # Check what options need to be compiled
 OPTIONS=()
 for f in ${YAMLS}; do
@@ -77,7 +86,7 @@ for f in ${YAMLS}; do
 done 
 if [[ ${#OPTIONS[@]} -gt 0 ]]; then
     echo "Building: ${OPTIONS[@]}"
-    sh build_compute.sh -A ${ACCOUNT} ${OPTIONS[@]} >& ~/GW/build_$(basename ${HOMEgfs}).log &
+    sh build_all.sh ${OPTIONS[@]} #>& ~/GW/build_$(basename ${HOMEgfs}).log &
 fi
 }
 
