@@ -36,6 +36,10 @@ fi
 if [[ ${CI_DA} == T ]]; then
     for f in $( find ${HOMEgfs}/dev/ci/cases/pr -name *.yaml | xargs grep -l --exclude="*ecflow*" cycled | xargs grep -L ${m} ); do YAML+=("$f"); done
 fi 
+for Y in ${YAML[@]}; do 
+    [[ ! -f ${Y} ]] &&  echo "FATAL YAML NOT FOUND. ${Y}" && exit 1
+    echo ${Y}
+done
 export YAML
 }
 
@@ -71,23 +75,26 @@ build_gw () {
 HOMEgfs=${1}
 ACCOUNT=${2}
 YAMLS=${@:3}
-# See of the link_workflow.sh script needs to run
-cd ${HOMEgfs}/sorc
-[[ ! -L ${HOMEgfs}/exec/sfs_model.exe ]] && sh link_workflow.sh
 # Check what options need to be compiled
-OPTIONS=()
+NETS=()
 for f in ${YAMLS}; do
     net=$( grep net ${f} | awk '{print $2}' )
-    found=F
-    for OPTION in ${OPTIONS[@]}; do
-        [[ ${OPTION} == ${net} ]] && found=T && break 
-    done
-    [[ "${found}" == "F" ]] && [[ ! -f ${HOMEgfs}/exec/${net}_model.x ]] && OPTIONS+=("${net}")
+    NETS+=("${net}")
 done 
+readarray -t OPTIONS < <(printf "%s\n" "${NETS[@]}" | sort -u)
+for i in "${!OPTIONS[@]}"; do
+    if [[ -f ${HOMEgfs}/exec/${OPTIONS[$i]}_model.x ]]; then
+        unset "OPTIONS[$i]"
+    fi
+done
+cd ${HOMEgfs}/sorc
 if [[ ${#OPTIONS[@]} -gt 0 ]]; then
     echo "Building: ${OPTIONS[@]}"
     sh build_all.sh ${OPTIONS[@]} #>& ~/GW/build_$(basename ${HOMEgfs}).log &
+    sh link_workflow.sh
 fi
+# See of the link_workflow.sh script needs to run
+#[[ ! -L ${HOMEgfs}/exec/sfs_model.exe ]] && sh link_workflow.sh
 }
 
 ################################################
@@ -124,6 +131,7 @@ for YAML in ${YAMLS}; do
     eval "$(PDY=0 cyc=0 source "${RUNTESTS}/EXPDIR/${pslot}/config.base" >& /dev/null; echo DATAROOT="${STMP}/RUNDIRS/${PSLOT}")"
     ln -sf ${HOMEgfs} ${EXPDIR}/GW-CODE 
     ln -sf ${HOMEgfs}/dev/workflow/rocoto_viewer.py ${EXPDIR}/rocoto_viewer.py
+    ln -sf ${HOMEgfs}/dev/workflow/setup_workflow.py ${EXPDIR}/setup_workflow.py
     ln -sf ${HOMEgfs}/dev/parm/config ${EXPDIR}/ORIG_CONFIGS
     ln -sf ${COMROOT}/logs ${EXPDIR}/LOGS_COMROOT
     ln -sf ${DATAROOT} ${EXPDIR}/DATAROOT
