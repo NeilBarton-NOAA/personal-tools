@@ -123,7 +123,7 @@ link_EXPDIR () {
 HOMEgfs=${1}
 YAMLS=${@:2}
 local YAML
-ln -sf ${RUNTESTS}/EXPDIR ${PWD}/GW 
+[[ ! -d ${HOME}/GW/EXPDIR ]] && ln -sf ${RUNTESTS}/EXPDIR ${HOME}/GW/EXPDIR 
 for YAML in ${YAMLS}; do
     pslot=$(basename ${YAML/.yaml*})_$(basename ${HOMEgfs})
     EXPDIR=${RUNTESTS}/EXPDIR/${pslot}
@@ -142,7 +142,8 @@ echo "FINISHED: soft-linking to EXPDIR"
 ################################################
 # add dates to yamls to run for SFS baseline 
 sfs_baseline () {
-YAMLS=${@:1}
+YAMLS=${1}
+MONTHS=${2:-"05 11"}
 local YAML
 for YAML in ${YAMLS}; do
     pslot=$(basename ${YAML/.yaml*})_$(basename ${HOMEgfs})
@@ -150,10 +151,9 @@ for YAML in ${YAMLS}; do
     XML_FILE=${EXPDIR}/${pslot}.xml
     line=$(grep -n 'cycledef group' ${XML_FILE} | cut -d: -f1) 
     sed -i ${line}d ${XML_FILE}
-    MONTHS="05 11"
     for Y in $(seq 1994 2023); do
         for M in ${MONTHS}; do 
-            text="<cycledef group='"gefs"'>${Y}${M}010000 ${Y}${M}010000 24:00:00</cycledef>"
+            text="<cycledef group='"sfs"'>${Y}${M}010000 ${Y}${M}010000 06:00:00</cycledef>"
             sed -i "${line} i   ${text}" ${XML_FILE}
             line=$(( line + 1))
         done
