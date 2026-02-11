@@ -26,21 +26,50 @@ get_yamls() {
 DEFAULT_YAMLS=${1}
 CI_FORECAST=${2:-F}
 CI_DA=${3:-F}
-[[ -z "${YAML+x}" ]] && YAML=()
+[[ -z "${YAMLS+x}" ]] && YAMLS=()
+PSLOTS=()
 if [[ ${DEFAULT_YAMLS} == T ]]; then
     for f in $( find ${PWD}/YAMLS -name C*.yaml ); do YAML+=("${f}"); done
 fi
 if [[ ${CI_FORECAST} == T ]]; then
-    for f in $( find ${HOMEgfs}/dev/ci/cases/pr -name *.yaml | xargs grep -l --exclude="*ecflow*" forecast-only | xargs grep -L ${m} ); do YAML+=("$f"); done
+    for f in $( find ${HOMEgfs}/dev/ci/cases/pr -name *.yaml | xargs grep -l --exclude="*ecflow*" forecast-only | xargs grep -L ${m} ); do YAMLS+=("$f"); done
 fi 
 if [[ ${CI_DA} == T ]]; then
-    for f in $( find ${HOMEgfs}/dev/ci/cases/pr -name *.yaml | xargs grep -l --exclude="*ecflow*" cycled | xargs grep -L ${m} ); do YAML+=("$f"); done
+    for f in $( find ${HOMEgfs}/dev/ci/cases/pr -name *.yaml | xargs grep -l --exclude="*ecflow*" cycled | xargs grep -L ${m} ); do YAMLS+=("$f"); done
 fi 
-for Y in ${YAML[@]}; do 
+for Y in ${YAMLS[@]}; do 
     [[ ! -f ${Y} ]] &&  echo "FATAL YAML NOT FOUND. ${Y}" && exit 1
-    echo ${Y}
+    if [[ ${PSLOT_NAME:-'default'} == 'default' ]]; then
+        pslot=$(basename ${Y/.yaml*})_$(basename ${HOMEgfs})
+        PSLOTS+=("${pslot}")
+    else
+        #set -x
+        pslot=${PSLOT_NAME}
+        #check to see if already exist
+        if [[ -d ${RUNTESTS}/EXPDIR/${pslot} ]]; then
+            n=1
+            ds=$( ls -d ${RUNTESTS}/EXPDIR/*/ )
+            e_pslot=()
+            for d in ${ds}; do
+                n_pslot=$(basename ${d})
+                e_pslot+=("${n_pslot}")
+            done
+            while true; do
+                f_n=$(printf %02d ${n})
+                temp_pslot=${pslot}_${f_n}
+                if [[ ! " ${e_pslot[@]} " =~ " ${temp_pslot} " ]]; then
+                    break
+                fi
+                n=$(( n + 1 ))
+            
+            done
+            pslot=${temp_pslot}
+        fi
+        PSLOTS+=("${pslot}")
+    fi
+    echo "${Y}, ${pslot}"
 done
-export YAML
+export YAMLS PSLOTS
 }
 
 ################################################
@@ -60,7 +89,7 @@ fi
 }
 
 ################################################
-# Clone gw if needed
+# Update gw if needed
 update_gw () {
 HOMEgfs=${1}
 ORIG_DIR=${PWD}
@@ -74,10 +103,9 @@ cd ${ORIG_DIR}
 build_gw () {
 HOMEgfs=${1}
 ACCOUNT=${2}
-YAMLS=${@:3}
 # Check what options need to be compiled
 NETS=()
-for f in ${YAMLS}; do
+for f in ${YAMLS[@]}; do
     net=$( grep net ${f} | awk '{print $2}' )
     NETS+=("${net}")
 done 
@@ -93,8 +121,6 @@ if [[ ${#OPTIONS[@]} -gt 0 ]]; then
     sh build_all.sh ${OPTIONS[@]} #>& ~/GW/build_$(basename ${HOMEgfs}).log &
     sh link_workflow.sh
 fi
-# See of the link_workflow.sh script needs to run
-#[[ ! -L ${HOMEgfs}/exec/sfs_model.exe ]] && sh link_workflow.sh
 }
 
 ################################################
@@ -103,17 +129,24 @@ create_experiment () {
 HOMEgfs=${1}
 machine=${2}
 export HPC_ACCOUNT=${3}
-YAMLS=${@:4}
-local YAML
 source ${HOMEgfs}/dev/ci/platforms/config.${machine/.*}
 source ${HOMEgfs}/dev/ush/gw_setup.sh >& /dev/null
 export HPC_ACCOUNT=${COMPUTE_ACCOUNT}
-for YAML in ${YAMLS}; do
-    echo "create_experiment.py: ${YAML}"
-    export pslot=$(basename ${YAML/.yaml*})_$(basename ${HOMEgfs})
+for (( i=0; i<${#YAMLS[@]}; i++ )); do
+    YAML=${YAMLS[${i}]}
+    export pslot=${PSLOTS[${i}]}
+    echo "create_experiment.py: ${YAML}, ${pslot}"
     ${HOMEgfs}/dev/workflow/create_experiment.py --yaml "${YAML}"
     eval "$(PDY=0 cyc=0 source "${RUNTESTS}/EXPDIR/${pslot}/config.base" >& /dev/null; echo DATAROOT="${STMP}/RUNDIRS/${PSLOT}")"
-    [[ -d ${DATAROOT} ]] && echo "Removing ${DATAROOT}" && rm -r ${DATAROOT}
+    echo ${DATAROOT}
+    if [[ -d ${DATAROOT} ]]; then
+        echo "DATAROOT exist: ${DATAROOT}" 
+        read -p "  remove (y/n)?:" -r -n 1 
+        echo 
+        if [[ $REPLY =~ ^[Yy]$ ]]; then
+            rm -r ${DATAROOT}
+        fi
+    fi
 done
 }
 
@@ -121,11 +154,10 @@ done
 # link items to EXPDIR for personal debugging 
 link_EXPDIR () {
 HOMEgfs=${1}
-YAMLS=${@:2}
-local YAML
 [[ ! -d ${HOME}/GW/EXPDIR ]] && ln -sf ${RUNTESTS}/EXPDIR ${HOME}/GW/EXPDIR 
-for YAML in ${YAMLS}; do
-    pslot=$(basename ${YAML/.yaml*})_$(basename ${HOMEgfs})
+for (( i=0; i<${#YAMLS[@]}; i++ )); do
+    YAML=${YAMLS[${i}]}
+    pslot=${PSLOTS[${i}]}
     EXPDIR=${RUNTESTS}/EXPDIR/${pslot}
     COMROOT=${RUNTESTS}/COMROOT/${pslot}
     eval "$(PDY=0 cyc=0 source "${RUNTESTS}/EXPDIR/${pslot}/config.base" >& /dev/null; echo DATAROOT="${STMP}/RUNDIRS/${PSLOT}")"
@@ -142,11 +174,10 @@ echo "FINISHED: soft-linking to EXPDIR"
 ################################################
 # add dates to yamls to run for SFS baseline 
 sfs_baseline () {
-YAMLS=${1}
-MONTHS=${2:-"05 11"}
-local YAML
-for YAML in ${YAMLS}; do
-    pslot=$(basename ${YAML/.yaml*})_$(basename ${HOMEgfs})
+MONTHS=${1:-"05 11"}
+for (( i=0; i<${#YAMLS[@]}; i++ )); do
+    YAML=${YAMLS[${i}]}
+    pslot=${PSLOTS[${i}]}
     EXPDIR=${RUNTESTS}/EXPDIR/${pslot}
     XML_FILE=${EXPDIR}/${pslot}.xml
     line=$(grep -n 'cycledef group' ${XML_FILE} | cut -d: -f1) 
@@ -166,14 +197,14 @@ done
 # add to cronttab if not currenting in crontab 
 add_to_crontab () {
 machine=${1}
-YAMLS=${@:2}
 if [[ ${machine} == gaea* ]] || [[ ${machine} == GAEA* ]]; then
     ct=scrontab
 else
     ct=crontab
 fi
-for YAML in ${YAMLS}; do
-    pslot=$(basename ${YAML/.yaml*})_$(basename ${HOMEgfs})
+for (( i=0; i<${#YAMLS[@]}; i++ )); do
+    YAML=${YAMLS[${i}]}
+    pslot=${PSLOTS[${i}]}
     f=${RUNTESTS}/EXPDIR/${pslot}/${pslot}
     exist=$( ${ct} -l | grep ${f} 2>/dev/null | wc -l )
     if (( ${exist} > 0 )); then
