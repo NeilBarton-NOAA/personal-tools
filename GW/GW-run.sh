@@ -7,20 +7,19 @@ source ${PWD}/functions.sh && machine_config
 ####################################
 # Code
 #REPO=YangxingZheng-NOAA && HASH=sfs_products
-REPO=NeilBarton-NOAA && HASH=SFSbeta1.0
+REPO=NeilBarton-NOAA && HASH=SFSbeta1.1 #&& PSLOT_NAME='GFSICS_BETA1.1'
+#YAMLS=(${HOME}/GW/YAMLS/C192mx025_S2S_GFSV17_ICS_TEST.yaml) && export TOPICDIR=${NPB_WORKDIR}/ICs 
+#REPO=NeilBarton-NOAA && HASH=SFSbeta1.0 && PSLOT_NAME='BETA1.0'
+#YAMLS=(${HOME}/GW/YAMLS/C96mx100_S2S_CPC_ICS_TEST.yaml)
 #REPO=NOAA-EMC && HASH=develop
 #REPO=NOAA-EMC && HASH=dev/sfs
 
 HOMEgfs=${NPB_WORKDIR}/CODE/gw_${HASH////\_}_${REPO}
-YAMLS=(${HOME}/GW/YAMLS/C192mx025_S2S_GFSV17_ICS_TEST.yaml)
-#YAMLS=(${HOME}/GW/YAMLS/C96mx100_S2S_CPC_ICS_TEST.yaml)
-#YAMLS=(${HOMEgfs}/dev/ci/cases/sfs/C192mx025_S2S_CPC_ICS.yaml)
-export TOPICDIR=${NPB_WORKDIR}/ICs 
+#YAMLS=(${HOMEgfs}/dev/ci/cases/sfs/C192mx025_S2S_GFSV17_ICS.yaml)
 DEFAULT_YAMLS=F
-CI_FORECASTS_YAMLS=F
+CI_FORECASTS_YAMLS=T
 CI_DA_YAMLS=F 
 SFS_BASELINE=F && SFS_MONTHS='03'
-PSLOT_NAME='GFSICS'
 CLONE_ONLY=F
 BUILD_ONLY=F
 UPDATE_CODE=F

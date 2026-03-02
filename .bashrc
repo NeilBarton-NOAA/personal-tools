@@ -28,6 +28,7 @@ alias psu="ps U $USER"
 alias gitgeturl="git config --get remote.origin.url"
 alias qme="squeue -u $USER --format='%.18i %.50j %.2t %.8M %.10l %.6D'"
 alias qdelme="squeue -u $USER | grep -v JOBID | awk '{print \$1}' | xargs scancel"
+alias qdel="scancel"
 alias "cylc_check"="~/.cylc_check.sh"
 export ARCHIVE_HOME="/NCEPDEV/emc-marine/*year/Neil.Barton"
 ########################
@@ -65,6 +66,7 @@ elif [[ ${machine} == *[cd]login* ]]; then
     export NPB_WORKDIR=${ptmp}
     alias qme="qstat -u $USER"
     alias qdelme="qselect -u ${USER} | xargs qdel"
+    unalias qdel
 # mercury
 elif [[ ${machine} == mfe* ]]; then
     if [[ $(uname -n) != mfe01.fairmont.rdhpcs.noaa.gov ]]; then
