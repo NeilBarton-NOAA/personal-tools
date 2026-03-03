@@ -21,7 +21,7 @@ CI_FORECASTS_YAMLS=T
 CI_DA_YAMLS=F 
 SFS_BASELINE=F && SFS_MONTHS='03'
 CLONE_ONLY=F
-BUILD_ONLY=F
+BUILD_ONLY=T
 UPDATE_CODE=F
 
 ####################################
@@ -30,7 +30,7 @@ clone_gw ${HOMEgfs} ${HASH} ${REPO}
 [[ ${CLONE_ONLY:-F} == T ]] && echo "Only Cloning g-w" && exit 0
 [[ ${UPDATE_CODE:-F} == T ]] && update_gw ${HOMEgfs}
 get_yamls ${DEFAULT_YAMLS} ${CI_FORECASTS_YAMLS} ${CI_DA_YAMLS} 
-build_gw ${HOMEgfs} ${COMPUTE_ACCOUNT} #${YAML[@]}
+build_gw ${HOMEgfs} ${COMPUTE_ACCOUNT} ${YAML[@]}
 [[ ${BUILD_ONLY:-F} == T ]] && echo "Stoping After Building g-w" && exit 0
 create_experiment ${HOMEgfs} ${m} ${COMPUTE_ACCOUNT} ${YAML[@]} 
 link_EXPDIR ${HOMEgfs} ${YAML[@]}

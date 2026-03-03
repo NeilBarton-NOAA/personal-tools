@@ -118,8 +118,8 @@ done
 cd ${HOMEgfs}/sorc
 if [[ ${#OPTIONS[@]} -gt 0 ]]; then
     echo "Building: ${OPTIONS[@]}"
-    sh build_all.sh ${OPTIONS[@]} #>& ~/GW/build_$(basename ${HOMEgfs}).log &
-    sh link_workflow.sh
+    ./build_all.sh "${OPTIONS[@]}" #>& ~/GW/build_$(basename ${HOMEgfs}).log &
+    ./link_workflow.sh
 fi
 }
 
