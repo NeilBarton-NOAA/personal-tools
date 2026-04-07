@@ -30,7 +30,9 @@ alias qme="squeue -u $USER --format='%.18i %.50j %.2t %.8M %.10l %.6D'"
 alias qdelme="squeue -u $USER | grep -v JOBID | awk '{print \$1}' | xargs scancel"
 alias qdel="scancel"
 alias "cylc_check"="~/.cylc_check.sh"
+alias "cpu_report"="shpcrpt -c ursa -u $USER && sshare -U $USER" 
 export ARCHIVE_HOME="/NCEPDEV/emc-marine/*year/Neil.Barton"
+
 ########################
 # machine specific
 # orion and hercules
@@ -49,11 +51,12 @@ elif [[ ${machine} == gaea* ]] || [[ ${machine} == dtn* ]]; then
     fi
 # ursa
 elif [[ ${machine} == ufe* ]]; then
+    export PROJ_DATA="/scratch3/NCEPDEV/nems/Neil.Barton/miniconda3/share/proj"
     export COMPUTE_ACCOUNT=marine-cpu
     export NPB_WORKDIR=/scratch4/NCEPDEV/stmp/Neil.Barton
     #export PROJ_LIB=/scratch2/NCEPDEV/stmp3/Neil.Barton/TOOLS/miniconda3/share/proj
-    if [[ $(uname -n) != ufe03 ]] && [[ $(uname -n) != u*[cm]* ]]; then
-        ssh -X ufe03
+    if [[ $(uname -n) != ufe02 ]] && [[ $(uname -n) != u*[cm]* ]]; then
+        ssh -X ufe02
     fi
 # WCOSS2
 elif [[ ${machine} == *[cd]login* ]]; then

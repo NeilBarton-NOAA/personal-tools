@@ -1,0 +1,19 @@
+#!/bin/sh
+set -u
+file=${1}
+machine=$(uname -n)
+module load globus-cli
+
+if  [[ ${machine} == ufe* ]]; then
+    SRC=8bbc822a-a625-4058-b68e-65edacd73828
+    src_dir=/scratch3/NCEPDEV/stmp/Neil.Barton/GLOBUS_TANSFER
+    mkdir -p ${src_dir}
+    rm ${src_dir}/* 2>/dev/null
+else
+    echo "GLOBUS ID UNKNOWN for machine"
+    exit 1
+fi
+DST=c91d7ca1-17ec-11f1-9eb8-0affd5da4067
+cp ${file} ${src_dir}/$(basename ${file})
+globus transfer ${SRC}:${src_dir}/$(basename ${file}) ${DST}:/~/${file}
+#rm ${src_dir}/$(basename ${file})
