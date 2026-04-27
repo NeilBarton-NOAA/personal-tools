@@ -146,9 +146,8 @@ for (( i=0; i<${#YAMLS[@]}; i++ )); do
     echo ${DATAROOT}
     if [[ -d ${DATAROOT} ]]; then
         echo "DATAROOT exist: ${DATAROOT}" 
-        read -p "  remove [y/N]?: " -r -n 1 
-        echo 
-        if [[ $REPLY =~ ^[Yy]$ ]]; then
+        read -p "  remove [y/N]?: " input
+        if [[ "$input" == "y" || "$input" == "Y" ]]; then
             rm -r ${DATAROOT}
         fi
     fi

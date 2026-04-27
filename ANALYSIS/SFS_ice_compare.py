@@ -13,8 +13,9 @@ from pathlib import Path
 import sys, glob
 import cartopy.crs as ccrs
 import cartopy.feature as cfeature
-dir1="/scratch4/NCEPDEV/stmp/Neil.Barton/RUNS/COMROOT/SFSBETA1.1_GFSv17ICs"
-dir2="/scratch3/NCEPDEV/global/Yangxing.Zheng/SFS_NRT_C192mx025_20260301"
+ymd="20260401"
+dir1="/scratch4/NCEPDEV/stmp/Neil.Barton/RUNS/COMROOT/beta1.1_GFS_ICs"
+dir2="/scratch3/NCEPDEV/global/Yangxing.Zheng/SFS_NRT_C192mx025"
 temp_f="/scratch4/NCEPDEV/stmp/Neil.Barton/sfs_ice.zarr"
 my_dir = Path(temp_f)
 # model data
@@ -25,7 +26,7 @@ else:
     ds_gfs, ds_cpc = [], []
     for mem in range(31):
         print("member: ", mem)
-        d="/sfs.20260301/00/mem" + str(mem).zfill(3) + "/products/ice/netcdf/native/sfs.*monthly_avg*nc"
+        d="/sfs." + ymd + "/00/mem" + str(mem).zfill(3) + "/products/ice/netcdf/native/sfs.*monthly_avg*nc"
         # gfs ic runs
         files = glob.glob(dir1 + d)
         ds = xr.open_mfdataset(files)

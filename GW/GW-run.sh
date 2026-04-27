@@ -6,22 +6,25 @@ source ${PWD}/functions.sh && machine_config
 # https://global-workflow.readthedocs.io/en/latest/
 ####################################
 # Code
-REPO=NOAA-EMC && HASH=develop
+#REPO=NOAA-EMC && HASH=develop
 #REPO=NOAA-EMC && HASH=dev/sfs
-#REPO=NeilBarton-NOAA && HASH=SFSbeta1.1 && PSLOT_NAME='SFSBETA1.1_GFSv17ICs'
+REPO=NeilBarton-NOAA && HASH=SFSbeta1.1 
 HOMEglobal=${NPB_WORKDIR}/CODE/gw_${HASH////\_}_${REPO}
-
-#YAMLS=(${HOME}/GW/YAMLS/C96mx100_S2S_CPC_ICS_TEST.yaml) 
+export DTG_GW=2025070100
 #YAMLS=(${HOME}/GW/YAMLS/C192mx025_S2S_GFSV17_ICS_TEST.yaml) && export TOPICDIR=${NPB_WORKDIR}/ICs && PSLOT_NAME="TEST_GFSICS" 
-#YAMLS=(${HOMEglobal}/dev/ci/cases/sfs/C192mx025_S2S_GFSV17_ICS.yaml) && export TOPICDIR=${NPB_WORKDIR}/ICs 
+
+YAMLS=(${HOMEglobal}/dev/ci/cases/sfs/C192mx025_S2S_CPC_ICS.yaml) && PSLOT_NAME='beta1.1_CPC_ICs_CICE_EDITS' 
+#YAMLS=(${HOMEglobal}/dev/ci/cases/sfs/C192mx025_S2S_REPLAY_ICS.yaml) && PSLOT_NAME='beta1.1_REPLAY_ICs' && export TOPICDIR=${NPB_WORKDIR}/ICs
+#YAMLS=(${HOMEglobal}/dev/ci/cases/sfs/C192mx025_S2S_GFSV17_ICS.yaml) && PSLOT_NAME='beta1.1_GFS_ICs' && export TOPICDIR=${NPB_WORKDIR}/ICs
 
 DEFAULT_YAMLS=F
-CI_FORECASTS_YAMLS=T
-CI_DA_YAMLS=T
+CI_FORECASTS_YAMLS=F
+CI_DA_YAMLS=F
 SFS_BASELINE=F && SFS_MONTHS='03'
 CLONE_ONLY=F
-BUILD_ONLY=T
+BUILD_ONLY=F
 UPDATE_CODE=F
+START_RUN=F
 
 ####################################
 # The work to set up an experiment
@@ -34,8 +37,12 @@ build_gw ${HOMEglobal} ${COMPUTE_ACCOUNT}
 create_experiment ${HOMEglobal} ${m} ${COMPUTE_ACCOUNT} ${YAML[@]} 
 link_EXPDIR ${HOMEglobal} ${YAML[@]}
 [[ ${SFS_BASELINE:-F} == T ]] && sfs_baseline ${YAML[@]} ${SFS_MONTHS}
-add_to_crontab ${m} ${YAML[@]}
-source ~/.profile
-echo " "
-rocotoMONITOR
+if [[ ${START_RUN:-T} == T ]]; then
+    add_to_crontab ${m} ${YAML[@]}
+    ~/.profile
+    rocotoMONITOR
+else
+    echo "edit experiment"
+    echo ${PSLOT_NAME}
+fi
 
