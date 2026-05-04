@@ -13,9 +13,9 @@ HOMEglobal=${NPB_WORKDIR}/CODE/gw_${HASH////\_}_${REPO}
 export DTG_GW=2025070100
 #YAMLS=(${HOME}/GW/YAMLS/C192mx025_S2S_GFSV17_ICS_TEST.yaml) && export TOPICDIR=${NPB_WORKDIR}/ICs && PSLOT_NAME="TEST_GFSICS" 
 
-YAMLS=(${HOMEglobal}/dev/ci/cases/sfs/C192mx025_S2S_CPC_ICS.yaml) && PSLOT_NAME='beta1.1_CPC_ICs_CICE_EDITS' 
+#YAMLS=(${HOMEglobal}/dev/ci/cases/sfs/C192mx025_S2S_CPC_ICS.yaml) && PSLOT_NAME='beta1.1_CPC_ICs_EDITS' 
 #YAMLS=(${HOMEglobal}/dev/ci/cases/sfs/C192mx025_S2S_REPLAY_ICS.yaml) && PSLOT_NAME='beta1.1_REPLAY_ICs' && export TOPICDIR=${NPB_WORKDIR}/ICs
-#YAMLS=(${HOMEglobal}/dev/ci/cases/sfs/C192mx025_S2S_GFSV17_ICS.yaml) && PSLOT_NAME='beta1.1_GFS_ICs' && export TOPICDIR=${NPB_WORKDIR}/ICs
+YAMLS=(${HOMEglobal}/dev/ci/cases/sfs/C192mx025_S2S_GFSV17_ICS.yaml) && PSLOT_NAME='beta1.1_GFS_ICs_EDITS' && export TOPICDIR=${NPB_WORKDIR}/ICs
 
 DEFAULT_YAMLS=F
 CI_FORECASTS_YAMLS=F

@@ -1,5 +1,5 @@
 #!/bin/sh
-set -xu
+set -u
 file=${1}
 machine=$(uname -n)
 module load globus-cli

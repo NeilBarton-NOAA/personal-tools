@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import pandas as pd
 
 def line(ds, region = 'globe', obs = False):
     ####################################
@@ -18,7 +19,10 @@ def line(ds, region = 'globe', obs = False):
         weights.name = "weights"
         dat = ds.weighted(weights).mean(("latitude", "longitude"))
     plt.figure()
-    colors = plt.cm.tab10(np.linspace(0, 1, len(ds.experiment)))
+    if len(ds.experiment.values) == 2:
+        colors = ['blue', 'green']
+    else:
+        colors = plt.cm.tab10(np.linspace(0, 1, len(ds.experiment)))
     for i, n in enumerate(ds.experiment.values):
         mean = dat.sel(experiment = n).mean(dim = 'member') 
         lower = dat.sel(experiment = n).quantile(0.25, dim = 'member') 
@@ -31,7 +35,7 @@ def line(ds, region = 'globe', obs = False):
     plt.legend(frameon=False)
     plt.ylabel(ds.name)
     plt.title(region)
-    fig_name = ds.name + '_' + region + '.png'
+    fig_name = ds.name + '_' + region + '_' + pd.to_datetime(mean.time.values[0]).strftime('%Y%m%d') + '.png'
     plt.savefig(fig_name)
     print('SAVED:', fig_name)
 

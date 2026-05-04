@@ -66,5 +66,6 @@ def three_panel(ds):
         plt.savefig(name)
         plt.close()
     frames = [Image.open(image) for image in gif_files]
-    frames[0].save(ds.name + "_maps.gif", save_all=True, append_images=frames[1:], duration=500, loop=0)
+    gif_name = ds.name + '_' + pd.to_datetime(ds.time.values[0]).strftime('%Y%m%d') + '.gif'
+    frames[0].save(gif_name, save_all=True, append_images=frames[1:], duration=500, loop=0)
 

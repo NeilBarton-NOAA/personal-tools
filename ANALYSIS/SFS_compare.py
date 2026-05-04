@@ -14,19 +14,25 @@ def main():
     parser = argparse.ArgumentParser( description = "Comparing SFS Runs")
     parser.add_argument('-ymd', '--yearmonthday', action = 'store', nargs = 1,
                         default = ["20250701"],
+                        #default = ["20260401"],
                         help = 'YYYYMMDD of start of run')
     parser.add_argument('-v', '--var', action = 'store', nargs = 1,
                         default = ['SST'],
                         help = 'variable to analyze')
     parser.add_argument('-d', '--dirs', action = 'store', nargs = '+', 
+                        #default = [ "/scratch3/NCEPDEV/global/Yangxing.Zheng/SFS_NRT_C192mx025",
+                        #            os.getenv('NPB_WORKDIR') + "/RUNS/COMROOT/beta1.1_GFS_ICs"],
                         default = [ os.getenv('NPB_WORKDIR') + "/RUNS/COMROOT/beta1.1_GFS_ICs", 
+                                    os.getenv('NPB_WORKDIR') + "/RUNS/COMROOT/beta1.1_GFS_ICs_EDITS",
                                     os.getenv('NPB_WORKDIR') + "/RUNS/COMROOT/beta1.1_CPC_ICs",
                                     os.getenv('NPB_WORKDIR') + "/RUNS/COMROOT/beta1.1_CPC_ICs_CICE_EDITS"],
                         help = 'top directories of experiments')
     parser.add_argument('-n', '--names', action = 'store', nargs = '+',
+                        #default = [ 'cpc_ics', 'gfs_ics'],
                         default = [ 'gfs_ics',
+                                    'gfs_ics_EDITS',
                                     'cpc_ics',
-                                    'cpc_ics_edits'],
+                                    'cpc_ics_CICE_EDITS'],
                         help = 'names of experiments')
     parser.add_argument('-f','--force_read', action = argparse.BooleanOptionalAction, default=False,
                         help = 're-read in files to create zarr') 
@@ -67,9 +73,11 @@ def main():
 
     ########################
     # spatial plots
+    # global
     if len(exps) == 2 and model == 'ocn':
         py.maps.three_panel(ds)
-
+    # polar 
+    #py.maps.six_panel(ds)
     ########################
     # line plots
     if model == 'ocn':

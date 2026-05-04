@@ -1,10 +1,11 @@
 #!/bin/sh
 # hera/orion
-DEBUG=${T:-$1}
+
+DEBUG=${1:-F}
 machine=$(uname -n)
 if [[ ${machine} == u* ]]; then
     # ursa
-    if [[ ${DEBUG} == F ]]; then
+    if [[ ${DEBUG} == T ]]; then
         salloc --x11=first -q debug -t 0:30:00 --nodes=1 -A marine-cpu --exclusive
     else
         salloc --x11=first -t 2:00:00 --nodes=1 -A marine-cpu --exclusive

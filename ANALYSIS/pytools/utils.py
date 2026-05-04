@@ -14,6 +14,7 @@ def grabdata(ds_save, exps, ymd, FORCE_CALC = False):
                 # MOM6 output
                 d = "/sfs." + ymd + "/00/mem" + str(mem).zfill(3) + \
                     "/products/ocean/netcdf/1p00/sfs.ocean*monthly_avg*nc"
+                print(e + d)
                 files = glob.glob(e + d)
                 ds = xr.open_mfdataset(files)
                 vars_month = ['ocnheat', 'dt20c']
@@ -35,7 +36,6 @@ def grabdata(ds_save, exps, ymd, FORCE_CALC = False):
                 ds = ds.rename(rename_map)
                 ds = ds.assign_coords(time=pd.to_datetime(time_strings))
                 ds_ice.append(ds.expand_dims({'member' : [mem]}))
-            print(ds_ocn)
             ds_ocn = xr.concat(ds_ocn, dim = 'member')
             ds_ocn = ds_ocn.expand_dims({'component' : ['ocn']})
             ds_ice = xr.concat(ds_ice, dim = 'member')
