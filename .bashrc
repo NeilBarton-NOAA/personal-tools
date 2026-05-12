@@ -18,7 +18,6 @@ bind '"\e[B": history-search-forward' 2>/dev/null
 ##  Set the number of commands to be maintained in history within a session.
 export HISTSIZE=1000
 # env vars expand to directories
-shopt -s direxpand
 # modules
 source ~/.profile
 # aliases
@@ -82,5 +81,13 @@ else
 fi
 alias sd="cd $NPB_WORKDIR"
 export CYLC_WORKDIR=${NPB_WORKDIR}
+
+# tab completion
+shopt -s direxpand
+set completion-ignore-case on
+set show-all-if-ambiguous on
+
+
+
 
 

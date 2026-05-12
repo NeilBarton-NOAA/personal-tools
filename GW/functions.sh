@@ -16,6 +16,7 @@ gaea*)       m=gaeac6 ;
 u*)          m=ursa ;     
              TOPICDIR=/scratch4/NCEPDEV/global/Yangxing.Zheng/ICs ;;
 *[cd]login*) m=wcoss2 ;;
+*)           echo "MACHINE unknown:" ${machine} && exit 1;;
 esac
 export TOPICDIR=${TOPICDIR}
 }

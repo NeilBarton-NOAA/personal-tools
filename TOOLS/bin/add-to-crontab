@@ -1,5 +1,7 @@
 #!/bin/sh
+set -u
 file=$1
+machine=$(uname -n)
 if [[ ${machine} == gaea* ]] || [[ ${machine} == GAEA* ]]; then
     scrontab -l | cat - ${file} | scrontab -
 else

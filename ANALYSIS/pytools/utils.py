@@ -10,11 +10,11 @@ def grabdata(ds_save, exps, ymd, FORCE_CALC = False):
             ds_ocn, ds_ice = [], []
             mems = len(glob.glob(e + "/sfs." + ymd + "/00/mem*/products/ocean/netcdf/1p00/"))
             for mem in range(mems):
-                print("member: ", mem)
+                print(e_name, " member: ", mem)
+                #print(e + d)
                 # MOM6 output
                 d = "/sfs." + ymd + "/00/mem" + str(mem).zfill(3) + \
                     "/products/ocean/netcdf/1p00/sfs.ocean*monthly_avg*nc"
-                print(e + d)
                 files = glob.glob(e + d)
                 ds = xr.open_mfdataset(files)
                 vars_month = ['ocnheat', 'dt20c']
@@ -43,12 +43,13 @@ def grabdata(ds_save, exps, ymd, FORCE_CALC = False):
             ds = xr.concat([ds_ocn, ds_ice], dim = 'component')
             ds_all.append(ds.expand_dims({'experiment': [e_name] }))
         ds = xr.concat(ds_all, dim = 'experiment')
+        ds = ds.drop_vars("time_bnds")
         ds = ds.chunk({'time': 1, 'member': -1, 'z_l': 1, 'nj': -1, 'ni': -1, 'latitude':-1, 'longitude':-1})
         ds.to_zarr(ds_save, consolidated=True, mode = 'w')
         print('SAVED:', ds_save)
     else:
         print('OPENING:', ds_save)
-        ds = xr.open_dataset(ds_save)
+        ds = xr.open_dataset(ds_save, engine="zarr")
     return(ds)
 
 def get_thickness(z_l):

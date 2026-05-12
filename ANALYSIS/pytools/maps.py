@@ -1,3 +1,6 @@
+import pandas as pd
+import numpy as np
+import matplotlib.path as mpath
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mticker
 import cartopy.crs as ccrs
@@ -15,6 +18,7 @@ limits = {  'SST':                  [(0, 28), (0, 28), (-3, 3)],
             'salinity_vert_ave':    [(25, 35), (25, 35), (-1, 1)],
             'dt20c':                [(100, 200), (100, 200), (-50, 50)],
             'T300':                 [(10, 30), (10, 30), (-15, 15)],
+            'albsni':               [(0, 1), (0, 1), (-1, 1)],
             'ocnheat':              [(10, 30), (10, 30), (-15, 15)]
          }   
 
@@ -63,7 +67,77 @@ def three_panel(ds):
         name = ds.name + '_' + str(t.dt.year.values) + '-' + str(t.dt.month.values).zfill(2) + '.png'
         gif_files.append(name)
         #plt.show(); exit(1)
-        plt.savefig(name)
+        plt.savefig(name, dpi = 600)
+        plt.close()
+    frames = [Image.open(image) for image in gif_files]
+    gif_name = ds.name + '_' + pd.to_datetime(ds.time.values[0]).strftime('%Y%m%d') + '.gif'
+    frames[0].save(gif_name, save_all=True, append_images=frames[1:], duration=500, loop=0)
+
+def six_panel(ds):
+    c_maps = ['magma', 'magma', 'RdBu_r', 'magma', 'magma', 'RdBu_r']
+    exp_names = list(ds.experiment.values)
+    exp_names.append(exp_names[0] + ' minus ' + exp_names[1])
+    gif_files=[]
+    #lons = np.linspace(-180, 180, 100)
+    for t in ds.time:
+        print(t.values)
+        #fig, axes = plt.subplots(nrows=2, ncols=3, figsize=(12, 6))
+        #for i, ax in enumerate(axes):
+        for i in range(6):
+            print(i)
+            proj = ccrs.NorthPolarStereo() if i < 3 else ccrs.SouthPolarStereo()
+            #ax = fig.add_subplot(2, 3, i+1, projection=proj)
+            ax = plt.axes(projection=proj)
+            ax.set_extent([-180, 180, 55, 90], ccrs.PlateCarree()) if i < 3 else ax.set_extent([-180, 180, -45, -90], ccrs.PlateCarree())
+            # circle
+            theta = np.linspace(0, 2*np.pi, 100)
+            center, radius = [0.5, 0.5], 0.5
+            verts = np.vstack([np.sin(theta), np.cos(theta)]).T
+            circle = mpath.Path(verts * radius + center)
+            ax.set_boundary(circle, transform=ax.transAxes)
+            # data
+            if i in [2,5]:
+                dat1 = ds.sel(time = t, experiment = exp_names[0]).mean(dim = 'member')
+                dat2 = ds.sel(time = t, experiment = exp_names[1]).mean(dim = 'member')
+                dat = dat1 - dat2
+            else:
+                dat = ds.sel(time = t, experiment = exp_names[i]).mean(dim = 'member')
+            # Plot using xarray's built-in plotting (transform is CRITICAL here)
+            if ds.name in limits:
+                v_min, v_max = limits[ds.name][i]
+            else:
+                v_min, v_max = dat.min().values, dat.max().values
+                print('limits not set:', v_min, v_max)
+            #dat.plot(
+            #    ax=ax, 
+            #    transform=ccrs.PlateCarree(), # Data is usually lat/lon (PlateCarree)
+            #    cmap = c_maps[i],
+            #    vmin = v_min,
+            #    vmax = v_max,
+            #    levels = 16,
+            #    cbar_kwargs={'orientation': 'horizontal', 'pad': 0.05}
+            #)
+            #contour = ax.contourf(dat.TLON, dat.TLAT, dat, transform=ccrs.PlateCarree(),
+            #              vmin = v_min, vmax = v_max, cmap=c_maps[i], alpha=0.8, levels=10)
+            cf = ax.pcolormesh(dat.TLON, dat.TLAT, dat, transform = ccrs.PlateCarree(), vmin = v_min, vmax = v_max)
+            print('after dat.plot')
+            # lines
+            gl = ax.gridlines(crs=ccrs.PlateCarree(), draw_labels=True, linewidth=1, color='gray', alpha=0.5, linestyle='--')
+            #gl.ylocator = mticker.FixedLocator([-60,-20,-5,0,5,20,60])
+            #gl.xlocator = mticker.FixedLocator([-170,-120,-80,120])
+            # Add map features
+            ax.coastlines()
+            ax.add_feature(cfeature.BORDERS, linestyle=':')
+            #ax.set_global() # Ensures the whole world is shown
+            #print(dat.TLON)
+            #print(dat.TLAT)
+            ax.set_title(str(t.dt.year.values) + '-' + str(t.dt.month.values).zfill(2) + ': ' + exp_names[i])
+            plt.show(); exit(1)
+        plt.tight_layout()
+        name = ds.name + '_' + str(t.dt.year.values) + '-' + str(t.dt.month.values).zfill(2) + '.png'
+        gif_files.append(name)
+        plt.show(); exit(1)
+        plt.savefig(name, dpi = 600)
         plt.close()
     frames = [Image.open(image) for image in gif_files]
     gif_name = ds.name + '_' + pd.to_datetime(ds.time.values[0]).strftime('%Y%m%d') + '.gif'

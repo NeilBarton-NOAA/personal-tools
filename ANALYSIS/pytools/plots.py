@@ -25,8 +25,10 @@ def line(ds, region = 'globe', obs = False):
         colors = plt.cm.tab10(np.linspace(0, 1, len(ds.experiment)))
     for i, n in enumerate(ds.experiment.values):
         mean = dat.sel(experiment = n).mean(dim = 'member') 
-        lower = dat.sel(experiment = n).quantile(0.25, dim = 'member') 
-        upper = dat.sel(experiment = n).quantile(0.75, dim = 'member') 
+        lower = dat.sel(experiment = n).min(dim = 'member')
+        upper = dat.sel(experiment = n).max(dim = 'member') 
+        #lower = dat.sel(experiment = n).quantile(0.25, dim = 'member') 
+        #upper = dat.sel(experiment = n).quantile(0.75, dim = 'member') 
         plt.plot(mean.time, mean, color=colors[i], label = n)
         plt.fill_between(mean.time, lower, upper, color=colors[i], alpha=0.2)
     # plot obs
@@ -36,6 +38,6 @@ def line(ds, region = 'globe', obs = False):
     plt.ylabel(ds.name)
     plt.title(region)
     fig_name = ds.name + '_' + region + '_' + pd.to_datetime(mean.time.values[0]).strftime('%Y%m%d') + '.png'
-    plt.savefig(fig_name)
+    plt.savefig(fig_name, dpi=600, bbox_inches='tight')
     print('SAVED:', fig_name)
 

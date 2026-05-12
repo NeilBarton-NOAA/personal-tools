@@ -28,11 +28,12 @@ def main():
                                     os.getenv('NPB_WORKDIR') + "/RUNS/COMROOT/beta1.1_CPC_ICs_CICE_EDITS"],
                         help = 'top directories of experiments')
     parser.add_argument('-n', '--names', action = 'store', nargs = '+',
+                        default = None,
                         #default = [ 'cpc_ics', 'gfs_ics'],
-                        default = [ 'gfs_ics',
-                                    'gfs_ics_EDITS',
-                                    'cpc_ics',
-                                    'cpc_ics_CICE_EDITS'],
+                        #default = [ 'gfs_ics',
+                        #            'gfs_ics_EDITS',
+                        #            'cpc_ics',
+                        #            'cpc_ics_CICE_EDITS'],
                         help = 'names of experiments')
     parser.add_argument('-f','--force_read', action = argparse.BooleanOptionalAction, default=False,
                         help = 're-read in files to create zarr') 
@@ -47,6 +48,13 @@ def main():
     exp_names = args.names
     FORCE_READ_DATA = args.force_read
     work_dir = args.working_directory[0]
+    ############
+    if not exp_names:
+        exp_names = []
+        for d in exp_dirs:
+            name = os.path.basename(os.path.normpath(d))
+            name = name.replace('beta1.1_','')
+            exp_names.append(name)
     exps = dict(zip(exp_names, exp_dirs))
     
     ################################################
@@ -59,7 +67,7 @@ def main():
     ds = py.ds_addvar(ds, var)
     ice_vars = ['ice_extent', 'ice_volume', 'snow_volume', 'aice', 'albsni', 'hi', 'hs']
     model = 'ice' if var in ice_vars else 'ocn'
-    ds = ds[var].sel(component = model) 
+    ds = ds[var].sel(component = model, experiment = exp_names) 
     
     ################################################
     # grab obs
@@ -77,7 +85,8 @@ def main():
     if len(exps) == 2 and model == 'ocn':
         py.maps.three_panel(ds)
     # polar 
-    #py.maps.six_panel(ds)
+    if len(exps) == 2 and model == 'ice' and var not in ['ice_extent', 'ice_volume', 'snow_volume']:
+        py.maps.six_panel(ds)
     ########################
     # line plots
     if model == 'ocn':
