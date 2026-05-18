@@ -2,22 +2,35 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 
-def line(ds, region = 'globe', obs = False):
+def line(ds, region = 'globe', obs = False, cell_area = False):
     ####################################
     if ds.name in ['ice_extent', 'ice_volume', 'snow_volume']:
         dat = ds
     else:
+        if 'TLAT' in ds.coords:
+            ds = ds.rename({"TLAT": "latitude"})
+            ds = ds.rename({"TLON": "longitude"})
+            cell_area = cell_area.rename({"TLAT": "latitude"})
+            cell_area = cell_area.rename({"TLON": "longitude"})
         if region == 'nino34':
-            ds = ds.sel(latitude=slice(-5, 5), longitude=slice(190, 240))
+            lat_mask = (ds.latitude >= -5) & (ds.latitude <= 5)
+            lon_mask = (ds.longitude >= 190) & (ds.longitude <= 240)
         if region == 'tropics':
-            ds = ds.sel(latitude=slice(-20, 20), longitude=slice(120, 260))
+            lat_mask = (ds.latitude >= -20) & (ds.latitude <= 20)
+            lon_mask = (ds.longitude >= 120) & (ds.longitude <= 260)
         if region == 'Arctic':
-            ds = ds.sel(latitude=slice(70, 90), longitude=slice(0, 360))
+            lat_mask = (ds.latitude >= 70) & (ds.latitude <= 90)
+            lon_mask = (ds.longitude >= 0) & (ds.longitude <= 360)
         if region == 'Antarctic':
-            ds = ds.sel(latitude=slice(-90, -70), longitude=slice(0, 360))
-        weights = np.cos(np.deg2rad(ds.latitude))
+            lat_mask = (ds.latitude >= -90) & (ds.latitude <= -70)
+            lon_mask = (ds.longitude >= 0) & (ds.longitude <= 360)
+        if region != 'global':
+            ds = ds.where(lat_mask & lon_mask, drop=True)
+        grid_dims = tuple(set(ds.latitude.dims) | set(ds.longitude.dims))
+        dim_slices = {dim: ds[dim] for dim in cell_area.dims if dim in ds.dims}
+        weights = cell_area.sel(dim_slices).fillna(0)
         weights.name = "weights"
-        dat = ds.weighted(weights).mean(("latitude", "longitude"))
+        dat = ds.weighted(weights).mean(grid_dims)
     plt.figure()
     if len(ds.experiment.values) == 2:
         colors = ['blue', 'green']
