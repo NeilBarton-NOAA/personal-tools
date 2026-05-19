@@ -101,13 +101,14 @@ def main():
         py.plots.line(da, 'global', obs, cell_area)
         py.plots.line(da, 'nino34', obs, cell_area)
         py.plots.line(da, 'tropics', obs, cell_area)
-    py.plots.line(da, 'Arctic', obs, cell_area)
-    py.plots.line(da, 'Antarctic', obs, cell_area)
     if 'hemisphere' in da.dims:
         ob = obs.sel(hemisphere = 'NH') if var in ['ice_extent'] else False
-        py.plots.line(ds.sel(hemisphere = 'NH'), 'Arctic', ob)
+        py.plots.line(da.sel(hemisphere = 'NH'), 'Arctic', ob, cell_area)
         ob = obs.sel(hemisphere = 'SH') if var in ['ice_extent'] else False
-        py.plots.line(ds.sel(hemisphere = 'SH'), 'Antarctic', ob)
+        py.plots.line(da.sel(hemisphere = 'SH'), 'Antarctic', ob, cell_area)
+    else:
+        py.plots.line(da, 'Arctic', obs, cell_area)
+        py.plots.line(da, 'Antarctic', obs, cell_area)
 
     print('SCRIPT FINISHED')
 
