@@ -15,7 +15,8 @@ gaea*)       m=gaeac6 ;
              TOPICDIR=/gpfs/f6/sfs-emc/proj-shared/Yangxing.Zheng/SFS/ICs ;;
 u*)          m=ursa ;     
              TOPICDIR=/scratch4/NCEPDEV/global/Yangxing.Zheng/ICs ;;
-*[cd]login*) m=wcoss2 ;;
+*[cd]login*) m=wcoss2 ;
+             TOPICDIR=/lfs/h2/emc/couple/noscrub/neil.barton/ICs ;;
 *)           echo "MACHINE unknown:" ${machine} && exit 1;;
 esac
 export TOPICDIR=${TOPICDIR}

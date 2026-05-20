@@ -86,8 +86,3 @@ export CYLC_WORKDIR=${NPB_WORKDIR}
 shopt -s direxpand
 set completion-ignore-case on
 set show-all-if-ambiguous on
-
-
-
-
-
