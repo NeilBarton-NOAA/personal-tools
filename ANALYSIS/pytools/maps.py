@@ -6,7 +6,7 @@ import matplotlib.ticker as mticker
 import matplotlib.colors as mcolors
 import cartopy.crs as ccrs
 import cartopy.feature as cfeature
-from PIL import Image
+import imageio.v3 as iio
 
 ############
 # model data
@@ -23,7 +23,7 @@ limits = {  'SST':                  [(0, 30), (0, 30), (-2.0, 2.0)],
             'hs':                   [(0, 0.6), (0, 0.6), (-0.25, 0.25)],
             'hi':                   [(0, 4), (0, 4), (-1, 1)],
             'albsni':               [(0, 100), (0, 100), (-100, 100)],
-            'ocnheat':              [(10, 30), (10, 30), (-15, 15)]
+            'ocnheat':              [(10, 30), (10, 30), (-5, 5)]
          }   
 
 #c_maps = ['magma', 'magma', 'RdBu_r']
@@ -31,10 +31,10 @@ c_maps = ['plasma', 'plasma', 'RdBu_r']
 
 def three_panel(ds, DEBUG = False):
     exp_names = list(ds.experiment.values)
+    SUFFIX = "_EXPS_" + "_".join(exp_names)
     exp_names.append(exp_names[0] + ' minus ' + exp_names[1])
-    gif_files=[]
+    loop_files=[]
     for t in ds.time:
-        print(t.values)
         fig, axes = plt.subplots(nrows=1, ncols=3, figsize=(18, 5), \
             subplot_kw={'projection': ccrs.Robinson(central_longitude=180)})
         for i, ax in enumerate(axes):
@@ -74,18 +74,23 @@ def three_panel(ds, DEBUG = False):
             ax.set_global() # Ensures the whole world is shown
             ax.set_title(str(t.dt.year.values) + '-' + str(t.dt.month.values).zfill(2) + ': ' + exp_names[i])
         plt.tight_layout()
-        name = ds.name + '_' + str(t.dt.year.values) + '-' + str(t.dt.month.values).zfill(2) + '.png'
-        gif_files.append(name)
+        name = ds.name + '_' + str(t.dt.year.values) + '-' + str(t.dt.month.values).zfill(2) + SUFFIX + '.png'
+        loop_files.append(name)
         if DEBUG:
             plt.show(); exit(1)
-        plt.savefig(name, dpi = 600)
+        plt.savefig(name, dpi = 400)
+        print("SAVED:", name)
         plt.close()
-    frames = [Image.open(image) for image in gif_files]
-    gif_name = ds.name + '_' + pd.to_datetime(ds.time.values[0]).strftime('%Y%m%d') + '.gif'
-    frames[0].save(gif_name, save_all=True, append_images=frames[1:], duration=500, loop=0)
+    loop_name = ds.name + '_' + pd.to_datetime(ds.time.values[0]).strftime('%Y%m') + SUFFIX + '.gif'
+    frames = [iio.imread(img, mode='RGB') for img in loop_files]
+    iio.imwrite(loop_name, frames, duration=500, loop=0, dither=0)
+    print("SAVED:", loop_name)
+    #optimize_gif(loop_name, loop_name + '_new.gif', max_pixels=25_000_000)
+    #iio.imwrite(loop_name, frames, duration=500, loop=0, dither=False)
 
 def six_panel(ds, DEBUG = False):
     exp_names = list(ds.experiment.values)
+    SUFFIX = "_EXPS_" + "_".join(exp_names)
     exp_names.append(exp_names[0] + ' minus ' + exp_names[1])
     gif_files=[]
     for t in ds.time:
@@ -141,13 +146,13 @@ def six_panel(ds, DEBUG = False):
                 if row == 0:
                     ax.set_title(str(t.dt.year.values) + '-' + str(t.dt.month.values).zfill(2) + ': ' + exp_names[col])
         plt.tight_layout()
-        name = ds.name + '_' + str(t.dt.year.values) + '-' + str(t.dt.month.values).zfill(2) + '.png'
+        name = ds.name + '_' + str(t.dt.year.values) + '-' + str(t.dt.month.values).zfill(2) + SUFFIX + '.png'
         gif_files.append(name)
         if DEBUG:
             plt.show(); exit(1)
         plt.savefig(name, dpi = 600)
         plt.close()
-    frames = [Image.open(image) for image in gif_files]
+    frames = [Image.open(image).convert('P', palette=Image.Palette.ADAPTIVE) for image in gif_files]
     gif_name = ds.name + '_' + pd.to_datetime(ds.time.values[0]).strftime('%Y%m%d') + '.gif'
-    frames[0].save(gif_name, save_all=True, append_images=frames[1:], duration=500, loop=0)
+    frames[0].save(gif_name, save_all=True, append_images=frames[1:], duration=500, optimize=False, loop=0)
 

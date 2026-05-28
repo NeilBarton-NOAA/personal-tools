@@ -1,6 +1,9 @@
 import glob
 import xarray as xr
 import pandas as pd
+import imageio.v3 as iio
+from PIL import Image
+import numpy as np
 
 def grabdata(ds_save, exps, ymd, FORCE_CALC = False):
     if not ds_save.exists() or FORCE_CALC:
@@ -110,3 +113,4 @@ def ds_addvar(ds, var):
         ohc_per_m2 = (ds.temp * dz_300 * rho0 * cp).sum(dim='z_l')
         ds[var] = ohc_per_m2 / 1e9
     return ds
+

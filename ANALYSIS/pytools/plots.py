@@ -3,6 +3,8 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 def line(ds, region = 'globe', obs = False, cell_area = False):
+    exp_names = list(ds.experiment.values)
+    SUFFIX = "_EXPS_" + "_".join(exp_names)
     ####################################
     if ds.name in ['ice_extent', 'ice_volume', 'snow_volume']:
         dat = ds
@@ -17,6 +19,9 @@ def line(ds, region = 'globe', obs = False, cell_area = False):
             lon_mask = (ds.longitude >= 190) & (ds.longitude <= 240)
         if region == 'tropics':
             lat_mask = (ds.latitude >= -20) & (ds.latitude <= 20)
+            lon_mask = (ds.longitude >= 120) & (ds.longitude <= 260)
+        if region == 'equator':
+            lat_mask = (ds.latitude >= -5) & (ds.latitude <= 5)
             lon_mask = (ds.longitude >= 120) & (ds.longitude <= 260)
         if region == 'Arctic':
             lat_mask = (ds.latitude >= 70) & (ds.latitude <= 90)
@@ -38,10 +43,10 @@ def line(ds, region = 'globe', obs = False, cell_area = False):
         colors = plt.cm.tab10(np.linspace(0, 1, len(ds.experiment)))
     for i, n in enumerate(ds.experiment.values):
         mean = dat.sel(experiment = n).mean(dim = 'member') 
-        lower = dat.sel(experiment = n).min(dim = 'member')
-        upper = dat.sel(experiment = n).max(dim = 'member') 
-        #lower = dat.sel(experiment = n).quantile(0.25, dim = 'member') 
-        #upper = dat.sel(experiment = n).quantile(0.75, dim = 'member') 
+        #lower = dat.sel(experiment = n).min(dim = 'member')
+        #upper = dat.sel(experiment = n).max(dim = 'member') 
+        lower = dat.sel(experiment = n).quantile(0.10, dim = 'member') 
+        upper = dat.sel(experiment = n).quantile(0.90, dim = 'member') 
         plt.plot(mean.time, mean, color=colors[i], label = n)
         plt.fill_between(mean.time, lower, upper, color=colors[i], alpha=0.2)
     # plot obs
@@ -50,7 +55,7 @@ def line(ds, region = 'globe', obs = False, cell_area = False):
     plt.legend(frameon=False)
     plt.ylabel(ds.name)
     plt.title(region)
-    fig_name = ds.name + '_' + region + '_' + pd.to_datetime(mean.time.values[0]).strftime('%Y%m%d') + '.png'
+    fig_name = ds.name + '_' + region + '_' + pd.to_datetime(mean.time.values[0]).strftime('%Y%m%d') + SUFFIX + '.png'
     plt.savefig(fig_name, dpi=600, bbox_inches='tight')
     print('SAVED:', fig_name)
 

@@ -47,6 +47,8 @@ def main():
     for e in experiments:
         name = os.path.basename(os.path.normpath(e))
         name = name.replace('beta1.1_','')
+        if name == 'SFS_NRT_C192mx025':
+            name = 'CPC_ICs'
         exp_names.append(name)
         d = e if '/' in e else comroot + '/' + e
         exp_dirs.append(d)
@@ -101,12 +103,13 @@ def main():
         py.plots.line(da, 'global', obs, cell_area)
         py.plots.line(da, 'nino34', obs, cell_area)
         py.plots.line(da, 'tropics', obs, cell_area)
+        py.plots.line(da, 'equator', obs, cell_area)
     if 'hemisphere' in da.dims:
         ob = obs.sel(hemisphere = 'NH') if var in ['ice_extent'] else False
         py.plots.line(da.sel(hemisphere = 'NH'), 'Arctic', ob, cell_area)
         ob = obs.sel(hemisphere = 'SH') if var in ['ice_extent'] else False
         py.plots.line(da.sel(hemisphere = 'SH'), 'Antarctic', ob, cell_area)
-    else:
+    elif var != 'WWV':
         py.plots.line(da, 'Arctic', obs, cell_area)
         py.plots.line(da, 'Antarctic', obs, cell_area)
 

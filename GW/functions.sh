@@ -4,6 +4,7 @@ set -u
 # Machine Specific and Personalized options
 machine_config() {
 export RUNTESTS=${NPB_WORKDIR}/RUNS #/gw_${HASH////\_}_${REPO}
+export CODEDIR=${NPB_WORKDIR}
 TOPICDIR=${NPB_WORKDIR}/ICs
 machine=$(uname -n)
 case ${machine} in
@@ -14,7 +15,8 @@ hercules*)   m=hercules ;
 gaea*)       m=gaeac6 ;   
              TOPICDIR=/gpfs/f6/sfs-emc/proj-shared/Yangxing.Zheng/SFS/ICs ;;
 u*)          m=ursa ;     
-             TOPICDIR=/scratch4/NCEPDEV/global/Yangxing.Zheng/ICs ;;
+             TOPICDIR=/scratch4/NCEPDEV/global/Yangxing.Zheng/ICs ;
+             CODEDIR=/scratch4/NCEPDEV/nems/Neil.Barton ;;
 *[cd]login*) m=wcoss2 ;
              TOPICDIR=/lfs/h2/emc/couple/noscrub/neil.barton/ICs ;;
 *)           echo "MACHINE unknown:" ${machine} && exit 1;;
