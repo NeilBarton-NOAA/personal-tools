@@ -81,7 +81,7 @@ def main():
 
     ################################################
     # grab obs
-    if var in ['ice_extent']:
+    if var in ['ice_extent', 'SST']:
         cm.start_dtg = pd.to_datetime(ds.time.values[0]).replace(day = 1)
         cm.end_dtg = pd.to_datetime(ds.time.values[-1]) + pd.offsets.MonthEnd(0)
         cm.var = var
@@ -100,10 +100,10 @@ def main():
     ########################
     # line plots
     if model == 'ocn':
-        py.plots.line(da, 'global', obs, cell_area)
-        py.plots.line(da, 'nino34', obs, cell_area)
-        py.plots.line(da, 'tropics', obs, cell_area)
-        py.plots.line(da, 'equator', obs, cell_area)
+        py.plots.line(da, 'global', obs, cell_area, DEBUG)
+        py.plots.line(da, 'nino34', obs, cell_area, DEBUG)
+        py.plots.line(da, 'tropics', obs, cell_area, DEBUG)
+        py.plots.line(da, 'equator', obs, cell_area, DEBUG)
     if 'hemisphere' in da.dims:
         ob = obs.sel(hemisphere = 'NH') if var in ['ice_extent'] else False
         py.plots.line(da.sel(hemisphere = 'NH'), 'Arctic', ob, cell_area)

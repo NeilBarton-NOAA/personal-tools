@@ -85,8 +85,6 @@ def three_panel(ds, DEBUG = False):
     frames = [iio.imread(img, mode='RGB') for img in loop_files]
     iio.imwrite(loop_name, frames, duration=500, loop=0, dither=0)
     print("SAVED:", loop_name)
-    #optimize_gif(loop_name, loop_name + '_new.gif', max_pixels=25_000_000)
-    #iio.imwrite(loop_name, frames, duration=500, loop=0, dither=False)
 
 def six_panel(ds, DEBUG = False):
     exp_names = list(ds.experiment.values)
@@ -94,7 +92,6 @@ def six_panel(ds, DEBUG = False):
     exp_names.append(exp_names[0] + ' minus ' + exp_names[1])
     gif_files=[]
     for t in ds.time:
-        print(t.values)
         fig, axes = plt.subplots(nrows=3, ncols=3, figsize=(14, 8), gridspec_kw={'height_ratios': [1, 1, 0.04]})
         for ax in axes.flat:
             ax.axis('off')
@@ -131,11 +128,12 @@ def six_panel(ds, DEBUG = False):
                 cmap = plt.get_cmap(c_maps[col])  # Choose your colormap
                 norm = mcolors.BoundaryNorm(boundaries=levels, ncolors=cmap.N)
                 cf = ax.pcolormesh(dat.TLON, dat.TLAT, dat, transform = ccrs.PlateCarree(),
-                                  cmap=cmap, norm=norm, extend = 'both')
+                                  cmap=cmap, norm=norm)
                 if row == 1:
                     cax = axes[2, col] # Grab the preallocated slot in the 3rd row
                     cax.axis('on')     # Turn the frame back on so labels show up
-                    cbar = plt.colorbar(cf, cax=cax, orientation='horizontal', ticks=np.linspace(v_min, v_max, 5))
+                    cbar = plt.colorbar(cf, cax=cax, orientation='horizontal',
+                                        ticks=np.linspace(v_min, v_max, 5), extend = 'both')
                     cbar.ax.tick_params(labelsize=10)
                 # plot options
                 gl = ax.gridlines(crs=ccrs.PlateCarree(), draw_labels=False, linewidth=1, color='gray',
@@ -151,8 +149,8 @@ def six_panel(ds, DEBUG = False):
         if DEBUG:
             plt.show(); exit(1)
         plt.savefig(name, dpi = 600)
-        plt.close()
-    frames = [Image.open(image).convert('P', palette=Image.Palette.ADAPTIVE) for image in gif_files]
-    gif_name = ds.name + '_' + pd.to_datetime(ds.time.values[0]).strftime('%Y%m%d') + '.gif'
-    frames[0].save(gif_name, save_all=True, append_images=frames[1:], duration=500, optimize=False, loop=0)
-
+        print("SAVED:" , name)
+    loop_name = ds.name + '_' + pd.to_datetime(ds.time.values[0]).strftime('%Y%m') + SUFFIX + '.gif'
+    frames = [iio.imread(img, mode='RGB') for img in gif_files]
+    iio.imwrite(loop_name, frames, duration=500, loop=0, dither=0)
+    print("SAVED:", loop_name)

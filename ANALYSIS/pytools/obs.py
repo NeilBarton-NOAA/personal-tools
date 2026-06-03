@@ -5,9 +5,13 @@ import copernicusmarine
 import pandas as pd
 import numpy as np
 import xarray as xr
-obs_dict = {    'ice_extent': {
-                   "dataset_id": "METOFFICE-GLO-SST-L4-NRT-OBS-SST-V2",
-                   "dataset_var": ["sea_ice_fraction", "mask"]}
+obs_dict = {
+            'ice_extent': {
+                "dataset_id": "METOFFICE-GLO-SST-L4-NRT-OBS-SST-V2",
+                "dataset_var": ["sea_ice_fraction", "mask"]},
+            'SST': {
+                "dataset_id": "METOFFICE-GLO-SST-L4-NRT-OBS-SST-V2",
+                "dataset_var": ["analysed_sst", "sea_ice_fraction", "mask"]}
            }
 
 
@@ -40,8 +44,15 @@ class cm(object):
             NH = NH.expand_dims({'hemisphere': ['NH']})
             SH = SH.expand_dims({'hemisphere': ['SH']})
             ds['ice_extent'] = xr.concat([NH, SH], dim = 'hemisphere')
-            ds['ice_extent'].attrs['title'] = 'L4 OSTIA'
             ds = ds['ice_extent']
+        else:
+            ds = ds[obs_dict[cm.var]['dataset_var'][0]]
+            ds = ds.where(~ds.isnull())
+            ds['longitude'] = ds['longitude'] + 180
+            ds = ds - 273.15 if cm.var == 'SST' else ds
+            #import matplotlib.pyplot as plt
+            #plt.imshow(ds[0], origin='lower'); plt.colorbar(); plt.show(); exit(1)
+        ds.attrs['title'] = 'L4 OSTIA'
         return ds
 
 
