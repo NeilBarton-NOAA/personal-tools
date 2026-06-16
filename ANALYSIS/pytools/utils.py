@@ -10,6 +10,7 @@ def grabdata(ds_save, exps, ymd, FORCE_CALC = False):
         ds_all = []
         for i, e_name in enumerate(exps.keys()):
             e = exps[e_name]
+            print(e_name)
             ds_ocn, ds_ice = [], []
             mems = len(glob.glob(e + "/sfs." + ymd + "/00/mem*/products/ocean/netcdf/1p00/"))
             for mem in range(mems):

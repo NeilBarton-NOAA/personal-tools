@@ -28,6 +28,8 @@ def main():
                         help = 'comroot/top directory of experiments')
     parser.add_argument('-f','--force_read', action = argparse.BooleanOptionalAction, default=False,
                         help = 're-read in files to create zarr') 
+    parser.add_argument('-lv','--list_vars', action = argparse.BooleanOptionalAction, default=False,
+                        help = 'list variables that are already set up') 
     parser.add_argument('-d','--debug', action = argparse.BooleanOptionalAction, default=False,
                         help = 'show plot for debugging') 
     ############
@@ -37,9 +39,17 @@ def main():
     experiments = args.experiments
     comroot = args.comroot
     FORCE_READ_DATA = args.force_read
+    list_vars = args.list_vars
     DEBUG = args.debug
 
     ############
+    if list_vars:
+        for k in py.maps.limits:
+            print(k)
+        print('ice_extent')
+        print('ice_volume')
+        print('snow_volume')
+        exit(1)
     if experiments == 'ALL':
         print('GRABBING ALL EXPERIMENTS AT:', comroot)
         experiments = [comroot + '/' + d for d in os.listdir(comroot) if os.path.isdir(comroot + '/' + d) and d != 'ZARR']
