@@ -4,6 +4,10 @@
 set -u
 LOCAL_FILE=${1:-$PWD}
 HSI_DIR=${2:-/NCEPDEV/emc-marine/1year/Neil.Barton}
+machine=$(uname -n)
+if [[ ${machine} == "gaea"* ]]; then
+    echo "FATAL on gaea, need transer node" && exit 1
+fi
 
 echo "PUTTING FILE AT: ${HSI_DIR}/${LOCAL_FILE}"
 hsi -q put ${LOCAL_FILE} : ${HSI_DIR}/${LOCAL_FILE} 2>/dev/null

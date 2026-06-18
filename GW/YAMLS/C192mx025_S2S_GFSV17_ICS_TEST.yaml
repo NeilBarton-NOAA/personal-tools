@@ -1,17 +1,19 @@
 experiment:
-  net: gfs
+  net: sfs
   mode: forecast-only
-  idate: 2023050100
-  edate: 2023050100
+  idate: {{ 'DTG_GW' | getenv }}
+  edate: {{ 'DTG_GW' | getenv }}
   pslot: {{ 'pslot' | getenv }}
   app: S2S
-  resdetatmos: 96
-  resdetocean: 1
+  resdetatmos: 192
+  resensatmos: 192
+  resdetocean: 0.25
   start: 'cold'
+  nens: 1
   comroot: {{ 'RUNTESTS' | getenv }}/COMROOT
   expdir: {{ 'RUNTESTS' | getenv }}/EXPDIR
-  icsdir: {{ 'TOPICDIR' | getenv }}/CPC/C96mx100
-  yaml: {{ HOME }}/GW/YAMLS/sfs_full_C96mx100_CPC_ICS_TEST.yaml
+  icsdir: {{ 'TOPICDIR' | getenv }}/GFS/C192mx025
+  yaml: {{ HOME }}/GW/YAMLS/sfs_full_C192mx025_GFSV17_ICS_TEST.yaml
 
 workflow:
   engine: rocoto

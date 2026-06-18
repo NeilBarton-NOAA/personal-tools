@@ -1,14 +1,15 @@
 *.log
 *txt
+*.gif
 *.nc
 *.pkl
 *.png
 *.pyc
+*.out
 .bash_history
 .bash_logout
 .bash_profile
 .cache
-.copernicusmarine/
 .conda/
 .config
 .cshrc
