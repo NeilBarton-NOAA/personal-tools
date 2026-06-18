@@ -1,3 +1,4 @@
+syntax on
 filetype plugin on
 set expandtab
 set tabstop=4
