@@ -64,9 +64,10 @@ elif [[ ${machine} == *[cd]login* ]]; then
     export ptmp=/lfs/h2/emc/ptmp/neil.barton
     export couple_noscrub=/lfs/h2/emc/couple/noscrub/neil.barton
     export ens_noscrub=/lfs/h2/emc/ens/noscrub/neil.barton
-    export gefstemp=/lfs/h2/emc/gefstemp/neil.barton
+    alias nsd="cd ${couple_noscrub}"
     export NPB_WORKDIR=${ptmp}
-    alias qme="qstat -u $USER"
+    #alias qme="qstat -u $USER"
+    alias qme='jobs=$(qselect -u $USER); [ ! -z "$jobs" ] && jstat -n 40 -u 5 $jobs || echo "No jobs running"'
     alias qdelme="qselect -u ${USER} | xargs qdel"
     unalias qdel
 # mercury

@@ -16,9 +16,10 @@ gaea*)       m=gaeac6 ;
              TOPICDIR=/gpfs/f6/sfs-emc/proj-shared/Yangxing.Zheng/SFS/ICs ;;
 u*)          m=ursa ;     
              TOPICDIR=/scratch4/NCEPDEV/global/Yangxing.Zheng/ICs ;
-             CODEDIR=/scratch4/NCEPDEV/nems/Neil.Barton ;;
+             export CODEDIR=/scratch4/NCEPDEV/nems/Neil.Barton ;;
 *[cd]login*) m=wcoss2 ;
-             TOPICDIR=/lfs/h2/emc/couple/noscrub/neil.barton/ICs ;;
+             TOPICDIR=/lfs/h2/emc/couple/noscrub/neil.barton/ICs ;
+             export CODEDIR=/lfs/h2/emc/couple/noscrub/neil.barton ;;
 *)           echo "MACHINE unknown:" ${machine} && exit 1;;
 esac
 export TOPICDIR=${TOPICDIR}
