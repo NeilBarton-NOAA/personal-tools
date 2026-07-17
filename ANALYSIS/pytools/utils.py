@@ -48,7 +48,7 @@ def grabdata(ds_save, exps, ymd, FORCE_CALC = False):
             ds_all.append(ds.expand_dims({'experiment': [e_name] }))
         ds = xr.concat(ds_all, dim = 'experiment')
         ds = ds.drop_vars("time_bnds")
-        ds = ds.chunk({'time': 12, 'member': -1, 'z_l': 1, 'nj': -1, 'ni': -1, 'latitude':-1, 'longitude':-1})
+        ds = ds.chunk({'time': 36, 'experiment' :1, 'member': 1, 'z_l': 1, 'nj': -1, 'ni': -1, 'latitude':-1, 'longitude':-1})
         ds.to_zarr(ds_save, consolidated=True, mode = 'w')
         print('SAVED:', ds_save)
     else:

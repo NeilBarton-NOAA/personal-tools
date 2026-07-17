@@ -49,10 +49,12 @@ elif [[ ${machine} == gaea* ]] || [[ ${machine} == dtn* ]]; then
         ssh -X gaea63
     fi
 # ursa
-elif [[ ${machine} == ufe* ]]; then
+elif [[ ${machine} == u* ]]; then
     export PROJ_DATA="/scratch3/NCEPDEV/nems/Neil.Barton/miniconda3/share/proj"
-    export COMPUTE_ACCOUNT=marine-cpu
+    export COMPUTE_ACCOUNT=fv3-cpu
     export NPB_WORKDIR=/scratch4/NCEPDEV/stmp/Neil.Barton
+    export nems_dir=/scratch4/NCEPDEV/nems/Neil.Barton
+    alias nsd="cd ${nems_dir}"
     #export PROJ_LIB=/scratch2/NCEPDEV/stmp3/Neil.Barton/TOOLS/miniconda3/share/proj
     if [[ $(uname -n) != ufe02 ]] && [[ $(uname -n) != u*[cm]* ]]; then
         ssh -X ufe02

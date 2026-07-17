@@ -14,7 +14,7 @@ def main():
     ################################################
     parser = argparse.ArgumentParser( description = "Comparing SFS Runs")
     parser.add_argument('-ymd', '--yearmonthday', action = 'store', nargs = 1,
-                        default = ["20250701"],
+                        default = ["20260601"],
                         #default = ["20260401"],
                         help = 'YYYYMMDD of start of run')
     parser.add_argument('-v', '--var', action = 'store', nargs = 1,

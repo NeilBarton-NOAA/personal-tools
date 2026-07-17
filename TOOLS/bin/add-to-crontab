@@ -7,4 +7,4 @@ if [[ ${machine} == gaea* ]] || [[ ${machine} == GAEA* ]]; then
 else
     crontab -l | cat - ${file} | crontab -
 fi
-
+rocotoMONITOR

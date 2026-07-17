@@ -8,22 +8,13 @@ source ${PWD}/functions.sh && machine_config
 # Code
 #REPO=NOAA-EMC && HASH=develop
 #REPO=NOAA-EMC && HASH=dev/sfs
-#REPO=NeilBarton-NOAA && HASH=spackstack_update
-REPO=NeilBarton-NOAA && HASH=SFSbeta1.1_testing 
+#REPO=NeilBarton-NOAA && HASH=SFSbeta1.1_testing 
 #REPO=NeilBarton-NOAA && HASH=SFSbeta1.1 
-HOMEglobal=${NPB_WORKDIR}/CODE/gw_${HASH////\_}_${REPO}
-export DTG_GW=2025070100
-
-#YAMLS=(${HOMEglobal}/dev/ci/cases/sfs/C192mx025_S2S_CPC_ICS.yaml) && PSLOT_NAME='beta1.1_CPC_ICs_CICEDYN' && START_RUN=F
-#YAMLS=(${HOMEglobal}/dev/ci/cases/sfs/C192mx025_S2S_CPC_ICS.yaml) && PSLOT_NAME='beta1.1_CPC_ICs_BRINE' && START_RUN=F
-YAMLS=(${HOMEglobal}/dev/ci/cases/sfs/C192mx025_S2S_CPC_ICS.yaml) && PSLOT_NAME='beta1.1_CPC_ICs_PND_TOPO' && START_RUN=F
-#YAMLS=(${HOMEglobal}/dev/ci/cases/sfs/C192mx025_S2S_CPC_ICS.yaml) && PSLOT_NAME='beta1.1_CPC_SNOW_Cs_COMBINE' && export TOPICDIR=${NPB_WORKDIR}/ICs && START_RUN=F
-#YAMLS=(${HOMEglobal}/dev/ci/cases/sfsv1/C192mx025_S2S_CPC_ICS.yaml) && PSLOT_NAME='DEV_SFS_TEST' 
-#YAMLS=(${HOME}/GW/YAMLS/C192mx025_S2S_CPC_ICS.yaml) && PSLOT_NAME='TIMINGS_C192mx025' && START_RUN=F 
-#YAMLS=(${HOMEglobal}/dev/ci/cases/sfs/C192mx025_S2S_CPC_ICS.yaml) && PSLOT_NAME='beta1.1_CPC_ICs_CICE_EDITS' && START_RUN=F
-#YAMLS=(${HOMEglobal}/dev/ci/cases/sfs/C192mx025_S2S_REPLAY_ICS.yaml) && PSLOT_NAME='beta1.1_REPLAY_ICs' && export TOPICDIR=${NPB_WORKDIR}/ICs
-#YAMLS=(${HOMEglobal}/dev/ci/cases/sfs/C192mx025_S2S_GFSV17_ICS.yaml) && PSLOT_NAME='beta1.1_GFS_ICs' && export TOPICDIR=${NPB_WORKDIR}/ICs
-#YAMLS=(${HOMEglobal}/dev/ci/cases/sfs/C192mx025_S2S_DA_UPDATE_ICS.yaml) && PSLOT_NAME='beta1.1_GFS_DA_UPDATE_ICs' && export TOPICDIR=${NPB_WORKDIR}/ICs
+HOMEglobal=${CODEDIR}/CODE/gw_${HASH////\_}_${REPO}
+#export DTG_GW=2024010100
+export DTG_GW=2026030100
+#YAMLS=(${HOMEglobal}/dev/ci/cases/sfs/C192mx025_S2S_CPC_ICS.yaml) && PSLOT_NAME='beta1.1_FINAL_BRINE' && START_RUN=T
+YAMLS=(${HOMEglobal}/dev/ci/cases/sfs/C192mx025_S2S_GFSV17_ICS.yaml) && PSLOT_NAME='TEST_beta1.1_GFS_ICs' && export TOPICDIR=${NPB_WORKDIR}/ICs
 
 DEFAULT_YAMLS=F
 CI_FORECASTS_YAMLS=F
