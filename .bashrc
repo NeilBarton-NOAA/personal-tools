@@ -63,11 +63,12 @@ elif [[ ${machine} == u* ]]; then
 elif [[ ${machine} == *[cd]login* ]]; then
     # list of working directories
     export COMPUTE_ACCOUNT=GFS-DEV
-    export ptmp=/lfs/h2/emc/ptmp/neil.barton
+    export ptmp=/lfs/h2/emc/ptmp/neil.barton # 1 day scrub
+    export stmp=/lfs/h2/emc/stmp/neil.barton # 5 day scrub
     export couple_noscrub=/lfs/h2/emc/couple/noscrub/neil.barton
     export ens_noscrub=/lfs/h2/emc/ens/noscrub/neil.barton
     alias nsd="cd ${couple_noscrub}"
-    export NPB_WORKDIR=${ptmp}
+    export NPB_WORKDIR=${stmp}
     #alias qme="qstat -u $USER"
     alias qme='jobs=$(qselect -u $USER); [ ! -z "$jobs" ] && jstat -n 40 -u 5 $jobs || echo "No jobs running"'
     alias qdelme="qselect -u ${USER} | xargs qdel"
