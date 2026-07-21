@@ -122,7 +122,7 @@ if [[ ${CYCLED} > 0 ]]; then
 fi
 readarray -t OPTIONS < <(printf "%s\n" "${NETS[@]}" | sort -u)
 for i in "${!OPTIONS[@]}"; do
-    if [[ -f ${HOMEglobal}/exec/ufs_model_${OPTIONS[$i]}.x || -f ${HOMEglobal}/exec/ufs_model_${OPTIONS[$i]}.x ]]; then
+    if [[ -f ${HOMEglobal}/exec/ufs_model_${OPTIONS[$i]}.x || -f ${HOMEglobal}/exec/${OPTIONS[$i]}_model.x ]]; then
         unset "OPTIONS[$i]"
     fi
 done
