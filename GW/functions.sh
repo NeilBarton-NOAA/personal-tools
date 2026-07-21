@@ -4,6 +4,7 @@ set -u
 # Machine Specific and Personalized options
 machine_config() {
 export RUNTESTS=${NPB_WORKDIR}/RUNS #/gw_${HASH////\_}_${REPO}
+export EXPDIR_TOP=${HOME}/GW
 export CODEDIR=${NPB_WORKDIR}
 TOPICDIR=${NPB_WORKDIR}/ICs
 machine=$(uname -n)
@@ -51,9 +52,9 @@ for Y in ${YAMLS[@]}; do
         #set -x
         pslot=${PSLOT_NAME}
         #check to see if already exist
-        if [[ -d ${RUNTESTS}/EXPDIR/${pslot} ]]; then
+        if [[ -d ${EXPDIR_TOP}/EXPDIR/${pslot} ]]; then
             n=1
-            ds=$( ls -d ${RUNTESTS}/EXPDIR/*/ )
+            ds=$( ls -d ${EXPDIR_TOP}/EXPDIR/*/ )
             e_pslot=()
             for d in ${ds}; do
                 n_pslot=$(basename ${d})
@@ -121,7 +122,7 @@ if [[ ${CYCLED} > 0 ]]; then
 fi
 readarray -t OPTIONS < <(printf "%s\n" "${NETS[@]}" | sort -u)
 for i in "${!OPTIONS[@]}"; do
-    if [[ -f ${HOMEglobal}/exec/${OPTIONS[$i]}_model.x || -f ${HOMEglobal}/exec/${OPTIONS[$i]}.x ]]; then
+    if [[ -f ${HOMEglobal}/exec/ufs_model_${OPTIONS[$i]}.x || -f ${HOMEglobal}/exec/ufs_model_${OPTIONS[$i]}.x ]]; then
         unset "OPTIONS[$i]"
     fi
 done
@@ -147,7 +148,7 @@ for (( i=0; i<${#YAMLS[@]}; i++ )); do
     export pslot=${PSLOTS[${i}]}
     echo "create_experiment.py: ${YAML}, ${pslot}"
     ${HOMEglobal}/dev/workflow/create_experiment.py --yaml "${YAML}"
-    eval "$(PDY=0 cyc=0 source "${RUNTESTS}/EXPDIR/${pslot}/config.base" >& /dev/null; echo DATAROOT="${STMP}/RUNDIRS/${PSLOT}")"
+    eval "$(PDY=0 cyc=0 source "${EXPDIR_TOP}/EXPDIR/${pslot}/config.base" >& /dev/null; echo DATAROOT="${STMP}/RUNDIRS/${PSLOT}")"
     echo ${DATAROOT}
     if [[ -d ${DATAROOT} ]]; then
         echo "DATAROOT exist: ${DATAROOT}" 
@@ -163,22 +164,22 @@ done
 # link items to EXPDIR for personal debugging 
 link_EXPDIR () {
 HOMEglobal=${1}
-[[ ! -d ${HOME}/GW/EXPDIR ]] && ln -sf ${RUNTESTS}/EXPDIR ${HOME}/GW/EXPDIR 
+#[[ ! -d ${HOME}/GW/EXPDIR ]] && ln -sf ${RUNTESTS}/EXPDIR ${HOME}/GW/EXPDIR 
 for (( i=0; i<${#YAMLS[@]}; i++ )); do
     YAML=${YAMLS[${i}]}
     pslot=${PSLOTS[${i}]}
-    EXPDIR=${RUNTESTS}/EXPDIR/${pslot}
+    local EXPDIRpslot=${EXPDIR_TOP}/EXPDIR/${pslot}
     COMROOT=${RUNTESTS}/COMROOT/${pslot}
-    eval "$(PDY=0 cyc=0 source "${RUNTESTS}/EXPDIR/${pslot}/config.base" >& /dev/null; echo DATAROOT="${STMP}/RUNDIRS/${PSLOT}")"
-    ln -sf ${HOMEglobal} ${EXPDIR}/GW-CODE 
-    ln -sf ${HOMEglobal}/dev/workflow/rocoto_viewer.py ${EXPDIR}/rocoto_viewer.py
-    ln -sf ${HOMEglobal}/dev/workflow/setup_workflow.py ${EXPDIR}/setup_workflow.py
-    ln -sf ${HOMEglobal}/dev/parm/config ${EXPDIR}/ORIG_CONFIGS
-    ln -sf ${COMROOT}/logs ${EXPDIR}/LOGS_COMROOT
-    ln -sf ${DATAROOT} ${EXPDIR}/DATAROOT
-    ln -sf ${HOMEglobal}/dev/ush/gw_setup.sh ${EXPDIR}/gw_setup.sh
+    eval "$(PDY=0 cyc=0 source "${EXPDIRpslot}/config.base" >& /dev/null; echo DATAROOT="${STMP}/RUNDIRS/${PSLOT}")"
+    ln -sf ${HOMEglobal} ${EXPDIRpslot}/GW-CODE 
+    ln -sf ${HOMEglobal}/dev/workflow/rocoto_viewer.py ${EXPDIRpslot}/rocoto_viewer.py
+    ln -sf ${HOMEglobal}/dev/workflow/setup_workflow.py ${EXPDIRpslot}/setup_workflow.py
+    ln -sf ${HOMEglobal}/dev/parm/config ${EXPDIRpslot}/ORIG_CONFIGS
+    ln -sf ${COMROOT}/logs ${EXPDIRpslot}/LOGS_COMROOT
+    ln -sf ${DATAROOT} ${EXPDIRpslot}/DATAROOT
+    ln -sf ${HOMEglobal}/dev/ush/gw_setup.sh ${EXPDIRpslot}/gw_setup.sh
 done
-echo "FINISHED: soft-linking to EXPDIR"
+echo "FINISHED: soft-linking to EXPDIRpslot"
 }
 
 ################################################
@@ -188,8 +189,8 @@ MONTHS=${1:-"05 11"}
 for (( i=0; i<${#YAMLS[@]}; i++ )); do
     YAML=${YAMLS[${i}]}
     pslot=${PSLOTS[${i}]}
-    EXPDIR=${RUNTESTS}/EXPDIR/${pslot}
-    XML_FILE=${EXPDIR}/${pslot}.xml
+    local EXPDIRpslot=${EXPDIR}/EXPDIR/${pslot}
+    XML_FILE=${EXPDIRpslot}/${pslot}.xml
     line=$(grep -n 'cycledef group' ${XML_FILE} | cut -d: -f1) 
     sed -i ${line}d ${XML_FILE}
     for Y in $(seq 1994 2023); do
@@ -215,7 +216,7 @@ fi
 for (( i=0; i<${#YAMLS[@]}; i++ )); do
     YAML=${YAMLS[${i}]}
     pslot=${PSLOTS[${i}]}
-    f=${RUNTESTS}/EXPDIR/${pslot}/${pslot}
+    f=${EXPDIR_TOP}/EXPDIR/${pslot}/${pslot}
     exist=$( ${ct} -l | grep ${f} 2>/dev/null | wc -l )
     if (( ${exist} > 0 )); then
         echo "Already in Crontab ${pslot}"

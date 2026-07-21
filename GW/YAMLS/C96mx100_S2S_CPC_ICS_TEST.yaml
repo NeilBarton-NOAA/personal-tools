@@ -11,7 +11,7 @@ experiment:
   start: 'cold'
   nens: 3
   comroot: {{ 'RUNTESTS' | getenv }}/COMROOT
-  expdir: {{ 'RUNTESTS' | getenv }}/EXPDIR
+  expdir: {{ 'EXPDIR_TOP' | getenv | default('RUNTESTS' | getenv, boolean=True) }}/EXPDIR
   icsdir: {{ 'TOPICDIR' | getenv }}/CPC/C96mx100
   yaml: {{ HOME }}/GW/YAMLS/sfs_full_C96mx100_CPC_ICS_TEST.yaml
 

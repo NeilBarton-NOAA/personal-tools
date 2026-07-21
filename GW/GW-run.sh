@@ -7,16 +7,16 @@ source ${PWD}/functions.sh && machine_config
 ####################################
 # Code
 #REPO=NOAA-EMC && HASH=develop
-#REPO=NOAA-EMC && HASH=dev/sfs
+REPO=NOAA-EMC && HASH=dev/sfs
 #REPO=NeilBarton-NOAA && HASH=SFSbeta1.1_testing 
 #REPO=NeilBarton-NOAA && HASH=SFSbeta1.1 
 HOMEglobal=${CODEDIR}/CODE/gw_${HASH////\_}_${REPO}
 #export DTG_GW=2024010100
 export DTG_GW=2026030100
 #YAMLS=(${HOMEglobal}/dev/ci/cases/sfs/C192mx025_S2S_CPC_ICS.yaml) && PSLOT_NAME='beta1.1_FINAL_BRINE' && START_RUN=T
-YAMLS=(${HOMEglobal}/dev/ci/cases/sfs/C192mx025_S2S_GFSV17_ICS.yaml) && PSLOT_NAME='TEST_beta1.1_GFS_ICs' && export TOPICDIR=${NPB_WORKDIR}/ICs
+YAMLS=(${HOME}/GW/YAMLS/C96mx100_S2S_CPC_ICS_TEST.yaml) && PSLOT_NAME="TEST"
 
-DEFAULT_YAMLS=F
+DEFAULT_YAMLS=T
 CI_FORECASTS_YAMLS=F
 CI_DA_YAMLS=F
 SFS_BASELINE=F && SFS_MONTHS='03'
