@@ -10,3 +10,4 @@ user:
   NOSCRUB: 'default'
   HPSS_PROJECT: 'emc-marine'
   ATARDIR : '/NCEPDEV/${HPSS_PROJECT}/5year/${USER}/${machine}/${PSLOT}'
+  DO_ARCHCOM: "YES"
