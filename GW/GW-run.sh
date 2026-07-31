@@ -9,7 +9,8 @@ source ${PWD}/functions.sh && machine_config
 #REPO=NOAA-EMC && HASH=develop
 REPO=NOAA-EMC && HASH=dev/sfs
 #REPO=NeilBarton-NOAA && HASH=SFSbeta1.1_testing 
-REPO=NeilBarton-NOAA && HASH=SFSbeta1.1 
+#REPO=NeilBarton-NOAA && HASH=SFSbeta1.1 
+REPO=NeilBarton-NOAA && HASH=SFSbeta2.0 
 HOMEglobal=${CODEDIR}/CODE/gw_${HASH////\_}_${REPO}
 #export DTG_GW=2024010100
 export DTG_GW=2026030100
@@ -19,7 +20,7 @@ DEFAULT_YAMLS=T
 CI_FORECASTS_YAMLS=F
 CI_DA_YAMLS=F
 SFS_BASELINE=F && SFS_MONTHS='03'
-CLONE_ONLY=F
+CLONE_ONLY=T
 BUILD_ONLY=F
 UPDATE_CODE=F
 
