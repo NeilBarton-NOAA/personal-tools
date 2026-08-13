@@ -1,5 +1,5 @@
 defaults:
-  !INC {{ HOMEgfs }}/dev/parm/config/sfs/yaml/defaults.yaml
+  !INC {{ HOMEglobal }}/dev/parm/config/sfs/yaml/defaults.yaml
 base:
   FHMAX_GFS: 240
   FCST_BREAKPOINTS: ""

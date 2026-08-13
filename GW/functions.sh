@@ -4,7 +4,8 @@ set -u
 # Machine Specific and Personalized options
 machine_config() {
 export RUNTESTS=${NPB_WORKDIR}/RUNS #/gw_${HASH////\_}_${REPO}
-export EXPDIR_TOP=${HOME}/GW
+#EXPDIR_GW=${RUNTESTS}/EXPDIR
+EXPDIR_GW=${HOME}/GW/EXPDIR && export EXPDIR_TOP=$(readlink -f ${EXPDIR_GW}/../)
 export CODEDIR=${NPB_WORKDIR}
 TOPICDIR=${NPB_WORKDIR}/ICs
 machine=$(uname -n)
@@ -52,9 +53,9 @@ for Y in ${YAMLS[@]}; do
         #set -x
         pslot=${PSLOT_NAME}
         #check to see if already exist
-        if [[ -d ${EXPDIR_TOP}/EXPDIR/${pslot} ]]; then
+        if [[ -d ${EXPDIR_GW}/${pslot} ]]; then
             n=1
-            ds=$( ls -d ${EXPDIR_TOP}/EXPDIR/*/ )
+            ds=$( ls -d ${EXPDIR_GW}/*/ )
             e_pslot=()
             for d in ${ds}; do
                 n_pslot=$(basename ${d})
@@ -148,7 +149,7 @@ for (( i=0; i<${#YAMLS[@]}; i++ )); do
     export pslot=${PSLOTS[${i}]}
     echo "create_experiment.py: ${YAML}, ${pslot}"
     ${HOMEglobal}/dev/workflow/create_experiment.py --yaml "${YAML}"
-    eval "$(PDY=0 cyc=0 source "${EXPDIR_TOP}/EXPDIR/${pslot}/config.base" >& /dev/null; echo DATAROOT="${STMP}/RUNDIRS/${PSLOT}")"
+    eval "$(PDY=0 cyc=0 source "${EXPDIR_GW}/${pslot}/config.base" >& /dev/null; echo DATAROOT="${STMP}/RUNDIRS/${PSLOT}")"
     echo ${DATAROOT}
     if [[ -d ${DATAROOT} ]]; then
         echo "DATAROOT exist: ${DATAROOT}" 
@@ -168,7 +169,7 @@ HOMEglobal=${1}
 for (( i=0; i<${#YAMLS[@]}; i++ )); do
     YAML=${YAMLS[${i}]}
     pslot=${PSLOTS[${i}]}
-    local EXPDIRpslot=${EXPDIR_TOP}/EXPDIR/${pslot}
+    local EXPDIRpslot=${EXPDIR_GW}/${pslot}
     COMROOT=${RUNTESTS}/COMROOT/${pslot}
     eval "$(PDY=0 cyc=0 source "${EXPDIRpslot}/config.base" >& /dev/null; echo DATAROOT="${STMP}/RUNDIRS/${PSLOT}")"
     ln -sf ${HOMEglobal} ${EXPDIRpslot}/GW-CODE 
@@ -189,7 +190,7 @@ MONTHS=${1:-"05 11"}
 for (( i=0; i<${#YAMLS[@]}; i++ )); do
     YAML=${YAMLS[${i}]}
     pslot=${PSLOTS[${i}]}
-    local EXPDIRpslot=${EXPDIR}/EXPDIR/${pslot}
+    local EXPDIRpslot=${EXPDIR_GW}/${pslot}
     XML_FILE=${EXPDIRpslot}/${pslot}.xml
     line=$(grep -n 'cycledef group' ${XML_FILE} | cut -d: -f1) 
     sed -i ${line}d ${XML_FILE}
@@ -216,7 +217,7 @@ fi
 for (( i=0; i<${#YAMLS[@]}; i++ )); do
     YAML=${YAMLS[${i}]}
     pslot=${PSLOTS[${i}]}
-    f=${EXPDIR_TOP}/EXPDIR/${pslot}/${pslot}
+    f=${EXPDIR_GW}/${pslot}/${pslot}
     exist=$( ${ct} -l | grep ${f} 2>/dev/null | wc -l )
     if (( ${exist} > 0 )); then
         echo "Already in Crontab ${pslot}"

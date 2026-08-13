@@ -11,7 +11,7 @@ experiment:
   start: 'cold'
   nens: 1
   comroot: {{ 'RUNTESTS' | getenv }}/COMROOT
-  expdir: {{ 'RUNTESTS' | getenv }}/EXPDIR
+  expdir: "{{ 'EXPDIR_TOP' | getenv if ('EXPDIR_TOP' | getenv) != 'UNDEFINED' else ('RUNTESTS' | getenv) }}/EXPDIR"
   icsdir: {{ 'TOPICDIR' | getenv }}/CPC_land/C192mx025
   yaml: {{ HOME }}/GW/YAMLS/sfs_full_C192mx025_CPC_ICS.yaml
 
