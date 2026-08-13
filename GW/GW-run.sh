@@ -11,13 +11,16 @@ REPO=NOAA-EMC && HASH=dev/sfs
 #REPO=NeilBarton-NOAA && HASH=SFSbeta1.1_testing 
 #REPO=NeilBarton-NOAA && HASH=SFSbeta1.1 
 REPO=NeilBarton-NOAA && HASH=SFSbeta2.0 
-HOMEglobal=${CODEDIR}/CODE/TEST_gw_${HASH////\_}_${REPO}
+HOMEglobal=${CODEDIR}/CODE/gw_${HASH////\_}_${REPO}
 export DTG_GW=2024010100
 export NENS_GW=2
-#export DTG_GW=2026030100
-#YAMLS=(${HOME}/GW/YAMLS/C192mx025_S2S_CPC_ICS.yaml) && PSLOT_NAME="C192_BETA2_TEST"
 #YAMLS=(${HOMEglobal}/dev/ci/cases/sfsv1/C192mx025_S2S_CPC_ICS.yaml) && PSLOT_NAME="SFSbeta2.0"
 YAMLS=(${HOMEglobal}/dev/ci/cases/sfsv1/C192mx025_S2S_CPC_ICS.yaml) && PSLOT_NAME="SFSbeta2.0_DEFAULT_DRAIN" && START_RUN=F
+HOMEglobal=${CODEDIR}/CODE/gw_${HASH////\_}_${REPO}
+HOMEgfs=${HOMEglobal}
+export DTG_GW=2026030100
+
+YAMLS=(${HOME}/GW/YAMLS/C96mx100_S2S_CPC_ICS_TEST.yaml) 
 
 DEFAULT_YAMLS=F
 CI_FORECASTS_YAMLS=F

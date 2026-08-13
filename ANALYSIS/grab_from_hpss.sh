@@ -2,18 +2,23 @@
 set -u
 HPSS_DIR=/NCEPDEV/emc-marine/5year/Neil.Barton/URSA/beta1.1_GFS_ICs/2026040100
 WORK_DIR=${NPB_WORKDIR}/RUNS/COMROOT/beta1.1_GFS_ICs
-HPC_ACCOUNT=${COMPUTE_ACCOUNT} && WALLTIME="01:00:00" && NTASKS=1 
+HPC_ACCOUNT=${COMPUTE_ACCOUNT} && WALLTIME="04:00:00" && NTASKS=1 
+
 
 ####################################
 main(){
     machine_config
-    files=$( hsi find ${HPSS_DIR} -name *"monthly"*".tar" 2>&1 | grep NCEPDEV | grep -v atmos )
-    for f in ${files}; do
-        of=${PWD}/logs_$(basename ${f}).out 
-        export WORK_DIR=${WORK_DIR}
-        export f=${f}
-        ${SUBMIT} -J "$(basename ${f})" -o "${of}" --wrap="cd ${WORK_DIR} && htar -xvf ${f}"
-    done    
+    cd /gpfs/f6/sfs-emc/scratch/Neil.Barton/ICs
+    of=${PWD}/logs_CPC_land_snow.out 
+    f=/NCEPDEV/emc-marine/1year/Neil.Barton/CPC_land_snow.tar
+    ${SUBMIT} -J "$(basename ${f})" -o "${of}" --wrap="htar -cvf ${f} CPC_land_snow/*"
+    #files=$( hsi find ${HPSS_DIR} -name *"monthly"*".tar" 2>&1 | grep NCEPDEV | grep -v atmos )
+    #for f in ${files}; do
+    #    of=${PWD}/logs_$(basename ${f}).out 
+    #    export WORK_DIR=${WORK_DIR}
+    #    export f=${f}
+    #    ${SUBMIT} -J "$(basename ${f})" -o "${of}" --wrap="cd ${WORK_DIR} && htar -xvf ${f}"
+    #done    
 }
 
 ####################################

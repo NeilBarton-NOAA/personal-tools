@@ -45,9 +45,9 @@ if [[ ${machine} == orion* ]] || [[ ${machine} == hercules-* ]]; then
 elif [[ ${machine} == gaea* ]] || [[ ${machine} == dtn* ]]; then
     export COMPUTE_ACCOUNT=ira-sti
     export NPB_WORKDIR=/gpfs/f6/sfs-emc/scratch/Neil.Barton
-    if [[ $(uname -n) != gaea63 ]] && [[ ${machine} != dtn* ]]; then
-        ssh -X gaea63
-    fi
+    #if [[ $(uname -n) != gaea63 ]] && [[ ${machine} != dtn* ]]; then
+    #    ssh -X gaea63
+    #fi
 # ursa
 elif [[ ${machine} == u* ]]; then
     export PROJ_DATA="/scratch3/NCEPDEV/nems/Neil.Barton/miniconda3/share/proj"
