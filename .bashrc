@@ -45,16 +45,16 @@ if [[ ${machine} == orion* ]] || [[ ${machine} == hercules-* ]]; then
 elif [[ ${machine} == gaea* ]] || [[ ${machine} == dtn* ]]; then
     export COMPUTE_ACCOUNT=ira-sti
     export NPB_WORKDIR=/gpfs/f6/sfs-emc/scratch/Neil.Barton
-    #if [[ $(uname -n) != gaea63 ]] && [[ ${machine} != dtn* ]]; then
-    #    ssh -X gaea63
-    #fi
+    export NS_WORKDIR=/gpfs/f6/sfs-cpu/proj-shared/Neil.Barton
+    if [[ $(uname -n) != gaea63 ]] && [[ ${machine} != dtn* ]]; then
+        ssh -X gaea63
+    fi
 # ursa
 elif [[ ${machine} == u* ]]; then
     export PROJ_DATA="/scratch3/NCEPDEV/nems/Neil.Barton/miniconda3/share/proj"
     export COMPUTE_ACCOUNT=fv3-cpu
     export NPB_WORKDIR=/scratch4/NCEPDEV/stmp/Neil.Barton
     export NS_WORKDIR=/scratch4/NCEPDEV/nems/Neil.Barton
-    alias nsd="cd ${NS_WORKDIR}"
     #export PROJ_LIB=/scratch2/NCEPDEV/stmp3/Neil.Barton/TOOLS/miniconda3/share/proj
     if [[ $(uname -n) != ufe02 ]] && [[ $(uname -n) != u*[cm]* ]]; then
         ssh -X ufe02
@@ -65,11 +65,8 @@ elif [[ ${machine} == *[cd]login* ]]; then
     export COMPUTE_ACCOUNT=GFS-DEV
     export ptmp=/lfs/h2/emc/ptmp/neil.barton # 1 day scrub
     export stmp=/lfs/h2/emc/stmp/neil.barton # 5 day scrub
-    export couple_noscrub=/lfs/h2/emc/couple/noscrub/neil.barton
-    export ens_noscrub=/lfs/h2/emc/ens/noscrub/neil.barton
-    alias nsd="cd ${couple_noscrub}"
+    export NS_WORKDIR=/lfs/h2/emc/couple/noscrub/neil.barton #/lfs/h2/emc/ens/noscrub/neil.barton
     export NPB_WORKDIR=${stmp}
-    #alias qme="qstat -u $USER"
     alias qme='jobs=$(qselect -u $USER); [ ! -z "$jobs" ] && jstat -n 40 -u 5 $jobs || echo "No jobs running"'
     alias qdelme="qselect -u ${USER} | xargs qdel"
     unalias qdel
@@ -83,7 +80,8 @@ elif [[ ${machine} == mfe* ]]; then
 else
     echo "machine unknown in .bashrc: " $machine
 fi
-alias sd="cd $NPB_WORKDIR"
+alias sd="cd ${NPB_WORKDIR}"
+alias nsd="cd ${NS_WORKDIR}"
 export CYLC_WORKDIR=${NPB_WORKDIR}
 
 # tab completion

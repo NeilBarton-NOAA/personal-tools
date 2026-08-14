@@ -5,7 +5,8 @@ set -u
 machine_config() {
 export RUNTESTS=${NPB_WORKDIR}/RUNS #/gw_${HASH////\_}_${REPO}
 #EXPDIR_GW=${RUNTESTS}/EXPDIR
-EXPDIR_GW=${HOME}/GW/EXPDIR && export EXPDIR_TOP=$(readlink -f ${EXPDIR_GW}/../)
+EXPDIR_GW=${HOME}/GW/EXPDIR && export EXPDIR_TOP=$(dirname ${EXPDIR_GW})
+
 export CODEDIR=${NPB_WORKDIR}
 TOPICDIR=${NPB_WORKDIR}/ICs
 machine=$(uname -n)
@@ -15,13 +16,14 @@ case ${machine} in
 hercules*)   m=hercules ; 
              TOPICDIR=/work/noaa/marine/Yangxing.Zheng/ICs ;;
 gaea*)       m=gaeac6 ;   
-             TOPICDIR=/gpfs/f6/sfs-emc/proj-shared/Yangxing.Zheng/SFS/ICs ;;
+             TOPICDIR=/gpfs/f6/sfs-emc/proj-shared/Yangxing.Zheng/SFS/ICs ;
+             export CODEDIR=${NS_WORKDIR} ;;
 u*)          m=ursa ;     
              TOPICDIR=/scratch4/NCEPDEV/global/Yangxing.Zheng/ICs ;
-             export CODEDIR=/scratch4/NCEPDEV/nems/Neil.Barton ;;
+             export CODEDIR=${NS_WORKDIR} ;;
 *[cd]login*) m=wcoss2 ;
              TOPICDIR=/lfs/h2/emc/couple/noscrub/neil.barton/ICs ;
-             export CODEDIR=/lfs/h2/emc/couple/noscrub/neil.barton ;;
+             export CODEDIR=${NS_WORKDIR} ;;
 *)           echo "MACHINE unknown:" ${machine} && exit 1;;
 esac
 export TOPICDIR=${TOPICDIR}
@@ -185,8 +187,9 @@ echo "FINISHED: soft-linking to EXPDIRpslot"
 
 ################################################
 # add dates to yamls to run for SFS baseline 
-sfs_baseline () {
-MONTHS=${1:-"05 11"}
+sfs_addmonths () {
+local MONTHS=${1:-"05 11"}
+local YEARS=${2:-{1991..2025}}
 for (( i=0; i<${#YAMLS[@]}; i++ )); do
     YAML=${YAMLS[${i}]}
     pslot=${PSLOTS[${i}]}
@@ -194,7 +197,7 @@ for (( i=0; i<${#YAMLS[@]}; i++ )); do
     XML_FILE=${EXPDIRpslot}/${pslot}.xml
     line=$(grep -n 'cycledef group' ${XML_FILE} | cut -d: -f1) 
     sed -i ${line}d ${XML_FILE}
-    for Y in $(seq 1994 2023); do
+    for Y in $(seq 1991 2023); do
         for M in ${MONTHS}; do 
             text="<cycledef group='"sfs"'>${Y}${M}010000 ${Y}${M}010000 06:00:00</cycledef>"
             sed -i "${line} i   ${text}" ${XML_FILE}
