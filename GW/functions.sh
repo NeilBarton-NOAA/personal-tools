@@ -125,7 +125,9 @@ if [[ ${CYCLED} > 0 ]]; then
 fi
 readarray -t OPTIONS < <(printf "%s\n" "${NETS[@]}" | sort -u)
 for i in "${!OPTIONS[@]}"; do
-    if [[ -f ${HOMEglobal}/exec/ufs_model_${OPTIONS[$i]}.x || -f ${HOMEglobal}/exec/${OPTIONS[$i]}_model.x ]]; then
+    if [[ -f ${HOMEglobal}/exec/ufs_model_${OPTIONS[$i]}.x 
+        || -f ${HOMEglobal}/exec/${OPTIONS[$i]}_model.x 
+        || -f ${HOMEglobal}/exec/${OPTIONS[$i]}.x ]]; then
         unset "OPTIONS[$i]"
     fi
 done
@@ -221,6 +223,8 @@ for (( i=0; i<${#YAMLS[@]}; i++ )); do
     YAML=${YAMLS[${i}]}
     pslot=${PSLOTS[${i}]}
     f=${EXPDIR_GW}/${pslot}/${pslot}
+    [[ ! -f ${f}.crontab ]] && f=${RUNTESTS}/EXPDIR/${pslot}/${pslot}
+    [[ ! -f ${f}.crontab ]] && echo "FATAL ${f}.crontab not found" && exit 1
     exist=$( ${ct} -l | grep ${f} 2>/dev/null | wc -l )
     if (( ${exist} > 0 )); then
         echo "Already in Crontab ${pslot}"
