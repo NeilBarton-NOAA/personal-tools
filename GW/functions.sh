@@ -222,6 +222,7 @@ fi
 for (( i=0; i<${#YAMLS[@]}; i++ )); do
     YAML=${YAMLS[${i}]}
     pslot=${PSLOTS[${i}]}
+    echo $YAML $pslot
     f=${EXPDIR_GW}/${pslot}/${pslot}
     [[ ! -f ${f}.crontab ]] && f=${RUNTESTS}/EXPDIR/${pslot}/${pslot}
     [[ ! -f ${f}.crontab ]] && echo "FATAL ${f}.crontab not found" && exit 1

@@ -49,6 +49,7 @@ elif [[ ${machine} == gaea* ]] || [[ ${machine} == dtn* ]]; then
     if [[ $(uname -n) != gaea63 ]] && [[ ${machine} != dtn* ]]; then
         ssh -X gaea63
     fi
+    alias "cpu_report"="sshare -U $USER" 
 # ursa
 elif [[ ${machine} == u* ]]; then
     export PROJ_DATA="/scratch3/NCEPDEV/nems/Neil.Barton/miniconda3/share/proj"
