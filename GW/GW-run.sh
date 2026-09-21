@@ -7,28 +7,31 @@ source ${PWD}/functions.sh && machine_config
 ####################################
 # Code
 #REPO=NOAA-EMC && HASH=develop
-#REPO=NOAA-EMC && HASH=dev/sfs
+REPO=NOAA-EMC && HASH=dev/sfs
 #REPO=NeilBarton-NOAA && HASH=SFSbeta1.1 
-REPO=NeilBarton-NOAA && HASH=SFSbeta2.0 
+#REPO=NeilBarton-NOAA && HASH=SFSbeta2.0 
+#REPO=NeilBarton-NOAA && HASH=SFSbeta3.0_dev 
 
 HOMEglobal=${CODEDIR}/CODE/gw_${HASH////\_}_${REPO} && HOMEgfs=${HOMEglobal}
 
 ## YAMLS ############
-YAMLS=(${HOMEglobal}/dev/ci/cases/sfsv1/C192mx025_S2S_CPC_ICS.yaml) && PSLOT_NAME="SFSbeta2.0"
+#YAMLS=(${HOMEglobal}/dev/ci/cases/sfsv1/C192mx025_S2S_CPC_ICS.yaml) && PSLOT_NAME="SFSbeta2.0"
+#YAMLS=(${HOMEglobal}/dev/ci/cases/sfsv1/C192mx025_S2S_CPC_ICS.yaml) && PSLOT_NAME="SFSbeta2.0_ICE_TEST" && START_RUN=T
 #YAMLS=(${HOMEglobal}/dev/ci/cases/sfs/C192mx025_S2S_GFSV17_ICS.yaml) && PSLOT_NAME='beta1.1_GFS_ICs' && export TOPICDIR=${NPB_WORKDIR}/ICs
 #YAMLS=(${HOME}/GW/YAMLS/C96mx100_S2S_CPC_ICS_TEST.yaml) 
+YAMLS=(${HOMEglobal}/dev/ci/cases/pr/C96C48mx500_S2SW_cyc_gfs.yaml) ##&& PSLOT_NAME="SFSbeta2.0"
 
 ## OPTIONS ############
-export DTG_GW=1991090100
-export NENS_GW=5
+export DTG_GW=2024010100
+export NENS_GW=3
 DEFAULT_YAMLS=F
 CI_FORECASTS_YAMLS=F
 CI_DA_YAMLS=F
 SFS_ADDDATES=F && SFS_MONTHS='09'
 CLONE_ONLY=F
-BUILD_ONLY=F
+BUILD_ONLY=T
 UPDATE_CODE=F
-START_RUN=T
+#START_RUN=T
 ####################################
 # The work to set up an experiment
 clone_gw ${HOMEglobal} ${HASH} ${REPO}
