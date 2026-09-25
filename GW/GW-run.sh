@@ -7,29 +7,29 @@ source ${PWD}/functions.sh && machine_config
 ####################################
 # Code
 #REPO=NOAA-EMC && HASH=develop
-REPO=NOAA-EMC && HASH=dev/sfs
+#REPO=NOAA-EMC && HASH=dev/sfs
 #REPO=NeilBarton-NOAA && HASH=SFSbeta1.1 
-#REPO=NeilBarton-NOAA && HASH=SFSbeta2.0 
+REPO=NeilBarton-NOAA && HASH=SFSbeta2.0 
 #REPO=NeilBarton-NOAA && HASH=SFSbeta3.0_dev 
 HOMEglobal=${CODEDIR}/CODE/gw_${HASH////\_}_${REPO} && HOMEgfs=${HOMEglobal}
 
 ## YAMLS ############
 #YAMLS=(${HOMEglobal}/dev/ci/cases/sfsv1/C192mx025_S2S_CPC_ICS.yaml) && PSLOT_NAME="SFSbeta2.0"
-#YAMLS=(${HOMEglobal}/dev/ci/cases/sfs/C192mx025_S2S_GFSV17_ICS.yaml) && PSLOT_NAME='beta1.1_GFS_ICs' && export TOPICDIR=${NPB_WORKDIR}/ICs
+YAMLS=(${HOMEglobal}/dev/ci/cases/sfsv1/C192mx025_S2S_GFSV17_ICS.yaml) && PSLOT_NAME='SFSbeta2.0_GFS_ICs' && export TOPICDIR=${NPB_WORKDIR}/ICs
 #YAMLS=(${HOME}/GW/YAMLS/C96mx100_S2S_CPC_ICS_TEST.yaml) 
-YAMLS=(${HOMEglobal}/dev/ci/cases/pr/C96C48mx500_S2SW_cyc_gfs.yaml) ##&& PSLOT_NAME="SFSbeta2.0"
+#YAMLS=(${HOMEglobal}/dev/ci/cases/pr/C96C48mx500_S2SW_cyc_gfs.yaml) 
 
 ## OPTIONS ############
-export DTG_GW=2024010100
+export DTG_GW=2026100100
 export NENS_GW=3
 DEFAULT_YAMLS=F
-CI_FORECASTS_YAMLS=T
-CI_DA_YAMLS=T
+CI_FORECASTS_YAMLS=F
+CI_DA_YAMLS=F
 SFS_ADDDATES=F && SFS_MONTHS='09'
 CLONE_ONLY=F
-BUILD_ONLY=T
+BUILD_ONLY=F
 UPDATE_CODE=F
-#START_RUN=T
+START_RUN=T
 
 ####################################
 # The work to set up an experiment
@@ -39,8 +39,8 @@ clone_gw ${HOMEglobal} ${HASH} ${REPO}
 get_yamls ${DEFAULT_YAMLS} ${CI_FORECASTS_YAMLS} ${CI_DA_YAMLS} 
 build_gw ${HOMEglobal} ${COMPUTE_ACCOUNT} 
 [[ ${BUILD_ONLY:-F} == T ]] && echo "Stoping After Building g-w" && exit 0
-#create_experiment ${HOMEglobal} ${m} ${COMPUTE_ACCOUNT} ${YAML[@]} 
-#link_EXPDIR ${HOMEglobal} ${YAML[@]}
+create_experiment ${HOMEglobal} ${m} ${COMPUTE_ACCOUNT} ${YAML[@]} 
+link_EXPDIR ${HOMEglobal} ${YAML[@]}
 [[ ${SFS_ADDDATES:-F} == T ]] && sfs_addmonths ${SFS_MONTHS}
 if [[ ${START_RUN:-T} == T ]]; then
     add_to_crontab ${m} #${YAML[@]}

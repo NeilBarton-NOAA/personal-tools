@@ -35,6 +35,7 @@ export ARCHIVE_HOME="/NCEPDEV/emc-marine/*year/Neil.Barton"
 ########################
 # machine specific
 # orion and hercules
+echo $machine
 if [[ ${machine} == orion* ]] || [[ ${machine} == hercules-* ]]; then
     node=${HOSTNAME#*-*-} && node=${node%%.*}
     PROMPT_COMMAND='echo -ne "\033]0;${HOSTNAME%%-*}0${node}\007"'
@@ -69,6 +70,7 @@ elif [[ ${machine} == *[cd]login* ]]; then
     export NS_WORKDIR=/lfs/h2/emc/couple/noscrub/neil.barton #/lfs/h2/emc/ens/noscrub/neil.barton
     export NPB_WORKDIR=${stmp}
     alias qme='jobs=$(qselect -u $USER); [ ! -z "$jobs" ] && jstat -n 40 -u 5 $jobs || echo "No jobs running"'
+    #alias qme="qstat -r -u $USER"
     alias qdelme="qselect -u ${USER} | xargs qdel"
     unalias qdel
 # mercury
