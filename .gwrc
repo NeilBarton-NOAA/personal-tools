@@ -9,5 +9,5 @@ user:
   PTMP: 'default'
   NOSCRUB: 'default'
   HPSS_PROJECT: 'emc-marine'
-  ATARDIR : '/NCEPDEV/${HPSS_PROJECT}/5year/${USER}/${machine}/${PSLOT}'
+  ATARDIR : '/NCEPDEV/${HPSS_PROJECT}/5year/Neil.Barton/${machine}/${PSLOT}'
   DO_ARCHCOM: "YES"
