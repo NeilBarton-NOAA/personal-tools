@@ -87,6 +87,10 @@ alias sd="cd ${NPB_WORKDIR}"
 alias nsd="cd ${NS_WORKDIR}"
 export CYLC_WORKDIR=${NPB_WORKDIR}
 
+# python
+export PYTHONPYCACHEPREFIX="/tmp/pycache_${USER}"
+export PYTHONUNBUFFERED=1
+
 # tab completion
 shopt -s direxpand
 set completion-ignore-case on
