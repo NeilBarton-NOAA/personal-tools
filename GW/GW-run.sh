@@ -8,17 +8,15 @@ source ${PWD}/functions.sh && machine_config
 # Code
 #REPO=NOAA-EMC && HASH=develop
 #REPO=NOAA-EMC && HASH=dev/sfs
-#REPO=NeilBarton-NOAA && HASH=SFSbeta1.1 
-REPO=NeilBarton-NOAA && HASH=SFSbeta2.0 
-#REPO=NeilBarton-NOAA && HASH=SFSbeta3.0_dev 
+#REPO=NeilBarton-NOAA && HASH=SFSbeta2.1 
+REPO=NeilBarton-NOAA && HASH=SFSbeta3.0
 HOMEglobal=${CODEDIR}/CODE/gw_${HASH////\_}_${REPO} && HOMEgfs=${HOMEglobal}
 
 ## YAMLS ############
 #YAMLS=(${HOMEglobal}/dev/ci/cases/sfsv1/C192mx025_S2S_CPC_ICS.yaml) && PSLOT_NAME="SFSbeta2.0"
-YAMLS=(${HOMEglobal}/dev/ci/cases/sfsv1/C192mx025_S2S_GFSV17_ICS.yaml) && PSLOT_NAME='SFSbeta2.0_GFS_ICs' && export TOPICDIR=${NPB_WORKDIR}/ICs
-YAMLS=(${HOMEglobal}/dev/ci/cases/sfsv1/C192mx025_S2S_CPC_ICS.yaml) && PSLOT_NAME="SFSbeta2.0_TEST2" && START_RUN=F
-#YAMLS=(${HOME}/GW/YAMLS/C96mx100_S2S_CPC_ICS_TEST.yaml) 
-#YAMLS=(${HOMEglobal}/dev/ci/cases/pr/C96C48mx500_S2SW_cyc_gfs.yaml) 
+#YAMLS=(${HOMEglobal}/dev/ci/cases/sfsv1/C192mx025_S2S_GFSV17_ICS.yaml) && PSLOT_NAME='SFSbeta2.0_GFS_ICs' && export TOPICDIR=${NPB_WORKDIR}/ICs
+#YAMLS=(${HOME}/GW/YAMLS/C96mx100_S2S_CPC_ICS_NPB.yaml) && PSLOT_NAME="beta2.1_TEST"
+YAMLS=(${HOME}/GW/YAMLS/C192mx025_S2S_CPC_ICS_NPB.yaml) && PSLOT_NAME="beta3_TEST"
 
 ## OPTIONS ############
 export DTG_GW=2026100100

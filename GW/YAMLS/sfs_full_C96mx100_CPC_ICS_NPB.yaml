@@ -1,10 +1,10 @@
 defaults:
   !INC {{ HOMEglobal }}/dev/parm/config/sfs/yaml/defaults.yaml
 base:
-  FHMAX_GFS: 480
+  FHMAX_GFS: 72
   FCST_BREAKPOINTS: "24,48"
-  KEEPDATA: "YES"
-  HPSSARCH: "YES"
+  KEEPDATA: "NO"
+  HPSSARCH: "NO"
   MOM6_INTERP_ICS: "NO"
 nsst:
   NST_SPINUP: 1
